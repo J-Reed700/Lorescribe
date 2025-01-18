@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  bot:
+    build: .
+    platform: linux/amd64
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+          cpus: '4'
+        reservations:
+          memory: 16G
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongodb:27017/summarizerbot
+      MONGODB_USER: ${MONGODB_USER:-botuser}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-secretpassword}
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:6
+    platform: linux/amd64
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      - MONGO_INITDB_DATABASE=summarizerbot
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER:-botuser}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD:-secretpassword}
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+    command: mongod --wiredTigerCacheSizeGB 1
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mongodb_data:

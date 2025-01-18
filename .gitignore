@@ -1,0 +1,9 @@
+node_modules/
+recordings/
+.env
+/src-python
+/temp
+/summaries
+/transcripts
+
+
