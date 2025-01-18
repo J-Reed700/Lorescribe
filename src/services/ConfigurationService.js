@@ -9,6 +9,7 @@ class ConfigurationService extends IConfigurationService {
         super();
         this.configPath = path.join(process.cwd(), 'guild-configs');
         this.configs = new Map();
+        this.inMemoryKeys = new Map();
         this.baseConfig = baseConfig;
         this.ensureConfigDirectory();
         this.loadConfigs();
@@ -114,14 +115,6 @@ class ConfigurationService extends IConfigurationService {
             return false;
         }
         
-        // Optional fields validation
-        if ('openaiKey' in config) {
-            if (typeof config.openaiKey !== 'string' || !config.openaiKey.startsWith('sk-')) {
-                logger.error('Invalid OpenAI API key format');
-                return false;
-            }
-        }
-
         if ('summaryChannelId' in config && typeof config.summaryChannelId !== 'string') {
             logger.error('Summary channel ID must be a string');
             return false;
@@ -132,12 +125,31 @@ class ConfigurationService extends IConfigurationService {
 
     hasOpenAIKey(guildId) {
         try {
-            const config = this.getGuildConfig(guildId);
-            return Boolean(config?.openaiKey);
+            return this.inMemoryKeys.has(guildId);
         } catch (error) {
             logger.error(`Error checking OpenAI key for guild ${guildId}:`, error);
             return false;
         }
+    }
+
+    setOpenAIKey(guildId, key) {
+        if (!guildId || typeof guildId !== 'string') {
+            throw new Error('Invalid guild ID');
+        }
+        if (!key || typeof key !== 'string') {
+            throw new Error('Invalid API key');
+        }
+        this.inMemoryKeys.set(guildId, key);
+        logger.info(`Set OpenAI key for guild ${guildId} (stored in memory only)`);
+    }
+
+    getOpenAIKey(guildId) {
+        return this.inMemoryKeys.get(guildId);
+    }
+
+    clearOpenAIKey(guildId) {
+        this.inMemoryKeys.delete(guildId);
+        logger.info(`Cleared OpenAI key for guild ${guildId} from memory`);
     }
 
     deleteGuildConfig(guildId) {

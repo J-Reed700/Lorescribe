@@ -1,0 +1,37 @@
+# MemoireBot 🎙️
+
+A Discord bot that records, transcribes, and summarizes voice channel conversations using AI.
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
+- [Docker](https://www.docker.com/) - For running required services
+
+### Setup & Installation
+
+1. **Install Dependencies**
+   ```bash
+   pnpm install
+   ```
+
+2. **Start Required Services**
+   ```bash
+   docker compose up -d
+   ```
+
+3. **Launch the Bot**
+   ```bash
+   pnpm start
+   ```
+
+## 💡 Tips
+- Make sure to set up your environment variables in `.env` file
+- You'll need a Discord bot token and OpenAI API key to get started
+- Check out our documentation for advanced configuration options
+
+## 🤝 Contributing
+We welcome contributions! Feel free to open issues and pull requests.

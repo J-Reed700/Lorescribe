@@ -16,7 +16,8 @@ class CommandHandler {
             'stop': this.handleStop.bind(this),
             'status': this.handleStatus.bind(this),
             'setsummarychannel': this.handleSetChannel.bind(this),
-            'debug': this.handleDebug.bind(this)
+            'debug': this.handleDebug.bind(this),
+            'setkey': this.handleSetKey.bind(this)
         };
 
         this.setupEventListeners();
@@ -52,55 +53,36 @@ class CommandHandler {
     }
 
     async handleCommand(interaction) {
-        const command = this.commands[interaction.commandName];
-        if (!command) {
-            try {
-                if (!interaction.replied && !interaction.deferred) {
-                    await interaction.reply({ 
-                        content: 'Unknown command', 
-                        ephemeral: true 
-                    });
-                }
-            } catch (error) {
-                this.logger.error('Failed to reply to unknown command:', error);
-            }
-            return;
-        }
+        if (!interaction.isCommand()) return;
 
-        let deferred = false;
+        await interaction.deferReply({ ephemeral: true });
+
         try {
-            // Try to defer only if not already handled
-            if (!interaction.replied && !interaction.deferred) {
-                try {
-                    await interaction.deferReply({ ephemeral: true });
-                    deferred = true;
-                } catch (error) {
-                    if (error.code !== 10062 && error.code !== 40060) { // Ignore "unknown interaction" and "already acknowledged"
-                        this.logger.error('Failed to defer reply:', error);
-                    }
-                }
+            switch (interaction.commandName) {
+                case 'record':
+                    await this.handleStart(interaction);
+                    break;
+                case 'stop':
+                    await this.handleStop(interaction);
+                    break;
+                case 'status':
+                    await this.handleStatus(interaction);
+                    break;
+                case 'setsummarychannel':
+                    await this.handleSetChannel(interaction);
+                    break;
+                case 'debug':
+                    await this.handleDebug(interaction);
+                    break;
+                case 'setkey':
+                    await this.handleSetKey(interaction);
+                    break;
             }
-
-            await command(interaction);
         } catch (error) {
-            this.logger.error(`Error executing command ${interaction.commandName}:`, error);
-            
-            try {
-                const errorMessage = { 
-                    content: 'An error occurred while executing the command. Please try again.',
-                    ephemeral: true
-                };
-                
-                if (!interaction.replied && !interaction.deferred) {
-                    await interaction.reply(errorMessage);
-                } else if (interaction.deferred) {
-                    await interaction.editReply(errorMessage);
-                }
-            } catch (replyError) {
-                if (replyError.code !== 10062 && replyError.code !== 40060) { // Ignore expected errors
-                    this.logger.error('Failed to send error message:', replyError);
-                }
-            }
+            this.logger.error('Error handling command:', error);
+            await interaction.editReply({ 
+                content: '❌ An error occurred while processing your command.'
+            });
         }
     }
 
@@ -268,6 +250,43 @@ class CommandHandler {
         }
 
         await interaction.editReply({ content: debugInfo });
+    }
+
+    async handleSetKey(interaction) {
+        // Check if user has admin permissions
+        if (!interaction.member.permissions.has('ADMINISTRATOR')) {
+            await interaction.editReply({
+                content: '❌ You need administrator permissions to use this command.',
+                ephemeral: true
+            });
+            return;
+        }
+
+        const key = interaction.options.getString('key');
+        
+        try {
+            // Validate the API key
+            if (await this.transcriptionService._validateOpenAIKey(key)) {
+                // Store the key in memory
+                this.guildConfig.setOpenAIKey(interaction.guildId, key);
+                
+                await interaction.editReply({
+                    content: '✅ API key validated and set successfully! The key will be stored in memory only and will need to be set again if the bot restarts.',
+                    ephemeral: true
+                });
+            } else {
+                await interaction.editReply({
+                    content: '❌ Invalid OpenAI API key. Please check your key and try again.',
+                    ephemeral: true
+                });
+            }
+        } catch (error) {
+            this.logger.error('Error setting API key:', error);
+            await interaction.editReply({
+                content: '❌ Failed to set API key. Please try again.',
+                ephemeral: true
+            });
+        }
     }
 }
 

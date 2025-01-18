@@ -14,7 +14,6 @@ class StatusCommand extends BaseCommand {
     }
 
     async execute(interaction) {
-        await this.deferReplyIfNeeded(interaction);
         const status = this.voiceRecorder.getStatus(interaction.guildId);
         
         if (!status) {

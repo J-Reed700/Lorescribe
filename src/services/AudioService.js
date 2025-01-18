@@ -8,8 +8,7 @@ const { EndBehaviorType } = require('@discordjs/voice');
 const RecordingEvents = require('../events/RecordingEvents');
 
 class AudioService {
-    constructor(client, voiceState, storage, logger) {
-        this.client = client;
+    constructor(voiceState, storage, logger) {
         this.voiceState = voiceState;
         this.storage = storage;
         this.logger = logger;

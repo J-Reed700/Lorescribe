@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-# Install system dependencies and MongoDB tools
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     libopus-dev \
@@ -15,12 +15,7 @@ RUN apt-get update && apt-get install -y \
     make \
     g++ \
     git \
-    gnupg \
-    wget \
-    && wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - \
-    && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list \
-    && apt-get update \
-    && apt-get install -y mongodb-mongosh \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
@@ -33,19 +28,16 @@ COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies with increased memory limit
 ENV NODE_OPTIONS="--max_old_space_size=4096"
-RUN pnpm install 
-RUN pnpm add opusscript
-RUN pnpm rebuild
+RUN pnpm install
+
 
 # Copy the rest of the application
 COPY . .
 
-# Add MongoDB connection check script
+# Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Set entrypoint to wait for MongoDB
+# Set entrypoint and default command
 ENTRYPOINT ["docker-entrypoint.sh"]
-
-# Set default command
 CMD ["pnpm", "start"]

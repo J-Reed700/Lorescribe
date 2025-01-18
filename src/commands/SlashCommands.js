@@ -1,16 +1,18 @@
-const SetChannelCommand = require('./SetChannelCommand');
-const SetTimeIntervalCommand = require('./SetTimeIntervalCommand');
-const StopCommand = require('./StopCommand');
-const StatusCommand = require('./StatusCommand');
-const RecordCommand = require('./RecordCommand');
-const ServiceFactory = require('../services/ServiceFactory');
+import ServiceFactory from '../services/ServiceFactory.js';
+import SetChannelCommand from './SetChannelCommand.js';
+import SetTimeIntervalCommand from './SetTimeIntervalCommand.js';
+import StopCommand from './StopCommand.js';
+import StatusCommand from './StatusCommand.js';
+import RecordCommand from './RecordCommand.js';
+import SetKeyCommand from './SetKeyCommand.js';
 
-const services = ServiceFactory.createContainer();
+const services = await new ServiceFactory().initialize();
 
-module.exports = [
-    new SetChannelCommand(services).data.toJSON(),
+export default [
+    new SetChannelCommand(services).data.toJSON(),  
     new SetTimeIntervalCommand(services).data.toJSON(),
     new StopCommand(services).data.toJSON(),
     new StatusCommand(services).data.toJSON(),
-    new RecordCommand(services).data.toJSON()
+    new RecordCommand(services).data.toJSON(),
+    new SetKeyCommand(services).data.toJSON()
 ]; 

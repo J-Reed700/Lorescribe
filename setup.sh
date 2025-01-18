@@ -5,7 +5,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}Setting up SummarizerBot development environment...${NC}"
+echo -e "${BLUE}Setting up MemoireBot development environment...${NC}"
 
 # Check if Python 3.10+ is installed
 if ! command -v python3 &> /dev/null; then

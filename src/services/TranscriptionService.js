@@ -4,20 +4,28 @@ const ITranscriptionService = require('../interfaces/ITranscriptionService');
 const { OpenAI } = require('openai');
 
 class TranscriptionService extends ITranscriptionService {
-    constructor(openai, config) {
+    constructor(configService) {
         super();
-        this.openai = openai;
-        this.config = config;
+        this.configService = configService;
+        this.openai = null; // Will be initialized per-request with the guild's key
     }
 
-    async transcribeAudio(filepath) {
+    async transcribe(audioPath, guildId) {
         try {
+            const apiKey = this.configService.getOpenAIKey(guildId);
+            if (!apiKey) {
+                throw new Error('No OpenAI API key set for this server. Please set it using the /setkey command.');
+            }
+
+            // Initialize OpenAI client with the guild's key
+            this.openai = new OpenAI({ apiKey });
+
             logger.debug(`[TranscriptionService] Starting transcription:`, {
-                filepath,
-                exists: fs.existsSync(filepath)
+                filepath: audioPath,
+                exists: fs.existsSync(audioPath)
             });
 
-            const stats = await fs.promises.stat(filepath);
+            const stats = await fs.promises.stat(audioPath);
             logger.debug(`[TranscriptionService] File stats:`, {
                 size: stats.size,
                 created: stats.birthtime,
@@ -26,7 +34,7 @@ class TranscriptionService extends ITranscriptionService {
 
             logger.debug('[TranscriptionService] Creating read stream and sending to OpenAI...');
             const transcription = await this.openai.audio.transcriptions.create({
-                file: fs.createReadStream(filepath),
+                file: fs.createReadStream(audioPath),
                 model: "whisper-1",
                 language: "en",
                 response_format: "text",
@@ -40,36 +48,11 @@ class TranscriptionService extends ITranscriptionService {
             });
             return transcription;
         } catch (error) {
-            const errorDetails = {
-                location: 'TranscriptionService.transcribeAudio',
-                error: {
-                    name: error.name,
-                    message: error.message,
-                    status: error.status,
-                    code: error.code,
-                    type: error.type,
-                    stack: error.stack
-                },
-                context: {
-                    filepath,
-                    fileExists: fs.existsSync(filepath),
-                    fileSize: fs.existsSync(filepath) ? fs.statSync(filepath).size : null,
-                    prompt: this.config.TRANSCRIPTION_PROMPT
-                }
-            };
-
-            if (error.response) {
-                errorDetails.openai = {
-                    status: error.response.status,
-                    statusText: error.response.statusText,
-                    data: error.response.data
-                };
-            }
-
-            logger.error('[TranscriptionService] Transcription failed:', errorDetails);
-            throw new Error(`Failed to transcribe audio: ${error.message}`);
+            logger.error('[TranscriptionService] Transcription failed:', error);
+            throw error;
         }
     }
+
     async generateSummary(transcript) {
         try {
             logger.debug(`[TranscriptionService] Starting summary generation`, {

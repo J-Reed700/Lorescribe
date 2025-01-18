@@ -3,6 +3,7 @@ const ServiceFactory = require('./services/ServiceFactory');
 const CommandRegistry = require('./commands/CommandRegistry');
 const logger = require('./utils/logger');
 const { ensureDirectoryStructure } = require('./utils/setup');
+const baseConfig = require('./config');
 
 class Bot {
     constructor() {
@@ -12,8 +13,9 @@ class Bot {
 
     async initialize() {
         try {
+            const serviceFactory = new ServiceFactory(baseConfig);    
             // Create and initialize container
-            this.container = ServiceFactory.createContainer();
+            this.container = await serviceFactory.initialize();
 
             // Get core services
             this.client = this.container.get('client');
@@ -47,10 +49,6 @@ class Bot {
             logger.error('Error handling command:', error);
             await this.sendErrorResponse(interaction);
         }
-    }
-
-    async handleError(error) {
-        logger.error('Discord client error:', error);
     }
 
     async sendErrorResponse(interaction) {

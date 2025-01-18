@@ -1,84 +1,117 @@
-const Agenda = require('agenda');
+const Queue = require('bull');
 const logger = require('../utils/logger');
 
 class JobService {
-    constructor(mongoConnectionString) {
-        this.agenda = new Agenda({
-            db: { address: mongoConnectionString, collection: 'jobs' },
-            processEvery: '30 seconds',
-            maxConcurrency: 5
-        });
-
-        this.setupJobs();
+    constructor(redisUrl) {
+        this.queues = new Map();
+        this.redisUrl = redisUrl;
+        this.processors = new Map();
     }
 
-    async setupJobs() {
-        // Define the summary generation job
-        this.agenda.define('generateSummary', { retries: 3 }, async (job) => {
-            const { guildId, transcript, services } = job.attrs.data;
-            
-            try {
-                const transcriptionService = services.get('transcription');
-                const storageService = services.get('storage');
-                const configService = services.get('config');
-                const events = services.get('events');
+    createQueue(name, processor) {
+        if (this.queues.has(name)) {
+            return this.queues.get(name);
+        }
 
-                // Attempt to generate summary
-                const summary = await transcriptionService.generateSummary(transcript);
-                const timestamp = Date.now();
-
-                // Save the updated summary
-                await storageService.saveTranscript(guildId, transcript, timestamp, summary);
-
-                // Get guild config for summary channel
-                const guildConfig = configService.getGuildConfig(guildId);
-                if (guildConfig?.summaryChannelId) {
-                    const client = services.get('client');
-                    const channel = await client.channels.fetch(guildConfig.summaryChannelId);
-                    if (channel) {
-                        await channel.send({
-                            content: `**Updated Summary** (Background Generated)\n\n${summary}\n\n`
-                        });
-                    }
+        const queue = new Queue(name, this.redisUrl, {
+            defaultJobOptions: {
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 1000
                 }
-
-                // Emit success event
-                events.emit('RECORDING_SUMMARIZED', {
-                    guildId,
-                    summary,
-                    transcript,
-                    timestamp,
-                    isBackgroundGenerated: true
-                });
-
-                logger.info(`[JobService] Successfully generated summary for guild ${guildId}`);
-            } catch (error) {
-                logger.error(`[JobService] Failed to generate summary:`, error);
-                throw error; // This will trigger Agenda's retry mechanism
             }
         });
 
-        await this.agenda.start();
-        logger.info('[JobService] Background job processor started');
+        // Store the processor for reconnection scenarios
+        this.processors.set(name, processor);
+
+        // Set up processing
+        this.setupQueueProcessing(queue, name, processor);
+
+        this.queues.set(name, queue);
+        return queue;
     }
 
-    async scheduleBackgroundSummary(guildId, transcript, services) {
-        try {
-            await this.agenda.schedule('in 1 minute', 'generateSummary', {
-                guildId,
-                transcript,
-                services
+    setupQueueProcessing(queue, name, processor) {
+        // Set up the processor
+        queue.process(async (job) => {
+            try {
+                logger.debug(`[JobService] Processing job in queue ${name}:`, {
+                    jobId: job.id,
+                    data: job.data
+                });
+                return await processor(job);
+            } catch (error) {
+                logger.error(`[JobService] Error processing job in queue ${name}:`, {
+                    jobId: job.id,
+                    error: error.message,
+                    stack: error.stack
+                });
+                throw error;
+            }
+        });
+
+        // Handle events
+        queue.on('completed', (job, result) => {
+            logger.debug(`[JobService] Job completed in queue ${name}:`, {
+                jobId: job.id,
+                result
             });
-            logger.info(`[JobService] Scheduled summary generation for guild ${guildId}`);
-        } catch (error) {
-            logger.error(`[JobService] Failed to schedule summary generation:`, error);
-            throw error;
-        }
+        });
+
+        queue.on('failed', (job, error) => {
+            logger.error(`[JobService] Job failed in queue ${name}:`, {
+                jobId: job.id,
+                error: error.message,
+                stack: error.stack,
+                attempts: job.attemptsMade
+            });
+        });
+
+        queue.on('error', (error) => {
+            logger.error(`[JobService] Queue ${name} error:`, {
+                error: error.message,
+                stack: error.stack
+            });
+        });
     }
 
-    async shutdown() {
-        await this.agenda.stop();
-        logger.info('[JobService] Background job processor stopped');
+    async scheduleJob(queueName, data, options = {}) {
+        const queue = this.queues.get(queueName);
+        if (!queue) {
+            throw new Error(`Queue ${queueName} not found`);
+        }
+
+        const job = await queue.add(data, {
+            ...options,
+            removeOnComplete: true
+        });
+
+        logger.debug(`[JobService] Scheduled job in queue ${queueName}:`, {
+            jobId: job.id,
+            data
+        });
+
+        return job;
+    }
+
+    async dispose() {
+        const closePromises = Array.from(this.queues.values()).map(async (queue) => {
+            try {
+                await queue.pause(true);
+                await queue.close();
+            } catch (error) {
+                logger.error(`[JobService] Error closing queue:`, {
+                    error: error.message,
+                    stack: error.stack
+                });
+            }
+        });
+
+        await Promise.all(closePromises);
+        this.queues.clear();
+        this.processors.clear();
     }
 }
 

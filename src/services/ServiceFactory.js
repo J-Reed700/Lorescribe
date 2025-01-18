@@ -8,45 +8,75 @@ const VoiceStateService = require('./VoiceStateService');
 const StorageService = require('./StorageService');
 const ConfigurationService = require('./ConfigurationService');
 const JobService = require('./JobService');
+const SummaryJobService = require('./SummaryJobService');
 const logger = require('../utils/logger');
 const baseConfig = require('../config');
 const { EventEmitter } = require('events');
 
+let containerInstance = null;
+
 class ServiceFactory {
-    constructor(client, config) {
-        this.client = client;
+    constructor(config) {
         this.config = config;
-        this.container = new Container();
+        this.containerInstance = null;
     }
 
     async initialize() {
+        if (this.containerInstance) {
+            return this.containerInstance;
+        }
+
         try {
-            // Register basic services
-            this.container.register('client', this.client);
-            this.container.register('config', new ConfigurationService(this.config));
-            this.container.register('logger', logger);
-            this.container.register('events', new EventEmitter());
+            this.containerInstance = new Container();
+
+
+            this.containerInstance.register('config', new ConfigurationService(this.config));
+            this.containerInstance.register('logger', logger);
+            this.containerInstance.register('events', new EventEmitter());
+
+            this.containerInstance.register('client', new Client({
+                intents: [
+                    GatewayIntentBits.Guilds,
+                    GatewayIntentBits.GuildVoiceStates,
+                    GatewayIntentBits.GuildMessages,
+                    GatewayIntentBits.GuildMembers,
+                    GatewayIntentBits.GuildPresences,
+                    GatewayIntentBits.GuildWebhooks,
+                    GatewayIntentBits.GuildIntegrations,
+                    GatewayIntentBits.GuildInvites,
+                ]
+            }));
 
             // Register core services
-            this.container.register('voiceState', new VoiceStateService(this.container));
-            this.container.register('audio', new AudioService(this.container));
-            this.container.register('storage', new StorageService(this.container));
+            this.containerInstance.register('voiceState', new VoiceStateService());
+            this.containerInstance.register('storage', new StorageService(baseConfig));
+            this.containerInstance.register('audio', new AudioService(
+                this.containerInstance.get('voiceState'),
+                this.containerInstance.get('storage'),
+                logger
+            ));
 
             // Initialize OpenAI
             const openai = new OpenAI({
-                apiKey: this.config.OPENAI_API_KEY
+                apiKey: process.env.OPENAI_API_KEY
             });
 
             // Register OpenAI dependent services
-            this.container.register('transcription', new TranscriptionService(openai, this.config));
+            this.containerInstance.register('transcription', new TranscriptionService(openai, this.config));
 
-            // Initialize and register job service with authentication
-            const mongoUri = `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@mongodb:27017/${baseConfig.MONGODB_DATABASE}?authSource=admin`;
-            const jobService = new JobService(mongoUri);
-            this.container.register('jobs', jobService);
+            // Initialize and register job services
+            const redisUrl = process.env.REDIS_URL || 'redis://redis:6379';
+            const jobService = new JobService(redisUrl);
+            this.containerInstance.register('jobs', jobService);
+            
+            // Register summary job service
+            this.containerInstance.register('summaryJobs', new SummaryJobService(this.containerInstance));
+
+            // Register VoiceRecorder after all its dependencies
+            this.containerInstance.register('voiceRecorder', new VoiceRecorder(this.containerInstance));
 
             logger.info('[ServiceFactory] Services initialized successfully');
-            return this.container;
+            return this.containerInstance;
         } catch (error) {
             logger.error('[ServiceFactory] Failed to initialize services:', error);
             throw error;
@@ -55,12 +85,23 @@ class ServiceFactory {
 
     async shutdown() {
         try {
-            // Get job service and shut it down properly
-            const jobService = this.container.get('jobs');
-            if (jobService) {
-                await jobService.shutdown();
+            if (!this.containerInstance) {
+                return;
             }
 
+            // Get services and shut them down properly
+            const jobService = this.containerInstance.get('jobs');
+            const summaryJobService = this.containerInstance.get('summaryJobs');
+
+            if (summaryJobService) {
+                await summaryJobService.dispose();
+            }
+
+            if (jobService) {
+                await jobService.dispose();
+            }
+
+            this.containerInstance = null;
             logger.info('[ServiceFactory] Services shut down successfully');
         } catch (error) {
             logger.error('[ServiceFactory] Error during service shutdown:', error);
@@ -69,4 +110,4 @@ class ServiceFactory {
     }
 }
 
-module.exports = ServiceFactory; 
+module.exports = ServiceFactory;

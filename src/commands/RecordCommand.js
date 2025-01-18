@@ -44,7 +44,9 @@ class RecordCommand extends BaseCommand {
         } catch (error) {
             const errorMessage = error.message === 'Recording already in progress' 
                 ? '❌ A recording is already in progress in this server!'
-                : '❌ Failed to start recording. Please try again.';
+                : error.message === 'OpenAI API key not set'
+                    ? '❌ OpenAI API key not set. Please run `/setkey` to set your key.'
+                    : '❌ Failed to start recording. Please try again.';
                 
             if (interaction.deferred) {
                 await interaction.editReply(errorMessage);

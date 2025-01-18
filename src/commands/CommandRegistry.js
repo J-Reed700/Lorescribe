@@ -16,7 +16,8 @@ class CommandRegistry {
             require('./StopCommand'),
             require('./StatusCommand'),
             require('./SetChannelCommand'),
-            require('./SetTimeIntervalCommand')
+            require('./SetTimeIntervalCommand'),
+            require('./SetKeyCommand')
         ];
 
         // Register each command

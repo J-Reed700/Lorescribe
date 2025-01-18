@@ -1,12 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-echo "Waiting for MongoDB to be ready..."
-until mongosh --host mongodb --eval "print(\"MongoDB connection successful\")" > /dev/null 2>&1; do
-  echo "MongoDB is unavailable - sleeping 2s"
-  sleep 2
-done
-echo "MongoDB is up - executing command"
+# Function to wait for Redis to be ready
+wait_for_redis() {
+    echo "Waiting for Redis to be ready..."
+    until nc -z redis 6379; do
+        echo "Redis is unavailable - sleeping"
+        sleep 1
+    done
+    echo "Redis is up - executing command"
+}
 
-# Execute the main container command
+# Wait for Redis before starting the application
+wait_for_redis
+
+# Execute the main command
 exec "$@" 

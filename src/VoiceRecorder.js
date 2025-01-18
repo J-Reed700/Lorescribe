@@ -12,6 +12,7 @@ class VoiceRecorder {
         this.events = services.get('events');
         this.storage = services.get('storage');
         this.transcriptionService = services.get('transcription');
+        this.summaryJobs = services.get('summaryJobs');
         this.container = services;
         
         this.activeRecordings = new Map();
@@ -88,7 +89,6 @@ class VoiceRecorder {
 
     async processRotatedRecording(recordingInfo, guildId) {
         try {
-            // First, properly close all streams
             await this.closeStreams(recordingInfo);
 
             // Wait a bit to ensure all data is written
@@ -116,9 +116,8 @@ class VoiceRecorder {
             } catch (summaryError) {
                 this.logger.warn(`[VoiceRecorder] Failed to generate summary, using transcript as fallback:`, summaryError);
                 
-                // Schedule background job for summary generation
-                const jobService = this.container.get('jobs');
-                await jobService.scheduleBackgroundSummary(guildId, transcript, this.container);
+                // Schedule background summary generation
+                await this.summaryJobs.scheduleSummaryGeneration(guildId, transcript);
             }
 
             // Save transcript
@@ -148,7 +147,7 @@ class VoiceRecorder {
             await this.storage.deleteFile(mp3File);
         } catch (error) {
             this.logger.error('[VoiceRecorder] Error processing recording:', error);
-            throw error; // Re-throw to be caught by the caller
+            throw error;
         }
     }
 
@@ -226,6 +225,10 @@ class VoiceRecorder {
 
         const guildId = voiceChannel.guild.id;
         const interval = await this.configService.getTimeInterval(guildId);
+        
+        if(!this.configService.getOpenAIKey(guildId)) {
+            throw new Error('OpenAI API key not set');
+        }
 
         if (this.activeRecordings.has(guildId)) {
 
@@ -448,9 +451,8 @@ class VoiceRecorder {
             } catch (summaryError) {
                 this.logger.warn(`[VoiceRecorder] Failed to generate summary in ClearStreamsAndSave, using transcript as fallback:`, summaryError);
                 
-                // Schedule background job for summary generation
-                const jobService = this.container.get('jobs');
-                await jobService.scheduleBackgroundSummary(recordingInfo.guildId, transcript, this.container);
+                // Schedule background summary generation
+                await this.summaryJobs.scheduleSummaryGeneration(recordingInfo.guildId, transcript);
             }
 
             this.logger.debug('[VoiceRecorder] Guild ID:', recordingInfo.guildId);

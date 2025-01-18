@@ -12,39 +12,32 @@ services:
           memory: 16G
     environment:
       NODE_ENV: production
-      MONGODB_URI: mongodb://mongodb:27017/summarizerbot
-      MONGODB_USER: ${MONGODB_USER:-botuser}
-      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-secretpassword}
+      REDIS_URL: redis://redis:6379
     volumes:
       - .:/usr/src/app
     depends_on:
-      mongodb:
+      redis:
         condition: service_healthy
 
-  mongodb:
-    image: mongo:6
+  redis:
+    image: redis:7-alpine
     platform: linux/amd64
     ports:
-      - "27017:27017"
+      - "6379:6379"
     volumes:
-      - mongodb_data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    environment:
-      - MONGO_INITDB_DATABASE=summarizerbot
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER:-botuser}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD:-secretpassword}
+      - redis_data:/data
     deploy:
       resources:
         limits:
-          memory: 1G
-          cpus: '1'
-    command: mongod --wiredTigerCacheSizeGB 1
+          memory: 512M
+          cpus: '0.5'
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    command: redis-server --save 60 1 --loglevel warning
 
 volumes:
-  mongodb_data:
+  redis_data:
