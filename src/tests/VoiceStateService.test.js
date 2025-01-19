@@ -1,6 +1,6 @@
-const { jest } = require('@jest/globals');
-const VoiceStateService = require('../services/VoiceStateService');
-const config = require('../config.test');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import VoiceStateService from '../services/VoiceStateService.js';
+import config from '../config.test.js';
 
 describe('VoiceStateService', () => {
     let voiceStateService;

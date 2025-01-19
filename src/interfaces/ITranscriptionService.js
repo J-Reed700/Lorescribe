@@ -1,18 +1,9 @@
-/**
- * @interface ITranscriptionService
- */
-class ITranscriptionService {
-    /**
-     * @param {string} filepath
-     * @returns {Promise<string>}
-     */
-    transcribeAudio(filepath) {}
+export default class ITranscriptionService {
+    async transcribe(audioPath, guildId) {
+        throw new Error('Method not implemented');
+    }
 
-    /**
-     * @param {string} text
-     * @returns {Promise<string>}
-     */
-    generateSummary(text) {}
-}
-
-module.exports = ITranscriptionService; 
+    async generateSummary(transcript) {
+        throw new Error('Method not implemented');
+    }
+} 

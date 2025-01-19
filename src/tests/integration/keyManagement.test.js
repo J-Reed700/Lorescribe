@@ -1,7 +1,7 @@
-const { jest } = require('@jest/globals');
-const Bot = require('../../bot');
-const { Client } = require('discord.js');
-const { OpenAI } = require('openai');
+import { jest, describe } from '@jest/globals';
+import Bot from '../../bot.js';
+import { Client } from 'discord.js';
+import { OpenAI } from 'openai';
 
 jest.mock('discord.js');
 jest.mock('openai');

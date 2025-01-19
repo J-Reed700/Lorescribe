@@ -1,10 +1,10 @@
-const { jest } = require('@jest/globals');
-const fs = require('fs');
-const path = require('path');
-const ConfigurationService = require('../services/ConfigurationService');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import fs from 'node:fs';
+import path from 'node:path';
+import ConfigurationService from '../services/ConfigurationService.js';
 
-jest.mock('fs');
-jest.mock('path');
+jest.mock('node:fs');
+jest.mock('node:path');
 
 describe('ConfigurationService', () => {
     let configService;

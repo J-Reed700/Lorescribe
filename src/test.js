@@ -1,49 +1,30 @@
-const { jest } = require('@jest/globals');
-const path = require('path');
-const fs = require('fs');
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'url';
 
-// Ensure test environment
-process.env.NODE_ENV = 'test';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Create test directories if they don't exist
-const testDirs = ['recordings', 'logs'].map(dir => 
-    path.join(process.cwd(), 'test', dir)
-);
+describe('Test Environment', () => {
+    beforeEach(() => {
+        // Setup test environment
+    });
 
-testDirs.forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
+    afterEach(() => {
+        // Cleanup test environment
+    });
 
-// Mock external services
-jest.mock('@discordjs/voice', () => ({
-    joinVoiceChannel: jest.fn(),
-    EndBehaviorType: {
-        AfterSilence: 'afterSilence'
-    }
-}));
+    it('should have test directories', () => {
+        const testDirs = [
+            'test/recordings',
+            'test/data',
+            'test/temp'
+        ];
 
-jest.mock('openai', () => ({
-    OpenAI: jest.fn().mockImplementation(() => ({
-        audio: {
-            transcriptions: {
-                create: jest.fn()
-            }
-        },
-        chat: {
-            completions: {
-                create: jest.fn()
-            }
-        }
-    }))
-}));
-
-// Clean up test files after tests
-afterAll(() => {
-    testDirs.forEach(dir => {
-        if (fs.existsSync(dir)) {
-            fs.rmSync(dir, { recursive: true });
-        }
+        testDirs.forEach(dir => {
+            const fullPath = path.join(__dirname, '..', dir);
+            expect(fs.existsSync(fullPath)).toBe(true);
+        });
     });
 }); 

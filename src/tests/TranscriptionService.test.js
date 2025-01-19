@@ -1,6 +1,6 @@
-const { jest } = require('@jest/globals');
-const TranscriptionService = require('../services/TranscriptionService');
-const config = require('../config.test');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import TranscriptionService from '../services/TranscriptionService.js';
+import config from '../config.test.js';
 
 describe('TranscriptionService', () => {
     let transcriptionService;

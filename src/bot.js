@@ -1,14 +1,14 @@
-require('dotenv').config();
-const ServiceFactory = require('./services/ServiceFactory');
-const CommandRegistry = require('./commands/CommandRegistry');
-const logger = require('./utils/logger');
-const { ensureDirectoryStructure } = require('./utils/setup');
-const { MessageFlags } = require('discord.js');
+import 'dotenv/config';
+import ServiceFactory from './services/ServiceFactory.js';
+import CommandRegistry from './commands/audio/CommandRegistry.js';
+import logger from './utils/logger.js';
+import { ensureDirectoryStructure } from './utils/setup.js';
+import { MessageFlags } from 'discord.js';
+import baseConfig from './config.js';
 
-class Bot {
+export default class Bot {
     constructor() {
         ensureDirectoryStructure();
-        this.initialize();
         this.setupMemoryMonitoring();
     }
 
@@ -40,15 +40,19 @@ class Bot {
 
     async initialize() {
         try {
+            const serviceFactory = new ServiceFactory(baseConfig);    
             // Create and initialize container
-            this.container = ServiceFactory.createContainer();
-
+            this.container = await serviceFactory.initialize();
+            this.logger = this.container.get('logger');
+            
             // Get core services
             this.client = this.container.get('client');
             this.commandRegistry = new CommandRegistry(this.container);
 
             // Setup event handlers
             this.setupEventHandlers();
+
+            await this.start();
             
             logger.info('Bot initialized successfully');
         } catch (error) {
@@ -73,29 +77,12 @@ class Bot {
             await this.commandRegistry.handleCommand(interaction);
         } catch (error) {
             logger.error('Error handling command:', error);
-            await this.sendErrorResponse(interaction);
+            throw error;
         }
     }
 
     async handleError(error) {
         logger.error('Discord client error:', error);
-    }
-
-    async sendErrorResponse(interaction) {
-        try {
-            const response = { 
-                content: 'There was an error executing this command!', 
-                flags: MessageFlags.Ephemeral
-            };
-
-            if (!interaction.replied && !interaction.deferred) {
-                await interaction.reply(response);
-            } else {
-                await interaction.editReply(response);
-            }
-        } catch (error) {
-            logger.error('Failed to send error response:', error);
-        }
     }
 
     async start() {
@@ -109,5 +96,12 @@ class Bot {
 }
 
 // Start the bot
-const bot = new Bot();
-bot.start(); 
+async function main() {
+    const bot = new Bot();
+    await bot.initialize();
+}
+
+main().catch(error => {
+    logger.error('Failed to start bot:', error);
+    process.exit(1);
+}); 

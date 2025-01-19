@@ -1,15 +1,15 @@
-const { jest } = require('@jest/globals');
-const fs = require('fs');
-const { pipeline } = require('node:stream');
-const AudioService = require('../services/AudioService');
-const config = require('../config.test');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import fs from 'node:fs';
+import { pipeline } from 'node:stream';
+import AudioService from '../services/AudioService.js';
+import config from '../config.test.js';
 
 // Mock dependencies
 jest.mock('node:stream', () => ({
     pipeline: jest.fn()
 }));
 
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
     createReadStream: jest.fn(),
     createWriteStream: jest.fn()
 }));

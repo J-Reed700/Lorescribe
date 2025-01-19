@@ -1,10 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const logger = require('../utils/logger');
+import fs from 'node:fs';
+import path from 'node:path';
+import logger from '../utils/logger.js';
 
-class StorageService {
+export default class StorageService {
     constructor(config) {
         this.config = config;
+        this.guildData = new Map();
         this.ensureDirectories();
         this.startCleanupInterval();
     }
@@ -83,7 +84,7 @@ class StorageService {
 
         try {
             const files = await fs.promises.readdir(fullPath);
-            logger.debug(`[StorageService] Cleaning directory:`, {
+            logger.info(`[StorageService] Cleaning directory:`, {
                 directory: dir,
                 fileCount: files.length,
                 maxAge
@@ -96,7 +97,7 @@ class StorageService {
                     
                     if (now - stats.mtimeMs > maxAge) {
                         await fs.promises.unlink(filePath);
-                        logger.debug(`[StorageService] Deleted old file:`, {
+                        logger.info(`[StorageService] Deleted old file:`, {
                             file,
                             age: now - stats.mtimeMs,
                             size: stats.size
@@ -138,13 +139,14 @@ class StorageService {
     }
 
     getTempFilePath(guildId, type = 'pcm') {
+        logger.info(`[StorageService] Generating temp file path for guild ${guildId} with type ${type}`);
         const filename = `recording-${guildId}-${Date.now()}.${type}`;
         const filepath = path.join(
             process.cwd(),
             this.config.STORAGE.TEMP_DIRECTORY,
             filename
         );
-        logger.debug(`[StorageService] Generated temp file path:`, {
+        logger.info(`[StorageService] Generated temp file path:`, {
             guildId,
             type,
             filename,
@@ -163,7 +165,7 @@ class StorageService {
 
         try {
             await fs.promises.writeFile(filePath, transcript);
-            logger.debug(`[StorageService] Saved transcript:`, {
+            logger.info(`[StorageService] Saved transcript:`, {
                 guildId,
                 fileName,
                 size: transcript.length
@@ -199,7 +201,7 @@ class StorageService {
 
         try {
             await fs.promises.writeFile(filePath, summary);
-            logger.debug(`[StorageService] Saved summary:`, {
+            logger.info(`[StorageService] Saved summary:`, {
                 guildId,
                 fileName,
                 size: summary.length
@@ -229,7 +231,7 @@ class StorageService {
         try {
             if (fs.existsSync(filePath)) {
                 await fs.promises.unlink(filePath);
-                logger.debug(`[StorageService] Deleted file:`, {
+                logger.info(`[StorageService] Deleted file:`, {
                     file: path.basename(filePath),
                     directory: path.dirname(filePath)
                 });
@@ -265,7 +267,7 @@ class StorageService {
                 .reverse()
                 .slice(0, limit);
 
-            logger.debug(`[StorageService] Fetching recent summaries:`, {
+            logger.info(`[StorageService] Fetching recent summaries:`, {
                 guildId,
                 limit,
                 found: guildSummaries.length
@@ -412,4 +414,3 @@ class StorageService {
     }
 }
 
-module.exports = StorageService; 

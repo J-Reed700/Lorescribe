@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     TIME_INTERVAL: 2, // 2 minutes
     CHUNK_DURATION: 30 * 1000, // 10 seconds for debugging
     MAX_CHUNKS: 48, // 4 hours total maximum
@@ -37,4 +37,4 @@ module.exports = {
         FORMAT: 'mp3',
         QUALITY: 2
     }
-}; 
+};

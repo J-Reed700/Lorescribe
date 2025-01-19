@@ -1,7 +1,8 @@
-const { handleError } = require('../utils/errorBoundary');
-const logger = require('../utils/logger');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { handleError } from '../utils/errorBoundary.js';
+import logger from '../utils/logger.js';
 
-jest.mock('../utils/logger');
+jest.mock('../utils/logger.js');
 
 describe('Error Boundary', () => {
     beforeEach(() => {

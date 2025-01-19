@@ -1,5 +1,5 @@
-const { jest } = require('@jest/globals');
-const winston = require('winston');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import winston from 'winston';
 
 jest.mock('winston', () => ({
     format: {
@@ -22,8 +22,8 @@ describe('logger', () => {
         jest.clearAllMocks();
     });
 
-    it('should create logger with correct configuration', () => {
-        require('../utils/logger');
+    it('should create logger with correct configuration', async () => {
+        const { default: logger } = await import('../utils/logger.js');
 
         expect(winston.createLogger).toHaveBeenCalledWith({
             level: 'info',
@@ -32,9 +32,9 @@ describe('logger', () => {
         });
     });
 
-    it('should add console transport in non-production', () => {
+    it('should add console transport in non-production', async () => {
         process.env.NODE_ENV = 'development';
-        const logger = require('../utils/logger');
+        const { default: logger } = await import('../utils/logger.js');
 
         expect(winston.transports.Console).toHaveBeenCalled();
         expect(logger.add).toHaveBeenCalled();

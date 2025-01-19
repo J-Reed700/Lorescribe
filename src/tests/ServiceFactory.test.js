@@ -1,7 +1,7 @@
-const { jest } = require('@jest/globals');
-const ServiceFactory = require('../services/ServiceFactory');
+import { jest, describe, it, expect } from '@jest/globals';
+import ServiceFactory from '../services/ServiceFactory.js';
 
-jest.mock('../services/Container', () => {
+jest.mock('../services/Container.js', () => {
     return {
         register: jest.fn(),
         registerImplementation: jest.fn()

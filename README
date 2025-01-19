@@ -1,4 +1,4 @@
-# MemoireBot 🎙️
+# Lorescribe 🎙️
 
 A Discord bot that records, transcribes, and summarizes voice channel conversations using AI.
 
@@ -10,6 +10,11 @@ Before you begin, ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (v16 or higher)
 - [pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
 - [Docker](https://www.docker.com/) - For running required services
+
+### Account Configuration
+
+1. Create a new Discord bot and get the token (https://discordpy.readthedocs.io/en/stable/discord.html)
+2. Create a new or use an existing OpenAI account and get the API key (https://platform.openai.com/docs/guides/chat/introduction)
 
 ### Setup & Installation
 
@@ -26,6 +31,11 @@ Before you begin, ensure you have the following installed:
 3. **Launch the Bot**
    ```bash
    pnpm start
+   ```
+
+4. **Deploy Commands**
+   ```bash
+   node src/deploy-commands.js
    ```
 
 ## 💡 Tips

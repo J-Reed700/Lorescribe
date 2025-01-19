@@ -1,12 +1,8 @@
-class RecordingEvents {
-    static RECORDING_STARTED = 'recording_started'
-    static RECORDING_STOPPED = 'recording_stopped'
-    static RECORDING_ERROR = 'recording_error'
-    static RECORDING_SUMMARIZED = 'recording_summarized'
-    static CONNECTION_CLOSED = 'connection_closed'
-    static CONNECTION_ERROR = 'connection_error'
-    static INTERVAL_COMPLETED = 'interval_completed'
-    static SUMMARY_GENERATION_FAILED = 'summary_generation_failed'
-}
-
-module.exports = RecordingEvents;
+export default {
+    RECORDING_STARTED: 'recordingStarted',
+    RECORDING_STOPPED: 'recordingStopped',
+    RECORDING_ERROR: 'recordingError',
+    RECORDING_TRANSCRIBED: 'recordingTranscribed',
+    RECORDING_SUMMARIZED: 'recordingSummarized',
+    RECORDING_CHUNK_PROCESSED: 'recordingChunkProcessed'
+};

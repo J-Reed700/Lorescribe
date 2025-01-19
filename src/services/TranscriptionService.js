@@ -1,38 +1,36 @@
-const fs = require('fs');
-const logger = require('../utils/logger');
-const ITranscriptionService = require('../interfaces/ITranscriptionService');
-const { OpenAI } = require('openai');
+import fs from 'node:fs';
+import logger from '../utils/logger.js';
+import ITranscriptionService from '../interfaces/ITranscriptionService.js';
+import { OpenAI } from 'openai';
 
-class TranscriptionService extends ITranscriptionService {
-    constructor(configService) {
+export default class TranscriptionService extends ITranscriptionService {
+    constructor(config, openai) {
         super();
-        this.configService = configService;
-        this.openai = null; // Will be initialized per-request with the guild's key
+        this.config = config;
+        this.openai = openai; // Will be initialized per-request with the guild's key
     }
 
     async transcribe(audioPath, guildId) {
         try {
-            const apiKey = this.configService.getOpenAIKey(guildId);
-            if (!apiKey) {
-                throw new Error('No OpenAI API key set for this server. Please set it using the /setkey command.');
-            }
 
-            // Initialize OpenAI client with the guild's key
-            this.openai = new OpenAI({ apiKey });
+            //const apiKey = this.configService.getOpenAIKey(guildId);
+            //if (!apiKey) {
+            //    throw new Error('No OpenAI API key set for this server. Please set it using the /setkey command.');
+            //}
 
-            logger.debug(`[TranscriptionService] Starting transcription:`, {
+            logger.info(`[TranscriptionService] Starting transcription:`, {
                 filepath: audioPath,
                 exists: fs.existsSync(audioPath)
             });
 
             const stats = await fs.promises.stat(audioPath);
-            logger.debug(`[TranscriptionService] File stats:`, {
+            logger.info(`[TranscriptionService] File stats:`, {
                 size: stats.size,
                 created: stats.birthtime,
                 modified: stats.mtime
             });
 
-            logger.debug('[TranscriptionService] Creating read stream and sending to OpenAI...');
+            logger.info('[TranscriptionService] Creating read stream and sending to OpenAI...');
             const transcription = await this.openai.audio.transcriptions.create({
                 file: fs.createReadStream(audioPath),
                 model: "whisper-1",
@@ -41,7 +39,7 @@ class TranscriptionService extends ITranscriptionService {
                 prompt: this.config.TRANSCRIPTION_PROMPT
             });
             
-            logger.debug(`[TranscriptionService] Transcription completed:`, {
+            logger.info(`[TranscriptionService] Transcription completed:`, {
                 length: transcription?.length || 0,
                 hasContent: !!transcription,
                 prompt: this.config.TRANSCRIPTION_PROMPT
@@ -55,7 +53,7 @@ class TranscriptionService extends ITranscriptionService {
 
     async generateSummary(transcript) {
         try {
-            logger.debug(`[TranscriptionService] Starting summary generation`, {
+            logger.info(`[TranscriptionService] Starting summary generation`, {
                 transcriptLength: transcript?.length || 0,
                 transcriptContent: transcript?.substring(0, 100)
             });
@@ -79,10 +77,10 @@ class TranscriptionService extends ITranscriptionService {
                 }
                 if (i > 0) {
                     const backoffMs = 2 * i * 1000; 
-                    logger.debug(`[TranscriptionService] Retry ${i+1}/3, waiting ${backoffMs}ms`);
+                    logger.info(`[TranscriptionService] Retry ${i+1}/4, waiting ${backoffMs}ms`);
                     await new Promise(resolve => setTimeout(resolve, backoffMs));
                 }
-                logger.debug(`[TranscriptionService] Sending summary prompt to OpenAI: ${transcript}`);    
+                logger.info(`[TranscriptionService] Sending summary prompt to OpenAI: ${transcript}`);    
                 completion = await this.openai.chat.completions.create({
                     model: model,
                     messages: [
@@ -117,7 +115,7 @@ class TranscriptionService extends ITranscriptionService {
             }
 
             const summary = completion.choices[0].message.content;
-            logger.debug(`[TranscriptionService] Summary generated successfully:`, {
+            logger.info(`[TranscriptionService] Summary generated successfully:`, {
                 length: summary.length,
                 transcriptLength: transcript?.length || 0
             });
@@ -155,14 +153,13 @@ class TranscriptionService extends ITranscriptionService {
 
     async _validateOpenAIKey(key) {
         try {
-            logger.debug('[TranscriptionService] Validating OpenAI API key');
-            const testOpenAI = new OpenAI({ apiKey: key });
-            await testOpenAI.chat.completions.create({
+            logger.info('[TranscriptionService] Validating OpenAI API key');
+            await this.openai.chat.completions.create({
                 model: "gpt-3.5-turbo",
                 messages: [{ role: "user", content: "test" }],
                 max_tokens: 1
             });
-            logger.debug('[TranscriptionService] API key validation successful');
+            logger.info('[TranscriptionService] API key validation successful');
             return true;
         } catch (error) {
             const errorDetails = {
@@ -189,6 +186,4 @@ class TranscriptionService extends ITranscriptionService {
             return false;
         }
     }
-}
-
-module.exports = TranscriptionService; 
+} 

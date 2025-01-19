@@ -1,4 +1,4 @@
-class RetryHandler {
+export default class RetryHandler {
     constructor(maxRetries = 3, initialDelay = 1000) {
         this.maxRetries = maxRetries;
         this.initialDelay = initialDelay;
@@ -46,6 +46,4 @@ class RetryHandler {
                error.message.includes('Invalid token') ||
                error.message.includes('Unknown Channel');
     }
-}
-
-module.exports = RetryHandler; 
+} 

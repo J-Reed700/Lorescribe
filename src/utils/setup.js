@@ -1,22 +1,25 @@
-const fs = require('fs');
-const path = require('path');
-const config = require('../config');
+import fs from 'node:fs';
+import path from 'node:path';
+import logger from './logger.js';
 
-function ensureDirectoryStructure() {
+export function ensureDirectoryStructure() {
     const directories = [
-        config.STORAGE.TEMP_DIRECTORY,
-        config.STORAGE.TRANSCRIPTS_DIRECTORY,
-        config.STORAGE.SUMMARIES_DIRECTORY
+        'recordings',
+        'data',
+        'data/transcripts',
+        'data/summaries',
+        'temp'
     ];
 
     directories.forEach(dir => {
-        const fullPath = path.join(process.cwd(), dir);
-        if (!fs.existsSync(fullPath)) {
-            fs.mkdirSync(fullPath, { recursive: true });
+        try {
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+                logger.info(`Created directory: ${dir}`);
+            }
+        } catch (error) {
+            logger.error(`Failed to create directory ${dir}:`, error);
+            throw error;
         }
     });
-}
-
-module.exports = {
-    ensureDirectoryStructure
-}; 
+} 

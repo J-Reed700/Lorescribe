@@ -1,4 +1,5 @@
-const Container = require('../services/Container');
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import Container from '../services/Container.js';
 
 describe('Container', () => {
     let container;

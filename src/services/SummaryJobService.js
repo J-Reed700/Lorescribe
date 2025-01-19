@@ -1,9 +1,11 @@
-const RecordingEvents = require('../events/RecordingEvents');
+import RecordingEvents from '../events/RecordingEvents.js';
+import logger from '../utils/logger.js';
 
-class SummaryJobService {
+export default class SummaryJobService {
     constructor(services) {
         this.transcriptionService = services.get('transcription');
         this.configService = services.get('config');
+        this.channelService = services.get('channel');
         this.events = services.get('events');
         this.client = services.get('client');
         this.logger = services.get('logger');
@@ -17,7 +19,7 @@ class SummaryJobService {
         this.jobService.createQueue('summary-generation', async (job) => {
             const { guildId, transcript } = job.data;
             
-            this.logger.debug(`[SummaryJobService] Processing summary for guild ${guildId}`);
+            this.logger.info(`[SummaryJobService] Processing summary for guild ${guildId}`);
             
             try {
                 const summary = await this.transcriptionService.generateSummary(transcript);
@@ -26,12 +28,9 @@ class SummaryJobService {
                 // Send to summary channel if configured
                 const guildConfig = this.configService.getGuildConfig(guildId);
                 if (guildConfig?.summaryChannelId) {
-                    const channel = await this.client.channels.fetch(guildConfig.summaryChannelId);
-                    if (channel) {
-                        await channel.send({
-                            content: `**Updated Summary** (Background Generated)\n\n${summary}\n\n`
-                        });
-                    }
+                    await this.channelService.sendMessage(guildConfig.summaryChannelId, {
+                        content: `**Updated Summary** (Background Generated) JobId: ${job.id}\n\n${summary}\n\nJobId: ${job.id}`
+                    });
                 }
 
                 // Emit success event
@@ -52,14 +51,13 @@ class SummaryJobService {
                     stack: error.stack,
                     guildId
                 });
-                throw error;
             }
         });
     }
 
     async scheduleSummaryGeneration(guildId, transcript) {
         try {
-            await this.jobService.scheduleJob('summary-generation', {
+            const job = await this.jobService.scheduleJob('summary-generation', {
                 guildId,
                 transcript
             }, {
@@ -70,8 +68,8 @@ class SummaryJobService {
                 },
                 removeOnComplete: true
             });
-
-            this.logger.debug(`[SummaryJobService] Scheduled summary generation for guild ${guildId}`);
+            this.logger.info(`[SummaryJobService] Scheduled summary generation for guild ${guildId}`);
+            return job.id;
         } catch (error) {
             this.logger.error(`[SummaryJobService] Failed to schedule summary generation:`, {
                 error: error.message,
@@ -85,6 +83,4 @@ class SummaryJobService {
     async dispose() {
         // The JobService will handle closing the queues
     }
-}
-
-module.exports = SummaryJobService; 
+} 

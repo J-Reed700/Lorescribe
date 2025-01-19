@@ -1,21 +1,20 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const { OpenAI } = require('openai');
-const Container = require('./Container');
-const VoiceRecorder = require('../VoiceRecorder');
-const AudioService = require('./AudioService');
-const TranscriptionService = require('./TranscriptionService');
-const VoiceStateService = require('./VoiceStateService');
-const StorageService = require('./StorageService');
-const ConfigurationService = require('./ConfigurationService');
-const JobService = require('./JobService');
-const SummaryJobService = require('./SummaryJobService');
-const logger = require('../utils/logger');
-const baseConfig = require('../config');
-const { EventEmitter } = require('events');
+import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { OpenAI } from 'openai';
+import Container from './Container.js';
+import VoiceRecorder from '../VoiceRecorder.js';
+import ChannelService from './ChannelService.js';
+import AudioService from './AudioService.js';
+import TranscriptionService from './TranscriptionService.js';
+import VoiceStateService from './VoiceStateService.js';
+import StorageService from './StorageService.js';
+import ConfigurationService from './ConfigurationService.js';
+import JobService from './JobService.js';
+import SummaryJobService from './SummaryJobService.js';
+import logger from '../utils/logger.js';
+import baseConfig from '../config.js';
+import { EventEmitter } from 'events';
 
-let containerInstance = null;
-
-class ServiceFactory {
+export default class ServiceFactory {
     constructor(config) {
         this.config = config;
         this.containerInstance = null;
@@ -29,24 +28,30 @@ class ServiceFactory {
         try {
             this.containerInstance = new Container();
 
-
+            // Register basic services
             this.containerInstance.register('config', new ConfigurationService(this.config));
             this.containerInstance.register('logger', logger);
             this.containerInstance.register('events', new EventEmitter());
 
-            this.containerInstance.register('client', new Client({
+            // Create Discord client with all required intents
+            const client = new Client({
                 intents: [
                     GatewayIntentBits.Guilds,
                     GatewayIntentBits.GuildVoiceStates,
                     GatewayIntentBits.GuildMessages,
                     GatewayIntentBits.GuildMembers,
+                    GatewayIntentBits.MessageContent,
                     GatewayIntentBits.GuildPresences,
-                    GatewayIntentBits.GuildWebhooks,
-                    GatewayIntentBits.GuildIntegrations,
-                    GatewayIntentBits.GuildInvites,
-                ]
-            }));
+                ],
+                partials: ['MESSAGE', 'CHANNEL', 'REACTION']
+            });
 
+            client.once(Events.ClientReady, (readyClient) => {
+                console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+            });
+
+            this.containerInstance.register('client', client);
+            this.containerInstance.register('channel', new ChannelService(client));
             // Register core services
             this.containerInstance.register('voiceState', new VoiceStateService());
             this.containerInstance.register('storage', new StorageService(baseConfig));
@@ -61,8 +66,9 @@ class ServiceFactory {
                 apiKey: process.env.OPENAI_API_KEY
             });
 
+            this.containerInstance.register('openai', openai);
             // Register OpenAI dependent services
-            this.containerInstance.register('transcription', new TranscriptionService(openai, this.config));
+            this.containerInstance.register('transcription', new TranscriptionService(baseConfig, this.containerInstance.get('openai')));
 
             // Initialize and register job services
             const redisUrl = process.env.REDIS_URL || 'redis://redis:6379';
@@ -101,6 +107,12 @@ class ServiceFactory {
                 await jobService.dispose();
             }
 
+            // Properly destroy the Discord client
+            const client = this.containerInstance.get('client');
+            if (client) {
+                client.destroy();
+            }
+
             this.containerInstance = null;
             logger.info('[ServiceFactory] Services shut down successfully');
         } catch (error) {
@@ -109,5 +121,3 @@ class ServiceFactory {
         }
     }
 }
-
-module.exports = ServiceFactory;

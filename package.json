@@ -1,8 +1,9 @@
 {
-  "name": "discord-audio-bot",
+  "name": "lorescribe",
   "version": "1.0.0",
   "description": "Discord bot that records and summarizes voice channels",
   "main": "src/bot.js",
+  "type": "module",
   "scripts": {
     "start": "node src/bot.js"
   },

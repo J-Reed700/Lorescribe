@@ -1,4 +1,4 @@
-class Container {
+export default class Container {
     constructor() {
         this.services = new Map();
         this.factories = new Map();
@@ -64,4 +64,3 @@ class Container {
     }
 }
 
-module.exports = Container; 

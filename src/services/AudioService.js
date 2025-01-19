@@ -1,13 +1,11 @@
-const { spawn } = require('child_process');
-const path = require('path');
-const fs = require('fs');
-const fsSync = require('fs');
-const logger = require('../utils/logger');
-const prism = require('prism-media');
-const { EndBehaviorType } = require('@discordjs/voice');
-const RecordingEvents = require('../events/RecordingEvents');
+import fs from 'node:fs';
+import fsSync from 'node:fs';
+import { spawn } from 'node:child_process';
+import { EndBehaviorType } from '@discordjs/voice';
+import prism from 'prism-media';
+import logger from '../utils/logger.js';
 
-class AudioService {
+export default class AudioService {
     constructor(voiceState, storage, logger) {
         this.voiceState = voiceState;
         this.storage = storage;
@@ -71,7 +69,7 @@ class AudioService {
                                 reject(new Error('FFmpeg produced empty output file'));
                                 return;
                             }
-                            logger.debug(`Successfully converted ${inputFile} to MP3`);
+                            logger.info(`Successfully converted ${inputFile} to MP3`);
                             resolve(outputFile);
                         } catch (err) {
                             logger.error('Error verifying output file:', err);
@@ -116,22 +114,22 @@ class AudioService {
         try {
             const decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
             opusDecoder = decoder;
-            this.logger.debug('[VoiceRecorder] Using prism-media opus decoder');
+            this.logger.info('[VoiceRecorder] Using prism-media opus decoder');
         } catch (e) {
             try {
-                const OpusScript = require('opusscript');
+                const { default: OpusScript } = await import('opusscript');
                 opusDecoder = new OpusScript(48000, 2);
-                this.logger.debug('[VoiceRecorder] Using opusscript decoder');
+                this.logger.info('[VoiceRecorder] Using opusscript decoder');
             } catch (e) {
                 try {
-                    const NodeOpus = require('node-opus');
+                    const { default: NodeOpus } = await import('node-opus');
                     opusDecoder = new NodeOpus.OpusDecoder(48000, 2);
-                    this.logger.debug('[VoiceRecorder] Using node-opus decoder');
+                    this.logger.info('[VoiceRecorder] Using node-opus decoder');
                 } catch (e) {
                     try {
-                        const { OpusDecoder } = require('@discordjs/opus');
+                        const { OpusDecoder } = await import('@discordjs/opus');
                         opusDecoder = new OpusDecoder(48000, 2);
-                        this.logger.debug('[VoiceRecorder] Using @discordjs/opus decoder');
+                        this.logger.info('[VoiceRecorder] Using @discordjs/opus decoder');
                     } catch (e) {
                         this.logger.error('[VoiceRecorder] Failed to load any opus decoder:', e);
                         throw new Error('No opus decoder available. Please install either opusscript, node-opus, or @discordjs/opus');
@@ -149,11 +147,17 @@ class AudioService {
             throw new Error('No voice receiver available');
         }
 
-        // Clean up any existing listeners
-        receiver.speaking.removeAllListeners();
+        connection.removeAllListeners();
+        
+        // Add connection state logging
+        this.logger.info(`[AudioService] Starting recording with connection state:`, {
+            status: connection.state.status,
+            adapter: connection.state.adapter ? 'present' : 'missing',
+            subscription: connection.state.subscription ? 'active' : 'inactive'
+        });
 
-        this.logger.debug(`[VoiceRecorder] Voice receiver state:`, {
-            speaking: receiver.speaking,
+        this.logger.info(`[AudioService] Voice receiver state:`, {
+            speaking: receiver.speaking.size,
             subscriptions: receiver.subscriptions.size
         });
 
@@ -172,11 +176,19 @@ class AudioService {
 
         // Set up error handlers first
         opusDecoder.on('error', error => {
-            this.logger.error('[VoiceRecorder] Opus decoder error:', error);
+            this.logger.error('[AudioService] Opus decoder error:', error);
         });
 
         outputStream.on('error', error => {
-            this.logger.error('[VoiceRecorder] Output stream error:', error);
+            this.logger.error('[AudioService] Output stream error:', error);
+        });
+
+        // Add connection state change monitoring
+        connection.on('stateChange', (oldState, newState) => {
+            this.logger.info(`[AudioService] Connection state changed:`, {
+                old: oldState.status,
+                new: newState.status
+            });
         });
 
         // Monitor speaking states and create audio subscriptions
@@ -184,13 +196,14 @@ class AudioService {
             // Only handle if we don't already have a subscription for this user
             if (!recordingInfo.audioStreams.has(userId)) {
                 recordingInfo.speakingStates.set(userId, true);
-                this.logger.debug(`[VoiceRecorder] User ${userId} started speaking`);
+                this.logger.info(`[AudioService] User ${userId} started speaking`);
                 
                 const audioStream = receiver.subscribe(userId, {
                     end: {
                         behavior: EndBehaviorType.Manual
                     },
                 });
+
                 let count = 0;
                 audioStream.on('data', (data) => {
                     count++;
@@ -198,13 +211,13 @@ class AudioService {
                     recordingInfo.lastDataTime = Date.now();
                     recordingInfo.bytesWritten += data.length;
                     if(count % 100 === 0) {
-                        this.logger.debug(`[VoiceRecorder] Received audio data from ${userId}: ${data.length} bytes`);
+                        this.logger.info(`[AudioService] Received audio data from ${userId}: ${data.length} bytes (total: ${recordingInfo.bytesWritten} bytes)`);
                     }
                 });
 
                 audioStream.on('error', error => {
                     if (!error.message.includes('Premature close')) {
-                        this.logger.error(`[VoiceRecorder] Audio stream error for ${userId}:`, error);
+                        this.logger.error(`[AudioService] Audio stream error for ${userId}:`, error);
                     }
                 });
 
@@ -212,19 +225,30 @@ class AudioService {
                     .pipe(opusDecoder)
                     .pipe(outputStream);
                 recordingInfo.audioStreams.set(userId, audioStream);
+                
+                this.logger.info(`[AudioService] Set up audio stream for user ${userId}`);
             }
         });
 
         receiver.speaking.on('end', (userId) => {
             if (recordingInfo.speakingStates.get(userId)) {
                 recordingInfo.speakingStates.set(userId, false);
-                this.logger.debug(`[VoiceRecorder] User ${userId} stopped speaking`);
+                this.logger.info(`[AudioService] User ${userId} stopped speaking`);
             }
         });
 
+        this.logger.info(`[AudioService] Recording setup complete, waiting for audio...`);
         return recordingInfo;
     }
-}
 
-
-module.exports = AudioService; 
+    async createSteamAndOpusDecoder(guildId) {
+        const filename = this.storage.getTempFilePath(guildId, 'pcm');
+        const outputStream = fs.createWriteStream(filename);
+        const opusDecoder = await this.createOpusDecoder();
+            
+        if (!opusDecoder) {
+            throw new Error('Failed to create opus decoder');
+        }
+        return { outputStream, opusDecoder, filename };
+    }
+} 

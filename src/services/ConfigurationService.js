@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const logger = require('../utils/logger');
-const IConfigurationService = require('../interfaces/IConfigurationService');
-const baseConfig = require('../config');
+import fs from 'node:fs';
+import path from 'node:path';
+import logger from '../utils/logger.js';
+import IConfigurationService from '../interfaces/IConfigurationService.js';
+import baseConfig from '../config.js';
 
-class ConfigurationService extends IConfigurationService {
+export default class ConfigurationService extends IConfigurationService {
     constructor(baseConfig) {
         super();
         this.configPath = path.join(process.cwd(), 'guild-configs');
@@ -228,7 +228,7 @@ class ConfigurationService extends IConfigurationService {
     async getTimeInterval(guildId) {
         try {
             const config = this.getGuildConfig(guildId);
-            var timeInterval = config?.timeInterval || baseConfig.TIME_INTERVAL;
+            var timeInterval = config?.timeInterval || this.baseConfig.TIME_INTERVAL;
             timeInterval = timeInterval * 1000 * 60;
             return timeInterval;
         } catch (error) {
@@ -238,4 +238,3 @@ class ConfigurationService extends IConfigurationService {
     }
 }
 
-module.exports = ConfigurationService; 

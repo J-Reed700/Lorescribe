@@ -1,25 +1,33 @@
-/**
- * @interface IConfigurationService
- */
-class IConfigurationService {
-    /**
-     * @param {string} guildId
-     * @returns {object|null}
-     */
-    getGuildConfig(guildId) {}
+export default class IConfigurationService {
+    getGuildConfig(guildId) {
+        throw new Error('Method not implemented');
+    }
 
-    /**
-     * @param {string} guildId
-     * @param {object} config
-     * @returns {Promise<boolean>}
-     */
-    setGuildConfig(guildId, config) {}
+    setGuildConfig(guildId, config) {
+        throw new Error('Method not implemented');
+    }
 
-    /**
-     * @param {string} guildId
-     * @returns {boolean}
-     */
-    hasOpenAIKey(guildId) {}
-}
+    hasOpenAIKey(guildId) {
+        throw new Error('Method not implemented');
+    }
 
-module.exports = IConfigurationService; 
+    setOpenAIKey(guildId, key) {
+        throw new Error('Method not implemented');
+    }
+
+    getOpenAIKey(guildId) {
+        throw new Error('Method not implemented');
+    }
+
+    clearOpenAIKey(guildId) {
+        throw new Error('Method not implemented');
+    }
+
+    setSummaryChannel(guildId, channelId) {
+        throw new Error('Method not implemented');
+    }
+
+    getSummaryChannel(guildId) {
+        throw new Error('Method not implemented');
+    }
+} 

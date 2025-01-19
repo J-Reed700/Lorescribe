@@ -1,4 +1,4 @@
-import ServiceFactory from '../services/ServiceFactory.js';
+import ServiceFactory from '../../services/ServiceFactory.js';
 import SetChannelCommand from './SetChannelCommand.js';
 import SetTimeIntervalCommand from './SetTimeIntervalCommand.js';
 import StopCommand from './StopCommand.js';

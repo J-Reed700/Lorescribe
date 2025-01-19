@@ -1,8 +1,8 @@
-const { joinVoiceChannel, VoiceConnectionStatus, entersState, getVoiceConnection } = require('@discordjs/voice');
-const { EventEmitter } = require('events');
-const logger = require('../utils/logger');
+import logger from '../utils/logger.js';
+import { joinVoiceChannel, VoiceConnectionStatus, entersState, getVoiceConnection } from '@discordjs/voice';
+import { EventEmitter } from 'events';
 
-class VoiceStateService extends EventEmitter {
+export default class VoiceStateService extends EventEmitter {
     constructor() {
         super();
     }
@@ -30,7 +30,7 @@ class VoiceStateService extends EventEmitter {
                     const timeout = setTimeout(() => {
                         connection.destroy();
                         reject(new Error('Connection timed out'));
-                    }, 60000); // 30 second timeout
+                    }, 30000); // 30 second timeout
 
                     const cleanup = () => {
                         clearTimeout(timeout);
@@ -44,14 +44,18 @@ class VoiceStateService extends EventEmitter {
                     });
 
                     connection.on('error', (error) => {
-                        logger.error(`[VoiceStateService] Connection error for guild ${guildId}:`, error);
+                        const isServer500Error = error.message?.includes('500');
+                        if (isServer500Error && attempt < maxAttempts) {
+                            logger.warn(`[VoiceStateService] Discord server error for guild ${guildId}, will retry:`, error);
+                        } else {
+                            logger.error(`[VoiceStateService] Connection error for guild ${guildId}:`, error);
+                        }
                         cleanup();
                         connection.destroy();
                         reject(error);
                     });
 
                     connection.on('stateChange', (oldState, newState) => {                        
-                        // If we're destroyed, stop trying
                         if (newState.status === VoiceConnectionStatus.Destroyed) {
                             cleanup();
                             reject(new Error('Connection destroyed'));
@@ -118,5 +122,3 @@ class VoiceStateService extends EventEmitter {
         return connection;
     }
 }
-
-module.exports = VoiceStateService;

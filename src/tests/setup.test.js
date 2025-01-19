@@ -1,7 +1,7 @@
-const { jest } = require('@jest/globals');
-const fs = require('fs');
-const path = require('path');
-const { ensureDirectoryStructure } = require('../utils/setup');
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import fs from 'node:fs';
+import path from 'node:path';
+import { ensureDirectoryStructure } from '../utils/setup.js';
 
 jest.mock('fs');
 jest.mock('path');

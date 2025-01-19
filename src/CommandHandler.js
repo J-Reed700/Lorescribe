@@ -1,9 +1,9 @@
-const { PermissionsBitField } = require('discord.js');
-const config = require('./config');
-const logger = require('./utils/logger');
-const RecordingEvents = require('./events/RecordingEvents');
+import { PermissionsBitField } from 'discord.js';
+import config from './config.js';
+import logger from './utils/logger.js';
+import RecordingEvents from './events/RecordingEvents.js';
 
-class CommandHandler {
+export default class CommandHandler {
     constructor(services) {
         this.voiceRecorder = services.get('voiceRecorder');
         this.logger = services.get('logger');
@@ -168,8 +168,8 @@ class CommandHandler {
         }
 
         try {
-            logger.debug('[CommandHandler] Stopping recording...');
-            logger.debug('[CommandHandler] Guild ID:', interaction.guildId);
+            logger.info('[CommandHandler] Stopping recording...');
+            logger.info('[CommandHandler] Guild ID:', interaction.guildId);
             await this.voiceRecorder.stopRecording(interaction.guildId);
             await interaction.editReply({ 
                 content: '🛑 Recording stopped! Processing final summary...'
@@ -288,6 +288,4 @@ class CommandHandler {
             });
         }
     }
-}
-
-module.exports = CommandHandler; 
+} 

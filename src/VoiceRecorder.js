@@ -1,10 +1,11 @@
-const { EndBehaviorType, VoiceReceiver } = require('@discordjs/voice');
-const fs = require('fs');
-const RecordingEvents = require('./events/RecordingEvents');
-const baseConfig = require('./config');
+import { EventEmitter } from 'events';
+import fs from 'node:fs';
+import logger from './utils/logger.js';
+import RecordingEvents from './events/RecordingEvents.js';
 
-class VoiceRecorder {
+export default class VoiceRecorder extends EventEmitter {
     constructor(services) {
+        super();
         this.audioService = services.get('audio');
         this.voiceState = services.get('voiceState');
         this.configService = services.get('config');
@@ -13,6 +14,7 @@ class VoiceRecorder {
         this.storage = services.get('storage');
         this.transcriptionService = services.get('transcription');
         this.summaryJobs = services.get('summaryJobs');
+        this.channelService = services.get('channel');
         this.container = services;
         
         this.activeRecordings = new Map();
@@ -49,14 +51,7 @@ class VoiceRecorder {
             // First, remove the old recording from active recordings to prevent duplicate events
             this.activeRecordings.delete(guildId);
 
-            // Create new recording session with proper setup
-            const filename = this.storage.getTempFilePath(guildId, 'pcm');
-            const outputStream = fs.createWriteStream(filename);
-            const opusDecoder = await this.audioService.createOpusDecoder();
-            
-            if (!opusDecoder) {
-                throw new Error('Failed to create opus decoder');
-            }
+            const { outputStream, opusDecoder, filename } = await this.audioService.createSteamAndOpusDecoder(guildId);
 
             // Create new recording info with all required components
             const newRecordingInfo = await this.audioService.StartRecording(connection, opusDecoder, outputStream);
@@ -90,7 +85,8 @@ class VoiceRecorder {
     async processRotatedRecording(recordingInfo, guildId) {
         try {
             await this.closeStreams(recordingInfo);
-
+            let isTranscription = false;
+            let jobId = null;
             // Wait a bit to ensure all data is written
             await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -105,19 +101,20 @@ class VoiceRecorder {
             }
 
             // Process transcription and summary
-            const transcript = await this.transcriptionService.transcribeAudio(mp3File);
+            const transcript = await this.transcriptionService.transcribe(mp3File);
             
             // **Add this log to verify transcription content**
-            this.logger.debug(`[VoiceRecorder] Transcript received for guild ${guildId}: ${transcript.substring(0, 200)}...`);
+            this.logger.info(`[VoiceRecorder] Transcript received for guild ${guildId}: ${transcript.substring(0, 200)}...`);
             
             let summary = transcript; 
             try {
                 summary = await this.transcriptionService.generateSummary(transcript);
             } catch (summaryError) {
                 this.logger.warn(`[VoiceRecorder] Failed to generate summary, using transcript as fallback:`, summaryError);
-                
+                isTranscription = true;
                 // Schedule background summary generation
-                await this.summaryJobs.scheduleSummaryGeneration(guildId, transcript);
+                jobId = await this.summaryJobs.scheduleSummaryGeneration(guildId, transcript);
+                this.logger.info(`[VoiceRecorder] Scheduled summary generation for guild ${guildId} with job ID: ${jobId}`);
             }
 
             // Save transcript
@@ -125,7 +122,7 @@ class VoiceRecorder {
             await this.storage.saveTranscript(guildId, transcript, timestamp);
 
             // Send to summary channel if configured
-            await this.sendSummaryToChannel(guildId, summary, recordingInfo.startTime);
+            await this.sendSummaryToChannel(guildId, summary, recordingInfo.startTime, isTranscription, jobId);
 
             // Emit events
             this.events.emit(RecordingEvents.INTERVAL_COMPLETED, {
@@ -172,7 +169,7 @@ class VoiceRecorder {
                 // Close output stream with proper end event handling
                 if (recordingInfo.outputStream) {
                     recordingInfo.outputStream.end(() => {
-                        this.logger.debug('[VoiceRecorder] Output stream closed successfully');
+                        this.logger.info('[VoiceRecorder] Output stream closed successfully');
                         resolve();
                     });
 
@@ -195,23 +192,26 @@ class VoiceRecorder {
         });
     }
 
-    async sendSummaryToChannel(guildId, summary, startTime) {
+    async sendSummaryToChannel(guildId, summary, startTime, isTranscription, jobId) {
         if (!guildId) return;
 
         const guildConfig = this.configService.getGuildConfig(guildId);
         
         if (guildConfig?.summaryChannelId) {
             try {
-                const client = this.container.get('client');
-                const channel = await client.channels.fetch(guildConfig.summaryChannelId);
-                
-                if (channel) {
-                    const duration = Date.now() - startTime;
-                    const durationMinutes = Math.round(duration / 60000);
-                    
-                    await channel.send({
+                const duration = Date.now() - startTime;
+                const durationMinutes = Math.round(duration / 60000);
+                if(isTranscription) {
+                    await this.channelService.sendMessage(guildConfig.summaryChannelId, {    
+                        content:
+                         `❌ **There was an error generating a summary** ❌ \n
+                            Direct transcription:\n\n${summary}\n
+                        **JobId:** ${jobId}`
+                    }); 
+                } else {
+                    await this.channelService.sendMessage(guildConfig.summaryChannelId, {
                         content: `**Recording Summary** (${durationMinutes} minutes)\n\n${summary}\n\n`
-                    });
+                });
                 }
             } catch (channelError) {
                 this.logger.error('[VoiceRecorder] Error sending to summary channel:', channelError);
@@ -226,9 +226,9 @@ class VoiceRecorder {
         const guildId = voiceChannel.guild.id;
         const interval = await this.configService.getTimeInterval(guildId);
         
-        if(!this.configService.getOpenAIKey(guildId)) {
-            throw new Error('OpenAI API key not set');
-        }
+        //if(!this.configService.getOpenAIKey(guildId)) {
+        //    throw new Error('OpenAI API key not set');
+        //}
 
         if (this.activeRecordings.has(guildId)) {
 
@@ -236,12 +236,15 @@ class VoiceRecorder {
         }
 
         try {
+            this.logger.info('THIS SHOULD WORK');
             // Join the voice channel
             const connection = await this.voiceState.joinChannel(voiceChannel);
+            this.logger.info(`[VoiceRecorder] Joined voice channel for guild ${guildId}`);
             if (!connection) {
                 throw new Error('Failed to establish voice connection');
             }
             
+            this.logger.info(`[VoiceRecorder] Joined voice channel for guild ${guildId}`);
             // Create the recording session
             const filename = this.storage.getTempFilePath(guildId, 'pcm');
             const outputStream = fs.createWriteStream(filename);
@@ -266,7 +269,7 @@ class VoiceRecorder {
             recordingInfo.rotationInterval = rotationInterval;
 
             // Log initial setup
-            this.logger.debug(`[VoiceRecorder] Started recording for guild ${guildId}`);
+            this.logger.info(`[VoiceRecorder] Started recording for guild ${guildId}`);
             this.activeRecordings.set(guildId, recordingInfo);
             this.events.emit(RecordingEvents.RECORDING_STARTED, { guildId });
             
@@ -281,7 +284,7 @@ class VoiceRecorder {
 
     async stopRecording(guildId) {   
         if (!guildId || !this.activeRecordings || this.activeRecordings.size === 0) return;
-        this.logger.debug(`[VoiceRecorder] Stopping recording for guild ${guildId}`);
+        this.logger.info(`[VoiceRecorder] Stopping recording for guild ${guildId}`);
         
         const recordingInfo = this.activeRecordings.get(guildId);
         recordingInfo.guildId = guildId;
@@ -290,7 +293,7 @@ class VoiceRecorder {
 
         try {
             // Log final state
-            this.logger.debug(`[VoiceRecorder] Stopping recording:`, {
+            this.logger.info(`[VoiceRecorder] Stopping recording:`, {
                 dataReceived: recordingInfo.dataReceived,
                 bytesWritten: recordingInfo.bytesWritten,
                 duration: Date.now() - recordingInfo.startTime,
@@ -327,6 +330,15 @@ class VoiceRecorder {
             // Clear the rotation interval if it exists
             if (recordingInfo.rotationInterval) {
                 clearInterval(recordingInfo.rotationInterval);
+            }
+
+            // Remove all event listeners from connection and receiver
+            if (recordingInfo.connection) {
+                recordingInfo.connection.removeAllListeners('stateChange');
+            }
+            if (recordingInfo.receiver) {
+                recordingInfo.receiver.speaking.removeAllListeners('start');
+                recordingInfo.receiver.speaking.removeAllListeners('end');
             }
 
             // Clean up all audio streams
@@ -384,6 +396,8 @@ class VoiceRecorder {
     }
 
     async ClearStreamsAndSave(recordingInfo, killProcess = false) {
+        let isTranscription = false;
+        let jobId = null;
         // Check if we received any data
         if (!recordingInfo.dataReceived) {
             throw new Error('No audio data was received during recording');
@@ -417,7 +431,7 @@ class VoiceRecorder {
 
             recordingInfo.outputStream.end(() => {
                 clearTimeout(timeout);
-                this.logger.debug('[VoiceRecorder] Output stream ended successfully');
+                this.logger.info('[VoiceRecorder] Output stream ended successfully');
                 resolve();
             });
         });
@@ -435,7 +449,7 @@ class VoiceRecorder {
             throw new Error('Recording file is empty');
         }
 
-        this.logger.debug(`[VoiceRecorder] Recording size: ${stats.size} bytes`);
+        this.logger.info(`[VoiceRecorder] Recording size: ${stats.size} bytes`);
 
         // Convert to MP3
         const mp3File = await this.audioService.convertToMp3(recordingInfo.filename);
@@ -450,17 +464,18 @@ class VoiceRecorder {
                 summary = await this.transcriptionService.generateSummary(transcript);
             } catch (summaryError) {
                 this.logger.warn(`[VoiceRecorder] Failed to generate summary in ClearStreamsAndSave, using transcript as fallback:`, summaryError);
-                
+                isTranscription = true;
                 // Schedule background summary generation
-                await this.summaryJobs.scheduleSummaryGeneration(recordingInfo.guildId, transcript);
+                jobId = await this.summaryJobs.scheduleSummaryGeneration(recordingInfo.guildId, transcript);
+                this.logger.info(`[VoiceRecorder] Scheduled summary generation for guild ${recordingInfo.guildId} with job ID: ${jobId}`);
             }
 
-            this.logger.debug('[VoiceRecorder] Guild ID:', recordingInfo.guildId);
+            this.logger.info('[VoiceRecorder] Guild ID:', recordingInfo.guildId);
             const guildConfig = this.configService.getGuildConfig(recordingInfo.guildId);
-            this.logger.debug('[VoiceRecorder] Summary Channel ID:', guildConfig?.summaryChannelId);
-            this.logger.debug('[VoiceRecorder] Guild Config:', JSON.stringify(guildConfig, null, 2));
+            this.logger.info('[VoiceRecorder] Summary Channel ID:', guildConfig?.summaryChannelId);
+            this.logger.info('[VoiceRecorder] Guild Config:', JSON.stringify(guildConfig, null, 2));
 
-            await this.sendSummaryToChannel(recordingInfo.guildId, summary, recordingInfo.startTime);
+            await this.sendSummaryToChannel(recordingInfo.guildId, summary, recordingInfo.startTime, isTranscription, jobId);
 
             this.events.emit(RecordingEvents.RECORDING_SUMMARIZED, {
                 guildId: recordingInfo.guildId,
@@ -476,6 +491,4 @@ class VoiceRecorder {
         await this.cleanup(recordingInfo.guildId, false); 
         return mp3File;
     }
-}
-
-module.exports = VoiceRecorder; 
+} 
