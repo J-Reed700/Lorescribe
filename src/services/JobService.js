@@ -6,6 +6,7 @@ export default class JobService {
         this.queues = new Map();
         this.redisUrl = redisUrl;
         this.processors = new Map();
+        this.failedJobsKey = 'failed_jobs';  // Redis key for failed jobs
     }
 
     createQueue(name, processor) {
@@ -60,13 +61,16 @@ export default class JobService {
             });
         });
 
-        queue.on('failed', (job, error) => {
+        queue.on('failed', async (job, error) => {
             logger.error(`[JobService] Job failed in queue ${name}:`, {
                 jobId: job.id,
                 error: error.message,
                 stack: error.stack,
                 attempts: job.attemptsMade
             });
+
+            // Log failed job to Redis
+            await this.logFailedJob(name, job, error);
         });
 
         queue.on('error', (error) => {
@@ -112,5 +116,62 @@ export default class JobService {
         await Promise.all(closePromises);
         this.queues.clear();
         this.processors.clear();
+    }
+
+    async logFailedJob(queueName, job, error) {
+        try {
+            const queue = this.queues.get(queueName);
+            if (!queue) return;
+
+            const failedJob = {
+                id: job.id,
+                queueName,
+                timestamp: Date.now(),
+                error: {
+                    message: error.message,
+                    stack: error.stack
+                },
+                data: job.data,
+                attempts: job.attemptsMade,
+                failedReason: job.failedReason
+            };
+
+            // Store in Redis with 30-day expiration
+            await queue.client.hset(
+                this.failedJobsKey,
+                `${queueName}:${job.id}`,
+                JSON.stringify(failedJob)
+            );
+            await queue.client.expire(this.failedJobsKey, 60 * 60 * 24 * 30); // 30 days
+
+            logger.info(`[JobService] Logged failed job to Redis:`, {
+                jobId: job.id,
+                queueName
+            });
+        } catch (redisError) {
+            logger.error(`[JobService] Error logging failed job to Redis:`, {
+                jobId: job.id,
+                queueName,
+                error: redisError
+            });
+        }
+    }
+
+    async getFailedJobs(queueName = null) {
+        try {
+            const queue = queueName ? this.queues.get(queueName) : Array.from(this.queues.values())[0];
+            if (!queue) return [];
+
+            const failedJobs = await queue.client.hgetall(this.failedJobsKey);
+            if (!failedJobs) return [];
+
+            return Object.entries(failedJobs)
+                .filter(([key]) => !queueName || key.startsWith(`${queueName}:`))
+                .map(([_, value]) => JSON.parse(value))
+                .sort((a, b) => b.timestamp - a.timestamp);
+        } catch (error) {
+            logger.error(`[JobService] Error retrieving failed jobs:`, error);
+            return [];
+        }
     }
 } 

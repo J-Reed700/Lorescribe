@@ -6,10 +6,11 @@ import prism from 'prism-media';
 import logger from '../utils/logger.js';
 
 export default class AudioService {
-    constructor(voiceState, storage, logger) {
+    constructor(voiceState, storage, logger, client) {
         this.voiceState = voiceState;
         this.storage = storage;
         this.logger = logger;
+        this.client = client;
         this.players = new Map();
     }
 
@@ -148,7 +149,7 @@ export default class AudioService {
         }
 
         connection.removeAllListeners();
-        
+
         // Add connection state logging
         this.logger.info(`[AudioService] Starting recording with connection state:`, {
             status: connection.state.status,
@@ -183,50 +184,54 @@ export default class AudioService {
             this.logger.error('[AudioService] Output stream error:', error);
         });
 
-        // Add connection state change monitoring
-        connection.on('stateChange', (oldState, newState) => {
-            this.logger.info(`[AudioService] Connection state changed:`, {
-                old: oldState.status,
-                new: newState.status
-            });
-        });
 
         // Monitor speaking states and create audio subscriptions
-        receiver.speaking.on('start', (userId) => {
+        receiver.speaking.on('start', async (userId) => {
             // Only handle if we don't already have a subscription for this user
             if (!recordingInfo.audioStreams.has(userId)) {
-                recordingInfo.speakingStates.set(userId, true);
-                this.logger.info(`[AudioService] User ${userId} started speaking`);
-                
-                const audioStream = receiver.subscribe(userId, {
-                    end: {
-                        behavior: EndBehaviorType.Manual
-                    },
-                });
-
-                let count = 0;
-                audioStream.on('data', (data) => {
-                    count++;
-                    recordingInfo.dataReceived = true;
-                    recordingInfo.lastDataTime = Date.now();
-                    recordingInfo.bytesWritten += data.length;
-                    if(count % 100 === 0) {
-                        this.logger.info(`[AudioService] Received audio data from ${userId}: ${data.length} bytes (total: ${recordingInfo.bytesWritten} bytes)`);
+                try {
+                    // Fetch user to check if they are a bot
+                    const user = await this.client.users.fetch(userId);
+                    if (user.bot) {
+                        this.logger.info(`[AudioService] Ignoring bot user ${userId}`);
+                        return;
                     }
-                });
 
-                audioStream.on('error', error => {
-                    if (!error.message.includes('Premature close')) {
-                        this.logger.error(`[AudioService] Audio stream error for ${userId}:`, error);
-                    }
-                });
+                    recordingInfo.speakingStates.set(userId, true);
+                    this.logger.info(`[AudioService] User ${userId} started speaking`);
+                    
+                    const audioStream = receiver.subscribe(userId, {
+                        end: {
+                            behavior: EndBehaviorType.Manual
+                        },
+                    });
 
-                audioStream
-                    .pipe(opusDecoder)
-                    .pipe(outputStream);
-                recordingInfo.audioStreams.set(userId, audioStream);
-                
-                this.logger.info(`[AudioService] Set up audio stream for user ${userId}`);
+                    let count = 0;
+                    audioStream.on('data', (data) => {
+                        count++;
+                        recordingInfo.dataReceived = true;
+                        recordingInfo.lastDataTime = Date.now();
+                        recordingInfo.bytesWritten += data.length;
+                        if(count % 100 === 0) {
+                            this.logger.info(`[AudioService] Received audio data from ${userId}: ${data.length} bytes (total: ${recordingInfo.bytesWritten} bytes)`);
+                        }
+                    });
+
+                    audioStream.on('error', error => {
+                        if (!error.message.includes('Premature close')) {
+                            this.logger.error(`[AudioService] Audio stream error for ${userId}:`, error);
+                        }
+                    });
+
+                    audioStream
+                        .pipe(opusDecoder)
+                        .pipe(outputStream);
+                    recordingInfo.audioStreams.set(userId, audioStream);
+                    
+                    this.logger.info(`[AudioService] Set up audio stream for user ${userId}`);
+                } catch (error) {
+                    this.logger.error(`[AudioService] Error checking user ${userId}:`, error);
+                }
             }
         });
 
@@ -241,7 +246,7 @@ export default class AudioService {
         return recordingInfo;
     }
 
-    async createSteamAndOpusDecoder(guildId) {
+    async createStreamAndOpusDecoder(guildId) {
         const filename = this.storage.getTempFilePath(guildId, 'pcm');
         const outputStream = fs.createWriteStream(filename);
         const opusDecoder = await this.createOpusDecoder();

@@ -20,7 +20,7 @@ export default class StopCommand extends BaseCommand {
             await this.deferReplyIfNeeded(interaction, false);
             
             logger.info('[StopCommand] Stopping recording...');
-            await this.voiceRecorder.stopRecording();
+            await this.voiceRecorder.stopRecording(interaction.guildId);
             
             await handleReply(
                 [

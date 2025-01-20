@@ -51,24 +51,22 @@ export default class ServiceFactory {
             });
 
             this.containerInstance.register('client', client);
-            this.containerInstance.register('channel', new ChannelService(client));
+            this.containerInstance.register('channel', new ChannelService(client, logger));
             // Register core services
             this.containerInstance.register('voiceState', new VoiceStateService());
             this.containerInstance.register('storage', new StorageService(baseConfig));
             this.containerInstance.register('audio', new AudioService(
                 this.containerInstance.get('voiceState'),
                 this.containerInstance.get('storage'),
-                logger
+                logger,
+                client
             ));
 
             // Initialize OpenAI
-            const openai = new OpenAI({
-                apiKey: process.env.OPENAI_API_KEY
-            });
-
-            this.containerInstance.register('openai', openai);
-            // Register OpenAI dependent services
-            this.containerInstance.register('transcription', new TranscriptionService(baseConfig, this.containerInstance.get('openai')));
+            this.containerInstance.register('transcription', new TranscriptionService(
+                baseConfig, 
+                this.containerInstance.get('config')
+            ));
 
             // Initialize and register job services
             const redisUrl = process.env.REDIS_URL || 'redis://redis:6379';

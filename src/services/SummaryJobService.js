@@ -22,7 +22,7 @@ export default class SummaryJobService {
             this.logger.info(`[SummaryJobService] Processing summary for guild ${guildId}`);
             
             try {
-                const summary = await this.transcriptionService.generateSummary(transcript);
+                const summary = await this.transcriptionService.generateSummary(transcript, guildId);
                 const timestamp = Date.now();
                 
                 // Send to summary channel if configured
@@ -51,11 +51,12 @@ export default class SummaryJobService {
                     stack: error.stack,
                     guildId
                 });
+                throw error;
             }
         });
     }
 
-    async scheduleSummaryGeneration(guildId, transcript) {
+    async scheduleSummaryGeneration(guildId, transcript, delayMs = 0) {
         try {
             const job = await this.jobService.scheduleJob('summary-generation', {
                 guildId,
@@ -66,9 +67,10 @@ export default class SummaryJobService {
                     type: 'exponential',
                     delay: 1000
                 },
-                removeOnComplete: true
+                removeOnComplete: true,
+                delay: delayMs 
             });
-            this.logger.info(`[SummaryJobService] Scheduled summary generation for guild ${guildId}`);
+            this.logger.info(`[SummaryJobService] Scheduled summary generation for guild ${guildId} with ${delayMs}ms delay`);
             return job.id;
         } catch (error) {
             this.logger.error(`[SummaryJobService] Failed to schedule summary generation:`, {

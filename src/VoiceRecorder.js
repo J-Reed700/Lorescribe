@@ -51,7 +51,7 @@ export default class VoiceRecorder extends EventEmitter {
             // First, remove the old recording from active recordings to prevent duplicate events
             this.activeRecordings.delete(guildId);
 
-            const { outputStream, opusDecoder, filename } = await this.audioService.createSteamAndOpusDecoder(guildId);
+            const { outputStream, opusDecoder, filename } = await this.audioService.createStreamAndOpusDecoder(guildId);
 
             // Create new recording info with all required components
             const newRecordingInfo = await this.audioService.StartRecording(connection, opusDecoder, outputStream);
@@ -101,14 +101,14 @@ export default class VoiceRecorder extends EventEmitter {
             }
 
             // Process transcription and summary
-            const transcript = await this.transcriptionService.transcribe(mp3File);
+            const transcript = await this.transcriptionService.transcribe(mp3File, guildId);
             
             // **Add this log to verify transcription content**
             this.logger.info(`[VoiceRecorder] Transcript received for guild ${guildId}: ${transcript.substring(0, 200)}...`);
             
             let summary = transcript; 
             try {
-                summary = await this.transcriptionService.generateSummary(transcript);
+                summary = await this.transcriptionService.generateSummary(transcript, guildId);
             } catch (summaryError) {
                 this.logger.warn(`[VoiceRecorder] Failed to generate summary, using transcript as fallback:`, summaryError);
                 isTranscription = true;
@@ -226,9 +226,9 @@ export default class VoiceRecorder extends EventEmitter {
         const guildId = voiceChannel.guild.id;
         const interval = await this.configService.getTimeInterval(guildId);
         
-        //if(!this.configService.getOpenAIKey(guildId)) {
-        //    throw new Error('OpenAI API key not set');
-        //}
+        if(!this.configService.getOpenAIKey(guildId)) {
+            throw new Error('OpenAI API key not set');
+        }
 
         if (this.activeRecordings.has(guildId)) {
 
@@ -246,10 +246,8 @@ export default class VoiceRecorder extends EventEmitter {
             
             this.logger.info(`[VoiceRecorder] Joined voice channel for guild ${guildId}`);
             // Create the recording session
-            const filename = this.storage.getTempFilePath(guildId, 'pcm');
-            const outputStream = fs.createWriteStream(filename);
-            const opusDecoder = await this.audioService.createOpusDecoder();
-            
+            const { outputStream, opusDecoder, filename } = await this.audioService.createStreamAndOpusDecoder(guildId);
+
             if (!opusDecoder) {
                 throw new Error('Failed to create opus decoder');
             }
@@ -330,15 +328,6 @@ export default class VoiceRecorder extends EventEmitter {
             // Clear the rotation interval if it exists
             if (recordingInfo.rotationInterval) {
                 clearInterval(recordingInfo.rotationInterval);
-            }
-
-            // Remove all event listeners from connection and receiver
-            if (recordingInfo.connection) {
-                recordingInfo.connection.removeAllListeners('stateChange');
-            }
-            if (recordingInfo.receiver) {
-                recordingInfo.receiver.speaking.removeAllListeners('start');
-                recordingInfo.receiver.speaking.removeAllListeners('end');
             }
 
             // Clean up all audio streams
@@ -455,13 +444,13 @@ export default class VoiceRecorder extends EventEmitter {
         const mp3File = await this.audioService.convertToMp3(recordingInfo.filename);
         
         try {
-            const transcript = await this.transcriptionService.transcribeAudio(mp3File);
+            const transcript = await this.transcriptionService.transcribeAudio(mp3File, recordingInfo.guildId);
             const timestamp = Date.now();
             await this.storage.saveTranscript(recordingInfo.guildId, transcript, timestamp);
             
             let summary = transcript;
             try {
-                summary = await this.transcriptionService.generateSummary(transcript);
+                summary = await this.transcriptionService.generateSummary(transcript, recordingInfo.guildId);
             } catch (summaryError) {
                 this.logger.warn(`[VoiceRecorder] Failed to generate summary in ClearStreamsAndSave, using transcript as fallback:`, summaryError);
                 isTranscription = true;
