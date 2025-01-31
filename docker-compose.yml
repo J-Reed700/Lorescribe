@@ -1,7 +1,9 @@
 version: '3.8'
 services:
-  bot:
-    build: .
+  lorescribe:
+    build: 
+      context: .
+      target: builder  # Use the builder stage for development
     platform: linux/amd64
     deploy:
       resources:
@@ -11,13 +13,21 @@ services:
         reservations:
           memory: 16G
     environment:
-      NODE_ENV: production
-      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+      PORT: 8080
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_TLS_ENABLED: "false"
+    ports:
+      - "8080:8080"
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - recordings:/recordings
     depends_on:
       redis:
         condition: service_healthy
+    command: ["pnpm", "start"]  # Use the start script from package.json
 
   redis:
     image: redis:7-alpine
@@ -41,3 +51,4 @@ services:
 
 volumes:
   redis_data:
+  recordings:

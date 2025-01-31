@@ -4,87 +4,125 @@ import { spawn } from 'node:child_process';
 import { EndBehaviorType } from '@discordjs/voice';
 import prism from 'prism-media';
 import logger from '../utils/logger.js';
+import RecordingEvents from '../events/RecordingEvents.js';
 
 export default class AudioService {
-    constructor(voiceState, storage, logger, client) {
+    constructor(voiceState, storage, logger, client, events) {
         this.voiceState = voiceState;
         this.storage = storage;
         this.logger = logger;
         this.client = client;
+        this.events = events;
         this.players = new Map();
+        this.activeConnections = new Map();
+
+        // Add cleanup verification
+        if (this.events) {
+            this.events.on(RecordingEvents.CLEANUP_COMPLETED, (status) => {
+                if (!status.success) {
+                    this.logger.error(`[AudioService] Cleanup failed for guild ${status.guildId}:`, {
+                        details: status.details,
+                        errors: status.errors
+                    });
+                    return;
+                }
+
+                // Verify all resources were properly cleaned up
+                const allResourcesCleaned = Object.values(status.details).every(value => value === true);
+                
+                if (!allResourcesCleaned) {
+                    this.logger.warn(`[AudioService] Some resources may not have been properly cleaned up:`, status.details);
+                } else {
+                    this.logger.info(`[AudioService] All resources successfully cleaned up for guild ${status.guildId}`);
+                }
+            });
+        }
     }
 
     async convertToMp3(inputFile) {
         try {
-            // Check if input file exists and has content
             const stats = await fs.promises.stat(inputFile);
             if (stats.size === 0) {
                 throw new Error('Input file is empty');
             }
 
-            // Wait a bit to ensure all writes are complete
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             const outputFile = inputFile + '.mp3';
-            
-            // Ensure the input file still exists before starting conversion
-            if (!fsSync.existsSync(inputFile)) {
+
+            // Use asynchronous file check
+            const inputExists = await fs.promises.access(inputFile, fs.constants.F_OK).then(() => true).catch(() => false);
+            if (!inputExists) {
                 throw new Error(`Input file was deleted before conversion: ${inputFile}`);
             }
 
             return new Promise((resolve, reject) => {
                 const ffmpeg = spawn('ffmpeg', [
-                    '-f', 's16le',        // Input format (PCM 16-bit little-endian)
-                    '-ar', '48000',       // Sample rate
-                    '-ac', '2',           // Number of channels
-                    '-i', inputFile,      // Input file
-                    '-codec:a', 'libmp3lame',  // MP3 codec
-                    '-q:a', '2',          // Quality (2 is high quality, lower number = higher quality)
-                    '-y',                 // Overwrite output file
-                    outputFile            // Output file
+                    '-hide_banner',
+                    '-f', 's16le',
+                    '-ar', '48000',
+                    '-ac', '2',
+                    '-acodec', 'pcm_s16le',
+                    '-i', inputFile,
+                    '-codec:a', 'libmp3lame',
+                    '-q:a', '2',
+                    '-y',
+                    outputFile
                 ]);
 
-                let ffmpegLogs = '';
+                let stderrLogs = '';
                 let stdoutLogs = '';
 
                 ffmpeg.stderr.on('data', (data) => {
-                    ffmpegLogs += data.toString();
+                    stderrLogs += data.toString();
                 });
 
                 ffmpeg.stdout.on('data', (data) => {
                     stdoutLogs += data.toString();
                 });
 
+                const checkFileExistence = async () => {
+                    try {
+                        await fs.promises.stat(outputFile);
+                        return true;
+                    } catch (error) {
+                        return false;
+                    }
+                };
+
                 ffmpeg.on('close', async (code) => {
                     if (code === 0) {
-                        // Verify the output file exists and has content
-                        try {
-                            const outStats = await fs.promises.stat(outputFile);
-                            if (outStats.size === 0) {
-                                logger.error('FFmpeg produced empty output file:', {
-                                    inputFile,
-                                    outputFile,
-                                    inputSize: stats.size,
-                                    logs: ffmpegLogs
-                                });
-                                reject(new Error('FFmpeg produced empty output file'));
-                                return;
-                            }
-                            logger.info(`Successfully converted ${inputFile} to MP3`);
-                            resolve(outputFile);
-                        } catch (err) {
-                            logger.error('Error verifying output file:', err);
-                            reject(err);
+                        let outputExists = await checkFileExistence();
+                        if (!outputExists) {
+                            logger.error('FFmpeg produced no output file:', {
+                                inputFile,
+                                outputFile
+                            });
+                            reject(new Error('FFmpeg produced no output file'));
+                            return;
                         }
+
+                        const outStats = await fs.promises.stat(outputFile);
+                        if (outStats.size === 0) {
+                            logger.error('FFmpeg produced empty output file:', {
+                                inputFile,
+                                outputFile,
+                                inputSize: stats.size,
+                                logs: { stderr: stderrLogs, stdout: stdoutLogs }
+                            });
+                            reject(new Error('FFmpeg produced empty output file'));
+                            return;
+                        }
+
+                        logger.info(`Successfully converted ${inputFile} to MP3`);
+                        resolve(outputFile);
                     } else {
                         logger.error('FFmpeg conversion failed:', {
                             inputFile,
                             outputFile,
                             exitCode: code,
-                            stderr: ffmpegLogs,
-                            stdout: stdoutLogs,
-                            inputFileExists: fsSync.existsSync(inputFile),
-                            inputFileSize: stats.size
+                            stderr: stderrLogs,
+                            stdout: stdoutLogs
                         });
                         reject(new Error(`FFmpeg conversion failed with code ${code}`));
                     }
@@ -92,10 +130,10 @@ export default class AudioService {
 
                 ffmpeg.on('error', (err) => {
                     logger.error('FFmpeg process error:', {
-                        error: err,
+                        error: err.message,
                         inputFile,
                         outputFile,
-                        inputFileExists: fsSync.existsSync(inputFile),
+                        inputFileExists: inputExists,
                         inputFileSize: stats.size
                     });
                     reject(err);
@@ -103,13 +141,14 @@ export default class AudioService {
             });
         } catch (error) {
             logger.error('Error in convertToMp3:', {
-                error,
+                error: error.message,
                 inputFile,
-                inputFileExists: fsSync.existsSync(inputFile)
+                inputFileExists: fs.existsSync(inputFile)
             });
             throw error;
         }
     }
+    
     async createOpusDecoder() {
         let opusDecoder;
         try {
@@ -255,5 +294,115 @@ export default class AudioService {
             throw new Error('Failed to create opus decoder');
         }
         return { outputStream, opusDecoder, filename };
+    }
+
+    async cleanup(guildId) {
+        const cleanupStatus = {
+            guildId,
+            success: false,
+            details: {
+                audioStreams: false,
+                opusDecoder: false,
+                outputStream: false,
+                connection: false
+            },
+            errors: []
+        };
+
+        try {
+            // Cleanup voice connection
+            const connection = this.activeConnections.get(guildId);
+            if (connection) {
+                try {
+                    connection.destroy();
+                    this.activeConnections.delete(guildId);
+                    cleanupStatus.details.connection = true;
+                } catch (error) {
+                    cleanupStatus.errors.push({
+                        component: 'connection',
+                        error: error.message
+                    });
+                }
+            }
+
+            // Cleanup audio streams
+            const recordingInfo = this.recordings.get(guildId);
+            if (recordingInfo) {
+                if (recordingInfo.audioStreams) {
+                    try {
+                        for (const [userId, stream] of recordingInfo.audioStreams) {
+                            stream.unpipe();
+                            stream.destroy();
+                        }
+                        cleanupStatus.details.audioStreams = true;
+                    } catch (error) {
+                        cleanupStatus.errors.push({
+                            component: 'audioStreams',
+                            error: error.message
+                        });
+                    }
+                }
+
+                // Cleanup opus decoder
+                if (recordingInfo.opusDecoder) {
+                    try {
+                        recordingInfo.opusDecoder.unpipe();
+                        recordingInfo.opusDecoder.destroy();
+                        cleanupStatus.details.opusDecoder = true;
+                    } catch (error) {
+                        cleanupStatus.errors.push({
+                            component: 'opusDecoder',
+                            error: error.message
+                        });
+                    }
+                }
+
+                // Cleanup output stream
+                if (recordingInfo.outputStream) {
+                    try {
+                        await new Promise((resolve, reject) => {
+                            const timeout = setTimeout(() => {
+                                recordingInfo.outputStream.destroy();
+                                resolve();
+                            }, 5000);
+
+                            recordingInfo.outputStream.once('finish', () => {
+                                clearTimeout(timeout);
+                                resolve();
+                            });
+
+                            recordingInfo.outputStream.once('error', (error) => {
+                                clearTimeout(timeout);
+                                reject(error);
+                            });
+
+                            recordingInfo.outputStream.end();
+                        });
+                        cleanupStatus.details.outputStream = true;
+                    } catch (error) {
+                        cleanupStatus.errors.push({
+                            component: 'outputStream',
+                            error: error.message
+                        });
+                    }
+                }
+
+                this.recordings.delete(guildId);
+            }
+
+            cleanupStatus.success = cleanupStatus.errors.length === 0;
+        } catch (error) {
+            cleanupStatus.errors.push({
+                component: 'general',
+                error: error.message
+            });
+        }
+
+        // Emit cleanup status
+        if (this.events) {
+            this.events.emit(RecordingEvents.CLEANUP_COMPLETED, cleanupStatus);
+        }
+
+        return cleanupStatus;
     }
 } 

@@ -1,5 +1,4 @@
 import RecordingEvents from '../events/RecordingEvents.js';
-import logger from '../utils/logger.js';
 
 export default class SummaryJobService {
     constructor(services) {
@@ -22,21 +21,19 @@ export default class SummaryJobService {
             this.logger.info(`[SummaryJobService] Processing summary for guild ${guildId}`);
             
             try {
-                const summary = await this.transcriptionService.generateSummary(transcript, guildId);
+                const transummarize = await this.transcriptionService.generateSummary(transcript, guildId);
                 const timestamp = Date.now();
                 
                 // Send to summary channel if configured
                 const guildConfig = this.configService.getGuildConfig(guildId);
-                if (guildConfig?.summaryChannelId) {
-                    await this.channelService.sendMessage(guildConfig.summaryChannelId, {
-                        content: `**Updated Summary** (Background Generated) JobId: ${job.id}\n\n${summary}\n\nJobId: ${job.id}`
-                    });
+                if (guildConfig?.summaryChannelId && !transummarize.isUnableToSummarize) {
+                    await this.channelService.sendErrorMessage(guildConfig, transummarize);
                 }
 
                 // Emit success event
                 this.events.emit(RecordingEvents.RECORDING_SUMMARIZED, {
                     guildId,
-                    summary,
+                    summary: summaryObject.summary,
                     transcript,
                     timestamp,
                     isBackgroundGenerated: true
@@ -51,7 +48,9 @@ export default class SummaryJobService {
                     stack: error.stack,
                     guildId
                 });
-                throw error;
+                // Mark the job as failed and remove it from the queue
+                await job.moveToFailed({ message: error.messsage }, true);
+                return { success: false, error: error.message };
             }
         });
     }

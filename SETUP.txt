@@ -1,0 +1,44 @@
+
+ONCE
+
+# Login to Google Cloud
+gcloud auth login
+gcloud auth application-default login
+
+# Set your project and region
+gcloud config set project lorescribe
+gcloud config set compute/region us-central1
+
+# Enable required APIs
+gcloud services enable \
+  artifactregistry.googleapis.com \
+  run.googleapis.com \
+  secretmanager.googleapis.com
+
+# Deploy base infrastructure
+
+cd terraform
+
+# Copy and edit variables
+cp terraform.tfvars.example terraform.tfvars
+nano terraform.tfvars  # Set project_id and other variables
+
+# Deploy base infrastructure
+terraform init
+terraform apply
+
+# Make script executable
+chmod +x scripts/build-and-push.sh
+
+# Build and push container
+./scripts/build-and-push.sh
+
+# Apply Terraform changes with new container
+cd terraform
+terraform apply
+
+# Set Discord token
+echo "your-discord-token" | gcloud secrets versions add discord-token --data-file=-
+
+# Set OpenAI key
+echo "your-openai-key" | gcloud secrets versions add openai-api-key --data-file=-

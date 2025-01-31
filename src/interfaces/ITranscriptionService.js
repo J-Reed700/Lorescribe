@@ -1,5 +1,5 @@
 export default class ITranscriptionService {
-    async transcribe(audioPath, guildId) {
+    async transcribeAudio(audioPath, guildId) {
         throw new Error('Method not implemented');
     }
 

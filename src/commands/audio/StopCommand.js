@@ -2,11 +2,13 @@ import BaseCommand from './BaseCommand.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import logger from '../../utils/logger.js';
 import { handleReply } from '../../utils/interactionHelper.js';
+import RetryHandler from '../../utils/RetryHandler.js';
 
 export default class StopCommand extends BaseCommand {
     constructor(services) {
         super(services);
         this.voiceRecorder = services.get('voiceRecorder');
+        this.retryHandler = new RetryHandler(3, 1000);
     }
 
     getData() {
@@ -20,7 +22,7 @@ export default class StopCommand extends BaseCommand {
             await this.deferReplyIfNeeded(interaction, false);
             
             logger.info('[StopCommand] Stopping recording...');
-            await this.voiceRecorder.stopRecording(interaction.guildId);
+            await this.retryHandler.execute(() => this.voiceRecorder.stopRecording(interaction.guildId));
             
             await handleReply(
                 [
@@ -30,17 +32,17 @@ export default class StopCommand extends BaseCommand {
                     '⏳ Please wait while the audio is being processed...'
                 ].join('\n'),
                 interaction,
-                false
+                false,
+                true
             );
         } catch (error) {
             const errorMessage = error.message === 'No recording in progress' 
                 ? '❌ **Error:** There is no recording in progress!'
                 : '❌ **Error:** Failed to stop recording. Please try again.';
-                
-            await handleReply(errorMessage, interaction, true);
             
             if (error.message !== 'No recording in progress') {
-                throw error; // Re-throw for logging purposes
+                error.message = errorMessage;
+                throw error;    
             }
         }
     }

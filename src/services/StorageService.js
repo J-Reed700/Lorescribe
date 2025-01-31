@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import logger from '../utils/logger.js';
 
+
 export default class StorageService {
     constructor(config) {
         this.config = config;
@@ -140,7 +141,8 @@ export default class StorageService {
 
     getTempFilePath(guildId, type = 'pcm') {
         logger.info(`[StorageService] Generating temp file path for guild ${guildId} with type ${type}`);
-        const filename = `recording-${guildId}-${Date.now()}.${type}`;
+        const randomId = Math.random().toString(36).substring(2, 15);
+        const filename = `recording-${guildId}-${Date.now()}-${randomId}.${type}`;
         const filepath = path.join(
             process.cwd(),
             this.config.STORAGE.TEMP_DIRECTORY,
@@ -156,12 +158,23 @@ export default class StorageService {
     }
 
     async saveTranscript(guildId, transcript, timestamp) {
-        const fileName = `transcript-${guildId}-${timestamp}.txt`;
-        const filePath = path.join(
+        const guildDir = path.join(
             process.cwd(),
             this.config.STORAGE.TRANSCRIPTS_DIRECTORY,
-            fileName
+            guildId.toString()
         );
+        
+        // Ensure guild directory exists
+        if (!fs.existsSync(guildDir)) {
+            await fs.promises.mkdir(guildDir, { recursive: true });
+            logger.info(`[StorageService] Created guild directory:`, {
+                guildId,
+                directory: guildDir
+            });
+        }
+
+        const fileName = `transcript-${guildId}-${timestamp}.txt`;
+        const filePath = path.join(guildDir, fileName);
 
         try {
             await fs.promises.writeFile(filePath, transcript);
@@ -192,12 +205,23 @@ export default class StorageService {
     }
 
     async saveSummary(guildId, summary, timestamp) {
-        const fileName = `summary-${guildId}-${timestamp}.txt`;
-        const filePath = path.join(
+        const guildDir = path.join(
             process.cwd(),
             this.config.STORAGE.SUMMARIES_DIRECTORY,
-            fileName
+            guildId.toString()
         );
+        
+        // Ensure guild directory exists
+        if (!fs.existsSync(guildDir)) {
+            await fs.promises.mkdir(guildDir, { recursive: true });
+            logger.info(`[StorageService] Created guild directory:`, {
+                guildId,
+                directory: guildDir
+            });
+        }
+
+        const fileName = `summary-${guildId}-${timestamp}.txt`;
+        const filePath = path.join(guildDir, fileName);
 
         try {
             await fs.promises.writeFile(filePath, summary);
@@ -258,8 +282,13 @@ export default class StorageService {
 
     async getRecentSummaries(guildId, limit = 10) {
         try {
-            const dir = path.join(process.cwd(), this.config.STORAGE.SUMMARIES_DIRECTORY);
-            const files = await fs.promises.readdir(dir);
+            const guildDir = path.join(process.cwd(), this.config.STORAGE.SUMMARIES_DIRECTORY, guildId.toString());
+            if (!fs.existsSync(guildDir)) {
+                logger.info(`[StorageService] No summaries directory exists for guild ${guildId}`);
+                return [];
+            }
+
+            const files = await fs.promises.readdir(guildDir);
             
             const guildSummaries = files
                 .filter(f => f.startsWith(`summary-${guildId}-`))
@@ -276,7 +305,7 @@ export default class StorageService {
             const summaries = [];
             for (const file of guildSummaries) {
                 try {
-                    const content = await fs.promises.readFile(path.join(dir, file), 'utf8');
+                    const content = await fs.promises.readFile(path.join(guildDir, file), 'utf8');
                     summaries.push({
                         timestamp: file.split('-')[2].replace('.txt', ''),
                         content
@@ -293,7 +322,7 @@ export default class StorageService {
                         context: {
                             guildId,
                             file,
-                            directory: dir
+                            directory: guildDir
                         }
                     });
                 }
@@ -320,8 +349,13 @@ export default class StorageService {
     }
 
     async getSummariesInRange(guildId, startTime, endTime) {
-        const dir = path.join(process.cwd(), this.config.STORAGE.SUMMARIES_DIRECTORY);
-        const files = await fs.promises.readdir(dir);
+        const guildDir = path.join(process.cwd(), this.config.STORAGE.SUMMARIES_DIRECTORY, guildId.toString());
+        if (!fs.existsSync(guildDir)) {
+            logger.info(`[StorageService] No summaries directory exists for guild ${guildId}`);
+            return [];
+        }
+
+        const files = await fs.promises.readdir(guildDir);
         
         const summaries = [];
         for (const file of files) {
@@ -329,7 +363,7 @@ export default class StorageService {
             
             const timestamp = parseInt(file.split('-')[2].replace('.txt', ''));
             if (timestamp >= startTime && timestamp <= endTime) {
-                const content = await fs.promises.readFile(path.join(dir, file), 'utf8');
+                const content = await fs.promises.readFile(path.join(guildDir, file), 'utf8');
                 summaries.push({
                     timestamp,
                     content,
@@ -342,8 +376,13 @@ export default class StorageService {
     }
 
     async getTranscriptsInRange(guildId, startTime, endTime) {
-        const dir = path.join(process.cwd(), this.config.STORAGE.TRANSCRIPTS_DIRECTORY);
-        const files = await fs.promises.readdir(dir);
+        const guildDir = path.join(process.cwd(), this.config.STORAGE.TRANSCRIPTS_DIRECTORY, guildId.toString());
+        if (!fs.existsSync(guildDir)) {
+            logger.info(`[StorageService] No transcripts directory exists for guild ${guildId}`);
+            return [];
+        }
+
+        const files = await fs.promises.readdir(guildDir);
         
         const transcripts = [];
         for (const file of files) {
@@ -351,7 +390,7 @@ export default class StorageService {
             
             const timestamp = parseInt(file.split('-')[2].replace('.txt', ''));
             if (timestamp >= startTime && timestamp <= endTime) {
-                const content = await fs.promises.readFile(path.join(dir, file), 'utf8');
+                const content = await fs.promises.readFile(path.join(guildDir, file), 'utf8');
                 transcripts.push({
                     timestamp,
                     content,

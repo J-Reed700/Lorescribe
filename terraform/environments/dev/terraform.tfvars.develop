@@ -1,0 +1,22 @@
+# GCP Project Settings
+project_id         = "lorescribe"
+region            = "us-central1"
+zone              = "us-central1-a"
+
+# GKE Cluster Settings
+min_node_count = 1
+max_node_count = 3
+
+# Monitoring Settings
+alert_email = "your-email@example.com"
+
+# Storage Settings
+backup_bucket = "discord-bot-backups"
+recordings_disk_size = 100
+
+# Redis Configuration
+redis_memory_size_gb = 1
+redis_tier          = "BASIC"  # Use STANDARD_HA for high availability
+redis_version       = "REDIS_6_X"
+redis_maintenance_day = "SUNDAY"
+redis_maintenance_hour = 2  # 2 AM 

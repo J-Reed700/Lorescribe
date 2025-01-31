@@ -50,16 +50,19 @@ export default class ServiceFactory {
                 console.log(`Ready! Logged in as ${readyClient.user.tag}`);
             });
 
+            // Register client and channel services
             this.containerInstance.register('client', client);
             this.containerInstance.register('channel', new ChannelService(client, logger));
-            // Register core services
+            
+            // Register core services in correct order
             this.containerInstance.register('voiceState', new VoiceStateService());
             this.containerInstance.register('storage', new StorageService(baseConfig));
             this.containerInstance.register('audio', new AudioService(
                 this.containerInstance.get('voiceState'),
                 this.containerInstance.get('storage'),
                 logger,
-                client
+                client,
+                this.containerInstance.get('events')
             ));
 
             // Initialize OpenAI

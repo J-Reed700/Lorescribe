@@ -1,10 +1,9 @@
-FROM node:18-slim
+# Build stage
+FROM --platform=linux/amd64 node:20-slim AS builder
 
-# Install system dependencies
+# Install system dependencies for build
 RUN apt-get update && apt-get install -y \
     ffmpeg \
-    libopus-dev \
-    opus-tools \
     build-essential \
     python3 \
     libsodium-dev \
@@ -15,7 +14,6 @@ RUN apt-get update && apt-get install -y \
     make \
     g++ \
     git \
-    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
@@ -23,21 +21,48 @@ RUN npm install -g pnpm
 
 WORKDIR /usr/src/app
 
-# Copy package files first
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies with increased memory limit
 ENV NODE_OPTIONS="--max_old_space_size=4096"
 RUN pnpm install
 
-
 # Copy the rest of the application
 COPY . .
 
-# Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Production stage
+FROM --platform=linux/amd64 node:20-slim
 
-# Set entrypoint and default command
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["pnpm", "start"]
+# Install runtime dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libopus-dev \
+    opus-tools \
+    netcat-openbsd \
+    libmp3lame0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verify FFmpeg installation and codecs
+RUN ffmpeg -version && \
+    ffmpeg -codecs | grep -iE "(libmp3lame|pcm)"
+
+WORKDIR /usr/src/app
+
+# Copy from builder
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/src ./src
+COPY --from=builder /usr/src/app/package.json ./
+
+# Create directories for recordings and temp files
+RUN mkdir -p /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries && \
+    chmod -R 777 /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Command to run the bot
+CMD ["node", "src/bot.js"]

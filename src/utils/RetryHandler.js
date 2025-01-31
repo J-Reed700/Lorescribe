@@ -12,6 +12,7 @@ export default class RetryHandler {
             try {
                 return await operation();
             } catch (error) {
+                console.log(`[RetryHandler] Error: ${error}`);
                 lastError = error;
                 
                 // Don't retry if it's a fatal error

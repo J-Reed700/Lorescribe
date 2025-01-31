@@ -1,9 +1,15 @@
 export default {
-    TIME_INTERVAL: 2, // 2 minutes
-    CHUNK_DURATION: 30 * 1000, // 10 seconds for debugging
+    TIME_INTERVAL: 4, // 5 minutes
+    ROTATION_DELAY: 500, // 500ms delay before processing rotated file
+    CHUNK_DURATION: 30 * 1000, // 30 seconds
     MAX_CHUNKS: 48, // 4 hours total maximum
+    JOB_DELAY: 5000, // 5 seconds delay for debugging
+    ORGANIZE_PROMPT: `You are given a transcript of a voice chat. Please organize the transcript into a structured format. Organize and assign a name to each speaker. If there is no way to defer the speaker, just use user1, user2, and so on.`,
     SUMMARY_PROMPT: `
-                    ## Narrative Summary
+
+                    ##### Rules
+                    
+                    ##### Narrative Summary
                     Start with a 2-3 sentence high-level overview of the transcript's main events, using ***bold italics*** for particularly significant moments.
 
                     Then begin a detailed breakdown of the transcript, be very descriptive and detailed. Do not leave out any important details. Below 
@@ -15,9 +21,9 @@ export default {
                     Otherwise, just give a very detailed summary of the transcript.
 
 
-                    ## Detailed Breakdown
+                    ##### Detailed Breakdown
                     
-                    ### Key Events
+                    ##### Key Events
                     Chronologically list major events, using:
                     - \`>\` for important quotes
                     - \`**\` for combat encounters
@@ -67,7 +73,7 @@ export default {
                     - *Known Challenges Ahead*
                     - Player Intentions
 
-                    Format Guidelines:
+                    #####Format Guidelines:
                     1. Use \`# \` for major sections
                     2. Use \`## \` for subsections
                     3. Use \`### \` for specific categories
@@ -81,7 +87,7 @@ export default {
                     11. Use \`||\` for spoilers
                     12. Use \`\`\` for code blocks/quotes
 
-                    Remember to:
+                    #####Remember to:
                     - Maintain chronological flow while grouping related events
                     - Attribute actions and quotes to specific players/characters
                     - Highlight both mechanical and narrative developments
@@ -90,8 +96,10 @@ export default {
                     - Document any major rule interpretations or house rules applied
                     - Balance detail with readability
                     - Use appropriate formatting for emphasis and organization
-
-                    If there is no transcript or you are unable to summarize, return 'No transcript available'.`,
+                    
+                    #### If there is no transcript return 'No transcript available'. ####
+                    
+                    #### If you are absolutely positive that you are unable to summarize no matter what and no matter how hard you try, return 'Unable to summarize'. ####`  ,
 
     TRANSCRIPTION_PROMPT: `Please transcribe the audio, clearly indicating different speakers by prefixing their lines with their usernames. 
                     
@@ -123,8 +131,8 @@ export default {
     },
     STORAGE: {
         TEMP_DIRECTORY: 'temp',           // For temporary audio files
-        TRANSCRIPTS_DIRECTORY: 'transcripts', // For storing transcripts
-        SUMMARIES_DIRECTORY: 'summaries',  // For storing summaries
+        TRANSCRIPTS_DIRECTORY: 'data/transcripts', // For storing transcripts
+        SUMMARIES_DIRECTORY: 'data/summaries',  // For storing summaries
         RETENTION_DAYS: 30,               // How long to keep transcripts and summaries
         CLEANUP_INTERVAL: 24 * 60 * 60 * 1000, // Cleanup old files daily
     },

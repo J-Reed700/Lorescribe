@@ -1,0 +1,17 @@
+project_id         = "lorescribe"
+region            = "us-central1"
+zone              = "us-central1-a"
+container_image   = "gcr.io/lorescribe/discord-bot:latest"
+discord_token = "MTMyNzg3MTY2MzIwMjc2Mjg0Mw.GxKzjL.6wuv3NiOKcinfGRsPoeB08nIZpYZx4xIBpXCsA"
+discord_client_id = 1327871663202762843
+min_instance_count = 1
+max_instance_count = 1
+alert_email       = "your-email@example.com"
+backup_bucket     = "your-project-discord-bot-backups"
+
+# Redis Configuration
+redis_memory_size_gb = 1
+redis_tier          = "BASIC"  # Use STANDARD_HA for high availability
+redis_version       = "REDIS_6_X"
+redis_maintenance_day = "SUNDAY"
+redis_maintenance_hour = 2  # 2 AM 

@@ -27,13 +27,18 @@ export default class RecordCommand extends BaseCommand {
                 return;
             }
 
-            // Defer the reply after the voice channel check
             await this.deferReplyIfNeeded(interaction, false);
 
             // Start recording
             logger.info('[RecordCommand] Starting recording...');
+            
             await this.voiceRecorder.startRecording(interaction.member.voice.channel);
             
+            this.logger.info('[RecordCommand] Deferred state:', {
+                deferred: interaction.deferred,
+                replied: interaction.replied
+            });
+
             // Send success message with rich formatting
             const response = [
                 '🎙️ **Recording Started!**',
@@ -48,20 +53,20 @@ export default class RecordCommand extends BaseCommand {
                 '> Use high-quality audio for best results.'
             ].join('\n');
 
-            await handleReply(response, interaction, false);
+            const [success, message] = await handleReply(response, interaction, false, true);
+            if(success) {
+                return message;
+            }
 
         } catch (error) {
+            logger.error('[RecordCommand] Error:', error);
             const errorMessage = error.message === 'Recording already in progress' 
                 ? '❌ **Error:** A recording is already in progress in this server!'
                 : error.message === 'OpenAI API key not set'
                     ? '❌ **Error:** OpenAI API key not set. Please run `/setkey` to set your key.'
                     : '❌ **Error:** Failed to start recording. Please try again.';
-            
-            await handleReply(errorMessage, interaction, true);
 
-            if (error.message !== 'Recording already in progress') {
-                throw error; 
-            }
+            throw error;
         }
     }
 } 

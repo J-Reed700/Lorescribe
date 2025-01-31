@@ -1,16 +1,19 @@
+import RetryHandler from '../../utils/RetryHandler.js';
 import RecordCommand from './RecordCommand.js';
 import StopCommand from './StopCommand.js';
 import StatusCommand from './StatusCommand.js';
-import SetChannelCommand from './SetChannelCommand.js';
+import SetSummaryChannelCommand from './SetSummaryChannelCommand.js';
 import SetKeyCommand from './SetKeyCommand.js';
 import SetTimeIntervalCommand from './SetTimeIntervalCommand.js';
 import logger from '../../utils/logger.js';
 import { MessageFlags } from 'discord.js';
+import { handleReply } from '../../utils/interactionHelper.js';
 
 export default class CommandRegistry {
     constructor(container) {
         this.container = container;
         this.commands = new Map();
+        this.retryHandler = new RetryHandler(3, 1000); // 3 retries, starting with 1s delay
         this.registerCommands();
     }
 
@@ -19,9 +22,9 @@ export default class CommandRegistry {
             RecordCommand,
             StopCommand,
             StatusCommand,
-            SetChannelCommand,
+            SetSummaryChannelCommand,
             SetKeyCommand,
-            SetTimeIntervalCommand
+            SetTimeIntervalCommand,
         ];
 
         // Register each command
@@ -44,6 +47,7 @@ export default class CommandRegistry {
         
         if (!command) {
             try {
+                console.log('Unknown command????');
                 if (!interaction.replied && !interaction.deferred) {
                     await interaction.reply({ 
                         content: 'Unknown command', 
@@ -51,21 +55,16 @@ export default class CommandRegistry {
                     });
                 }
             } catch (error) {
+                handleReply(error.message, interaction, true);
                 logger.error('Failed to reply to unknown command:', error);
             }
             return;
         }
 
         try {
-            // Execute the command with a longer timeout for voice operations
-            const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('Command execution timed out')), 60000);
-            });
+            
+            await command.execute(interaction);
 
-            await Promise.race([
-                command.execute(interaction),
-                timeoutPromise
-            ]);
         } catch (error) {
             // Handle command execution errors
             if (error?.message === 'Command execution timed out') {
@@ -73,8 +72,9 @@ export default class CommandRegistry {
                 return;
             }
 
-            logger.error(`Error executing command ${interaction.commandName}:`, error);
+            logger.error(`Error executing command ${interaction.commandName} after retries:`, error);
             throw error; // Let the Bot class handle the error response
         }
     }
+
 }
