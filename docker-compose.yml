@@ -5,13 +5,6 @@ services:
       context: .
       target: builder  # Use the builder stage for development
     platform: linux/amd64
-    deploy:
-      resources:
-        limits:
-          memory: 16G
-          cpus: '4'
-        reservations:
-          memory: 16G
     environment:
       NODE_ENV: development
       PORT: 8080
