@@ -16,27 +16,7 @@ export default class AudioService {
         this.players = new Map();
         this.activeConnections = new Map();
 
-        // Add cleanup verification
-        if (this.events) {
-            this.events.on(RecordingEvents.CLEANUP_COMPLETED, (status) => {
-                if (!status.success) {
-                    this.logger.error(`[AudioService] Cleanup failed for guild ${status.guildId}:`, {
-                        details: status.details,
-                        errors: status.errors
-                    });
-                    return;
-                }
-
-                // Verify all resources were properly cleaned up
-                const allResourcesCleaned = Object.values(status.details).every(value => value === true);
-                
-                if (!allResourcesCleaned) {
-                    this.logger.warn(`[AudioService] Some resources may not have been properly cleaned up:`, status.details);
-                } else {
-                    this.logger.info(`[AudioService] All resources successfully cleaned up for guild ${status.guildId}`);
-                }
-            });
-        }
+        // Add cleanup verifica
     }
 
     async convertToMp3(inputFile) {
