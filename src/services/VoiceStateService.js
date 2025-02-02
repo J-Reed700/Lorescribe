@@ -37,10 +37,48 @@ export default class VoiceStateService extends EventEmitter {
                         connection.removeAllListeners();
                     };
 
-                    connection.on(VoiceConnectionStatus.Ready, () => {
-                        logger.info(`[VoiceStateService] Connection ready for guild ${guildId}`);
-                        cleanup();
-                        resolve();
+                    // Handle all possible state transitions
+                    connection.on('stateChange', async (oldState, newState) => {
+                        logger.info(`[VoiceStateService] Connection state changed from ${oldState.status} to ${newState.status} for guild ${guildId}`);
+                        
+                        switch (newState.status) {
+                            case VoiceConnectionStatus.Ready:
+                                logger.info(`[VoiceStateService] Connection ready for guild ${guildId}`);
+                                cleanup();
+                                resolve();
+                                break;
+                            
+                            case VoiceConnectionStatus.Connecting:
+                            case VoiceConnectionStatus.Signalling:
+                                // These are normal transition states, just wait
+                                break;
+                            
+                            case VoiceConnectionStatus.Disconnected:
+                                try {
+                                    await Promise.race([
+                                        entersState(connection, VoiceConnectionStatus.Ready, 5_000),
+                                        entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+                                        entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+                                    ]);
+                                    // Seems to be reconnecting to a new channel
+                                    break;
+                                } catch (error) {
+                                    // Seems to be a real disconnect
+                                    connection.destroy();
+                                    reject(new Error('Disconnected from voice channel'));
+                                }
+                                break;
+                            
+                            case VoiceConnectionStatus.Destroyed:
+                                cleanup();
+                                reject(new Error('Connection destroyed'));
+                                break;
+                            
+                            default:
+                                // Unknown state
+                                logger.warn(`[VoiceStateService] Unknown connection state: ${newState.status}`);
+                                break;
+                        }
                     });
 
                     connection.on('error', (error) => {
@@ -53,14 +91,6 @@ export default class VoiceStateService extends EventEmitter {
                         cleanup();
                         connection.destroy();
                         reject(error);
-                    });
-
-                    connection.on('stateChange', (oldState, newState) => {                        
-                        if (newState.status === VoiceConnectionStatus.Destroyed) {
-                            cleanup();
-                            reject(new Error('Connection destroyed'));
-                            return;
-                        }
                     });
                 });
 

@@ -187,8 +187,6 @@ export default class AudioService {
             throw new Error('No voice receiver available');
         }
 
-        connection.removeAllListeners();
-
         // Add connection state logging
         this.logger.info(`[AudioService] Starting recording with connection state:`, {
             status: connection.state.status,
@@ -223,6 +221,10 @@ export default class AudioService {
             this.logger.error('[AudioService] Output stream error:', error);
         });
 
+        // Monitor connection state
+        connection.on('stateChange', (oldState, newState) => {
+            this.logger.info(`[AudioService] Voice connection state changed from ${oldState.status} to ${newState.status}`);
+        });
 
         // Monitor speaking states and create audio subscriptions
         receiver.speaking.on('start', async (userId) => {
