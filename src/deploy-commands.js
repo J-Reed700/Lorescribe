@@ -4,8 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import logger from './utils/logger.js';
-import Container from './services/Container.js';
-import ConfigurationService from './services/ConfigurationService.js';
+import ServiceFactory from './services/ServiceFactory.js';
 import baseConfig from './config.js';
 
 // Load environment variables
@@ -14,9 +13,10 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const commands = [];
+
 // Create minimal container with only required services
-const services = await new ServiceFactory(baseConfig).initialize();
-const container = services.initialize();
+const container = await new ServiceFactory(baseConfig).initialize();
 
 // Grab all the command folders from the commands directory
 const foldersPath = path.join(__dirname, 'commands');

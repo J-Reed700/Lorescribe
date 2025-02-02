@@ -11046,3 +11046,51 @@ The bot will now record and summarize your voice channel conversation.
 2025-02-02T06:10:02.685Z [32minfo[39m: Deploying commands globally...
 2025-02-02T06:10:02.994Z [32minfo[39m: Global commands deployed successfully
 2025-02-02T06:10:02.994Z [32minfo[39m: Successfully reloaded 2 application (/) commands.
+2025-02-02T07:05:53.927Z [32minfo[39m: Loaded 2 guild configs, 0 errors
+2025-02-02T07:05:53.952Z [32minfo[39m: [ServiceFactory] Services initialized successfully
+2025-02-02T07:05:53.958Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"temp","fileCount":0,"maxAge":0}
+2025-02-02T07:05:53.963Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/transcripts","fileCount":1,"maxAge":2592000000}
+2025-02-02T07:05:53.966Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/summaries","fileCount":0,"maxAge":2592000000}
+2025-02-02T07:05:53.966Z [32minfo[39m: [StorageService] Storage cleanup completed
+2025-02-02T07:05:53.978Z [32minfo[39m: Loaded command: record
+2025-02-02T07:05:53.980Z [32minfo[39m: Loaded command: setkey
+2025-02-02T07:05:53.981Z [32minfo[39m: Loaded command: setsummarychannel
+2025-02-02T07:05:53.982Z [32minfo[39m: Loaded command: setinterval
+2025-02-02T07:05:53.983Z [32minfo[39m: Loaded command: status
+2025-02-02T07:05:53.984Z [32minfo[39m: Loaded command: stop
+2025-02-02T07:05:53.984Z [32minfo[39m: Started refreshing 6 application (/) commands.
+2025-02-02T07:05:53.984Z [32minfo[39m: Deploying commands to guild 1315144523336122469...
+2025-02-02T07:05:53.995Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:53.995Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.047Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.047Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.150Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.150Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.186Z [32minfo[39m: Guild commands deployed successfully
+2025-02-02T07:05:54.186Z [32minfo[39m: Deploying commands globally...
+2025-02-02T07:05:54.303Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.303Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.507Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.507Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.520Z [32minfo[39m: Global commands deployed successfully
+2025-02-02T07:05:54.521Z [32minfo[39m: Successfully reloaded 6 application (/) commands.
+2025-02-02T07:05:54.760Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:54.761Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:55.065Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:55.065Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:55.420Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:55.421Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:55.826Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:55.826Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:56.281Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:56.282Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:56.788Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:56.789Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:57.344Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:57.344Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:57.948Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:57.949Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:58.601Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:58.602Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:59.304Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-02-02T07:05:59.305Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}

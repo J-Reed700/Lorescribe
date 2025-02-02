@@ -47,7 +47,7 @@ export default class CommandRegistry {
         
         if (!command) {
             try {
-                console.log('Unknown command????');
+                logger.warn('Unknown command received:', interaction.commandName);
                 if (!interaction.replied && !interaction.deferred) {
                     await interaction.reply({ 
                         content: 'Unknown command', 
@@ -62,19 +62,47 @@ export default class CommandRegistry {
         }
 
         try {
-            
             await command.execute(interaction);
-
         } catch (error) {
             // Handle command execution errors
             if (error?.message === 'Command execution timed out') {
                 logger.warn(`Command ${interaction.commandName} timed out`);
+                await this.handleErrorResponse(interaction, '⚠️ Command timed out. Please try again.');
                 return;
             }
 
-            logger.error(`Error executing command ${interaction.commandName} after retries:`, error);
-            throw error; // Let the Bot class handle the error response
+            logger.error(`Error executing command ${interaction.commandName}:`, error);
+            
+            // Provide user-friendly error messages
+            let errorMessage = '❌ An error occurred while executing the command.';
+            
+            if (error.message === 'OpenAI API key not set') {
+                errorMessage = '❌ OpenAI API key not set. Please use `/setkey` to set your API key first.';
+            } else if (error.message === 'Connection destroyed') {
+                errorMessage = '❌ Failed to connect to voice channel. Please make sure you are in a voice channel and try again.';
+            } else if (error.message.includes('REDIS')) {
+                errorMessage = '❌ Database connection error. Please try again later.';
+            }
+
+            await this.handleErrorResponse(interaction, errorMessage);
+            throw error; // Still throw for logging purposes
         }
     }
 
+    async handleErrorResponse(interaction, message) {
+        try {
+            if (!interaction.replied && !interaction.deferred) {
+                await interaction.reply({
+                    content: message,
+                    flags: MessageFlags.Ephemeral
+                });
+            } else {
+                await interaction.editReply({
+                    content: message
+                });
+            }
+        } catch (error) {
+            logger.error('Failed to send error response:', error);
+        }
+    }
 }
