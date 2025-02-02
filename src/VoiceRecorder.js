@@ -328,6 +328,10 @@ export default class VoiceRecorder extends EventEmitter {
             throw new Error('OpenAI API key not set');
         }
 
+        if(this.configService.getGuildConfig(guildId)?.summaryChannelId === null) {
+            throw new Error('Summary channel not set');
+        }
+
         if (this.activeRecordings.has(guildId)) {
 
             throw new Error('Recording already in progress');
