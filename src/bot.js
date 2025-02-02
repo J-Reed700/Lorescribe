@@ -5,6 +5,7 @@ import logger from './utils/logger.js';
 import { ensureDirectoryStructure } from './utils/setup.js';
 import { MessageFlags } from 'discord.js';
 import baseConfig from './config.js';
+import { startServer } from './server.js';
 
 export default class Bot {
     constructor() {
@@ -99,6 +100,9 @@ export default class Bot {
 async function main() {
     const bot = new Bot();
     await bot.initialize();
+    
+    // Start the health check server
+    startServer(bot.container);
 }
 
 main().catch(error => {

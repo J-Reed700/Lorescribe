@@ -61,7 +61,6 @@ RUN mkdir -p /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app
     chmod -R 777 /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries
 
 # Set environment variables
-ENV NODE_ENV=production
 ENV PORT=8080
 
 # Command to run the bot
