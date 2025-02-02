@@ -2,13 +2,11 @@ import BaseCommand from './BaseCommand.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import logger from '../../utils/logger.js';
 import { handleReply } from '../../utils/interactionHelper.js';
-import RetryHandler from '../../utils/RetryHandler.js';
 
 export default class StopCommand extends BaseCommand {
     constructor(services) {
         super(services);
         this.voiceRecorder = services.get('voiceRecorder');
-        this.retryHandler = new RetryHandler(3, 1000);
     }
 
     getData() {
@@ -22,7 +20,7 @@ export default class StopCommand extends BaseCommand {
             await this.deferReplyIfNeeded(interaction, false);
             
             logger.info('[StopCommand] Stopping recording...');
-            await this.retryHandler.execute(() => this.voiceRecorder.stopRecording(interaction.guildId));
+            await this.voiceRecorder.stopRecording(interaction.guildId);
             
             await handleReply(
                 [

@@ -122,14 +122,7 @@ export default class VoiceRecorder extends EventEmitter {
                     size: stats.size,
                     filename: recordingInfo.filename
                 });
-                
-                // Notify users about empty recording
-                const guildConfig = this.configService.getGuildConfig(guildId);
-                if (guildConfig?.summaryChannelId) {
-                    await this.channelService.sendMessage(guildConfig.summaryChannelId, {
-                        content: `⚠️ **Empty Recording** ⚠️\nThe last recording segment was empty or too short. This might happen if no one was speaking.`
-                    }).catch(err => this.logger.error('[VoiceRecorder] Failed to send empty recording message:', err));
-                }
+       
                 
                 await this.storage.deleteFile(recordingInfo.filename);
                 return;
@@ -286,7 +279,7 @@ export default class VoiceRecorder extends EventEmitter {
                             clearTimeout(timeout);
                             this.logger.info('[VoiceRecorder] Output stream closed successfully');
                             resolve();
-                        }
+                        } 
                     };
 
                     recordingInfo.outputStream.once('end', cleanup);
@@ -462,9 +455,10 @@ export default class VoiceRecorder extends EventEmitter {
             return;
         }
         
+        let mp3File;
         try {   
             // Now that streams are cleaned up, process the recording
-            const mp3File = await this.audioService.convertToMp3(recordingInfo.filename);
+            mp3File = await this.audioService.convertToMp3(recordingInfo.filename);
 
             const transummarize = await this.TrascribeAndSummarize(recordingInfo, guildId, mp3File);
             await this.sendSummaryToChannel(guildId, transummarize);
@@ -479,9 +473,10 @@ export default class VoiceRecorder extends EventEmitter {
         } catch (error) {
             this.logger.error('[VoiceRecorder] Error in transcription/summarization:', error);
             throw error;
+        } finally {
+            await this.cleanup(recordingInfo.guildId);
         }
 
-        await this.cleanup(recordingInfo.guildId); 
         return mp3File;
     }
 

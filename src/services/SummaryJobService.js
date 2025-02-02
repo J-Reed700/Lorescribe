@@ -33,7 +33,7 @@ export default class SummaryJobService {
                 // Emit success event
                 this.events.emit(RecordingEvents.RECORDING_SUMMARIZED, {
                     guildId,
-                    summary: summaryObject.summary,
+                    summary: transummarize.summary,
                     transcript,
                     timestamp,
                     isBackgroundGenerated: true
