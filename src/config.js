@@ -3,7 +3,7 @@ export default {
     ROTATION_DELAY: 500, // 500ms delay before processing rotated file
     CHUNK_DURATION: 30 * 1000, // 30 seconds
     MAX_CHUNKS: 48, // 4 hours total maximum
-    MAX_FILE_SIZE: 20 * 1024 * 1024, // 20MB to stay safely under OpenAI's 25MB limit
+    MAX_FILE_SIZE: 15 * 1024 * 1024, // Reduced to 15MB for faster rotation
     JOB_DELAY: 5000, // 5 seconds delay for debugging
     ORGANIZE_PROMPT: `You are given a transcript of a voice chat. Please organize the transcript into a structured format. Organize and assign a name to each speaker. If there is no way to defer the speaker, just use user1, user2, and so on.`,
     SUMMARY_PROMPT: `
@@ -124,10 +124,10 @@ export default {
         'SendMessages'
     ],
     VOICE: {
-        BITRATE: 64000,  // Reduced from 96000 to 64000 - still good quality but smaller file size
+        BITRATE: 48000,  // Reduced for better multi-speaker handling
         SILENCE_FRAME_LENGTH: 10000,
-        SAMPLE_RATE: 48000,
-        CHANNELS: 1,     // Changed from 2 to 1 - mono instead of stereo
+        SAMPLE_RATE: 32000,  // Reduced from 48000 for better file size
+        CHANNELS: 1,     // Keeping mono for size control
         ENCODING: 'opus'
     },
     STORAGE: {
@@ -140,6 +140,7 @@ export default {
     OUTPUT: {
         DIRECTORY: 'recordings',  // Deprecated, use STORAGE paths instead
         FORMAT: 'mp3',
-        QUALITY: 2
+        QUALITY: 3,  // Increased compression
+        BITRATE: '48k'  // Added explicit bitrate control
     }
 };

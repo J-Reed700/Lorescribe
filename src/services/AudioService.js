@@ -5,6 +5,7 @@ import { EndBehaviorType } from '@discordjs/voice';
 import prism from 'prism-media';
 import logger from '../utils/logger.js';
 import RecordingEvents from '../events/RecordingEvents.js';
+import config from '../config.js';
 
 export default class AudioService {
     constructor(voiceState, storage, logger, client, events) {
@@ -15,6 +16,7 @@ export default class AudioService {
         this.events = events;
         this.players = new Map();
         this.activeConnections = new Map();
+        this.config = config;
 
         // Add cleanup verifica
     }
@@ -40,13 +42,13 @@ export default class AudioService {
                 const ffmpeg = spawn('ffmpeg', [
                     '-hide_banner',
                     '-f', 's16le',
-                    '-ar', '44100',     // Bumped up from 32000 to 44100 (CD quality)
-                    '-ac', '1',         // Keeping mono for size control
+                    '-ar', String(this.config.VOICE.SAMPLE_RATE),
+                    '-ac', String(this.config.VOICE.CHANNELS),
                     '-acodec', 'pcm_s16le',
                     '-i', inputFile,
                     '-codec:a', 'libmp3lame',
-                    '-q:a', '4',        // Better quality (5->4)
-                    '-b:a', '96k',      // Higher bitrate (64k->96k)
+                    '-q:a', String(this.config.OUTPUT.QUALITY),
+                    '-b:a', this.config.OUTPUT.BITRATE,
                     '-y',
                     outputFile
                 ]);
@@ -134,8 +136,8 @@ export default class AudioService {
         let opusDecoder;
         try {
             const decoder = new prism.opus.Decoder({ 
-                rate: 44100,    // Bumped up to match FFmpeg
-                channels: 1,    // Keeping mono
+                rate: this.config.VOICE.SAMPLE_RATE,
+                channels: this.config.VOICE.CHANNELS,
                 frameSize: 960 
             });
             opusDecoder = decoder;
@@ -143,17 +145,17 @@ export default class AudioService {
         } catch (e) {
             try {
                 const { default: OpusScript } = await import('opusscript');
-                opusDecoder = new OpusScript(48000, 2);
+                opusDecoder = new OpusScript(this.config.VOICE.SAMPLE_RATE, this.config.VOICE.CHANNELS);
                 this.logger.info('[VoiceRecorder] Using opusscript decoder');
             } catch (e) {
                 try {
                     const { default: NodeOpus } = await import('node-opus');
-                    opusDecoder = new NodeOpus.OpusDecoder(48000, 2);
+                    opusDecoder = new NodeOpus.OpusDecoder(this.config.VOICE.SAMPLE_RATE, this.config.VOICE.CHANNELS);
                     this.logger.info('[VoiceRecorder] Using node-opus decoder');
                 } catch (e) {
                     try {
                         const { OpusDecoder } = await import('@discordjs/opus');
-                        opusDecoder = new OpusDecoder(48000, 2);
+                        opusDecoder = new OpusDecoder(this.config.VOICE.SAMPLE_RATE, this.config.VOICE.CHANNELS);
                         this.logger.info('[VoiceRecorder] Using @discordjs/opus decoder');
                     } catch (e) {
                         this.logger.error('[VoiceRecorder] Failed to load any opus decoder:', e);
