@@ -10827,3 +10827,194 @@ The bot will now record and summarize your voice channel conversation.
 2025-01-31T06:19:06.175Z [32minfo[39m: heapUsed: 26.3 MB
 2025-01-31T06:19:06.177Z [32minfo[39m: external: 8.06 MB
 2025-01-31T06:19:06.177Z [32minfo[39m: arrayBuffers: 0.15 MB
+2025-01-31T06:25:04.251Z [32minfo[39m: Loaded 2 guild configs, 0 errors
+2025-01-31T06:25:04.293Z [32minfo[39m: [ServiceFactory] Services initialized successfully
+2025-01-31T06:25:04.399Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"temp","fileCount":0,"maxAge":0}
+2025-01-31T06:25:04.423Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/transcripts","fileCount":1,"maxAge":2592000000}
+2025-01-31T06:25:04.429Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/summaries","fileCount":0,"maxAge":2592000000}
+2025-01-31T06:25:04.429Z [32minfo[39m: [StorageService] Storage cleanup completed
+2025-01-31T06:25:04.829Z [32minfo[39m: Bot initialized successfully
+2025-01-31T06:25:04.871Z [32minfo[39m: Logged in as Lorescribe#8404
+2025-01-31T06:25:29.034Z [32minfo[39m: Command Name: setkey
+2025-01-31T06:25:29.039Z [32minfo[39m: [BaseCommand] Deferring reply with ephemeral flag
+2025-01-31T06:25:29.240Z [32minfo[39m: Set OpenAI key for guild 1315144523336122469 (stored in memory only)
+2025-01-31T06:25:29.243Z [32minfo[39m: [handleReply] Interaction state: ✅ **Success!** OpenAI API key has been set
+> The key will be stored securely and used for transcription.{"deferred":true,"replied":false,"ephemeral":true,"interactionId":"1334771519066210376","commandName":"setkey","isCommand":true,"isMessageComponent":false,"isModalSubmit":false}
+2025-01-31T06:25:29.244Z [32minfo[39m: [handleReply] Attempting edit reply
+2025-01-31T06:25:32.850Z [32minfo[39m: Command Name: record
+2025-01-31T06:25:32.854Z [32minfo[39m: [BaseCommand] Deferring reply without ephemeral flag
+2025-01-31T06:25:33.035Z [32minfo[39m: [RecordCommand] Starting recording...
+2025-01-31T06:25:33.299Z [32minfo[39m: [VoiceStateService] Connection ready for guild 1315144523336122469
+2025-01-31T06:25:33.302Z [32minfo[39m: [VoiceStateService] Successfully connected to voice channel in guild 1315144523336122469 (attempt 1)
+2025-01-31T06:25:33.303Z [32minfo[39m: [VoiceRecorder] Joined voice channel for guild 1315144523336122469
+2025-01-31T06:25:33.303Z [32minfo[39m: [VoiceRecorder] Joined voice channel for guild 1315144523336122469
+2025-01-31T06:25:33.304Z [32minfo[39m: [StorageService] Generating temp file path for guild 1315144523336122469 with type pcm
+2025-01-31T06:25:33.306Z [32minfo[39m: [StorageService] Generated temp file path:{"guildId":"1315144523336122469","type":"pcm","filename":"recording-1315144523336122469-1738304733306-eenarhy98o.pcm","directory":"temp"}
+2025-01-31T06:25:33.383Z [32minfo[39m: [VoiceRecorder] Using prism-media opus decoder
+2025-01-31T06:25:33.384Z [32minfo[39m: [AudioService] Starting recording with connection state:{"status":"ready","adapter":"present","subscription":"inactive"}
+2025-01-31T06:25:33.385Z [32minfo[39m: [AudioService] Voice receiver state:{"subscriptions":0}
+2025-01-31T06:25:33.385Z [32minfo[39m: [AudioService] Recording setup complete, waiting for audio...
+2025-01-31T06:25:33.385Z [32minfo[39m: [VoiceRecorder] Started recording for guild 1315144523336122469
+2025-01-31T06:25:33.385Z [32minfo[39m: [RecordCommand] Deferred state:{"deferred":true,"replied":false}
+2025-01-31T06:25:33.386Z [32minfo[39m: [handleReply] Interaction state: 🎙️ **Recording Started!**
+The bot will now record and summarize your voice channel conversation.
+
+💡 **Tips:**
+• `Speak clearly` and at a normal pace
+• `Avoid background noise` if possible
+• Use `/stop` to end the recording
+
+> Your recording will be automatically processed and summarized.
+> Use high-quality audio for best results.{"deferred":true,"replied":false,"ephemeral":false,"interactionId":"1334771535185055794","commandName":"record","isCommand":true,"isMessageComponent":false,"isModalSubmit":false}
+2025-01-31T06:25:33.386Z [32minfo[39m: [handleReply] Attempting edit reply
+2025-01-31T06:25:33.422Z [32minfo[39m: [AudioService] User 406937877348352001 started speaking
+2025-01-31T06:25:33.423Z [32minfo[39m: [AudioService] Set up audio stream for user 406937877348352001
+2025-01-31T06:25:35.311Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 84 bytes (total: 15246 bytes)
+2025-01-31T06:25:37.394Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 26949 bytes)
+2025-01-31T06:25:39.474Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 167 bytes (total: 40998 bytes)
+2025-01-31T06:25:40.118Z [32minfo[39m: [AudioService] User 406937877348352001 stopped speaking
+2025-01-31T06:25:42.094Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 160 bytes (total: 54343 bytes)
+2025-01-31T06:25:44.095Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 69691 bytes)
+2025-01-31T06:25:46.229Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 81814 bytes)
+2025-01-31T06:25:48.712Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 96583 bytes)
+2025-01-31T06:25:50.714Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 164 bytes (total: 112298 bytes)
+2025-01-31T06:25:52.712Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 174 bytes (total: 127356 bytes)
+2025-01-31T06:25:54.712Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 134 bytes (total: 143406 bytes)
+2025-01-31T06:25:56.933Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 171 bytes (total: 157870 bytes)
+2025-01-31T06:25:59.174Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 64 bytes (total: 171757 bytes)
+2025-01-31T06:26:01.774Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 180674 bytes)
+2025-01-31T06:26:04.553Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 171 bytes (total: 196308 bytes)
+2025-01-31T06:26:06.554Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 156 bytes (total: 212236 bytes)
+2025-01-31T06:26:09.136Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 180 bytes (total: 225873 bytes)
+2025-01-31T06:26:11.216Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 182 bytes (total: 240227 bytes)
+2025-01-31T06:26:13.213Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 163 bytes (total: 254698 bytes)
+2025-01-31T06:26:15.213Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 167 bytes (total: 269293 bytes)
+2025-01-31T06:26:17.377Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 162 bytes (total: 283780 bytes)
+2025-01-31T06:26:19.372Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 298568 bytes)
+2025-01-31T06:26:21.473Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 172 bytes (total: 314118 bytes)
+2025-01-31T06:26:23.474Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 167 bytes (total: 330082 bytes)
+2025-01-31T06:26:26.343Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 159 bytes (total: 342949 bytes)
+2025-01-31T06:26:28.338Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 148 bytes (total: 358755 bytes)
+2025-01-31T06:26:30.331Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 176 bytes (total: 372649 bytes)
+2025-01-31T06:26:32.334Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 167 bytes (total: 388466 bytes)
+2025-01-31T06:26:34.333Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 169 bytes (total: 404473 bytes)
+2025-01-31T06:26:37.072Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 181 bytes (total: 417886 bytes)
+2025-01-31T06:26:39.733Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 172 bytes (total: 431717 bytes)
+2025-01-31T06:26:41.733Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 173 bytes (total: 447586 bytes)
+2025-01-31T06:26:43.730Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 462029 bytes)
+2025-01-31T06:26:45.731Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 174 bytes (total: 478147 bytes)
+2025-01-31T06:26:47.732Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 171 bytes (total: 494003 bytes)
+2025-01-31T06:26:49.733Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 510038 bytes)
+2025-01-31T06:26:51.812Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 94 bytes (total: 523066 bytes)
+2025-01-31T06:26:53.912Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 53 bytes (total: 536723 bytes)
+2025-01-31T06:26:57.693Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 546651 bytes)
+2025-01-31T06:27:00.054Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 147 bytes (total: 562719 bytes)
+2025-01-31T06:27:02.053Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 167 bytes (total: 577139 bytes)
+2025-01-31T06:27:04.133Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 591292 bytes)
+2025-01-31T06:27:06.132Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 150 bytes (total: 606006 bytes)
+2025-01-31T06:27:08.132Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 168 bytes (total: 619079 bytes)
+2025-01-31T06:27:10.652Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 176 bytes (total: 631439 bytes)
+2025-01-31T06:27:12.653Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 169 bytes (total: 647704 bytes)
+2025-01-31T06:27:14.652Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 155 bytes (total: 663542 bytes)
+2025-01-31T06:27:16.734Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 140 bytes (total: 677957 bytes)
+2025-01-31T06:27:18.732Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 174 bytes (total: 693932 bytes)
+2025-01-31T06:27:20.737Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 156 bytes (total: 709936 bytes)
+2025-01-31T06:27:22.733Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 725936 bytes)
+2025-01-31T06:27:24.732Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 174 bytes (total: 741552 bytes)
+2025-01-31T06:27:26.733Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 166 bytes (total: 757429 bytes)
+2025-01-31T06:27:29.673Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 131 bytes (total: 771415 bytes)
+2025-01-31T06:27:31.672Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 154 bytes (total: 785784 bytes)
+2025-01-31T06:27:33.670Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 168 bytes (total: 799759 bytes)
+2025-01-31T06:27:35.672Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 812147 bytes)
+2025-01-31T06:27:37.673Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 827791 bytes)
+2025-01-31T06:27:39.752Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 179 bytes (total: 842277 bytes)
+2025-01-31T06:27:41.753Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 53 bytes (total: 857654 bytes)
+2025-01-31T06:27:43.753Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 872056 bytes)
+2025-01-31T06:27:45.753Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 48 bytes (total: 885805 bytes)
+2025-01-31T06:27:47.752Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 147 bytes (total: 900510 bytes)
+2025-01-31T06:27:49.754Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 156 bytes (total: 915525 bytes)
+2025-01-31T06:27:51.833Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 184 bytes (total: 929589 bytes)
+2025-01-31T06:27:54.133Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 145 bytes (total: 942941 bytes)
+2025-01-31T06:27:57.312Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 166 bytes (total: 956228 bytes)
+2025-01-31T06:27:59.613Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 175 bytes (total: 970316 bytes)
+2025-01-31T06:28:01.614Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 165 bytes (total: 985797 bytes)
+2025-01-31T06:28:03.911Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 133 bytes (total: 999091 bytes)
+2025-01-31T06:28:05.913Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 159 bytes (total: 1015223 bytes)
+2025-01-31T06:28:07.912Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 146 bytes (total: 1029998 bytes)
+2025-01-31T06:28:09.913Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 169 bytes (total: 1043972 bytes)
+2025-01-31T06:28:12.394Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 177 bytes (total: 1057556 bytes)
+2025-01-31T06:28:14.594Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 169 bytes (total: 1069239 bytes)
+2025-01-31T06:28:16.592Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 179 bytes (total: 1084323 bytes)
+2025-01-31T06:28:18.594Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 148 bytes (total: 1099079 bytes)
+2025-01-31T06:28:20.595Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 151 bytes (total: 1114867 bytes)
+2025-01-31T06:28:22.933Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 102 bytes (total: 1129337 bytes)
+2025-01-31T06:28:25.033Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 154 bytes (total: 1143347 bytes)
+2025-01-31T06:28:27.032Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 128 bytes (total: 1159037 bytes)
+2025-01-31T06:28:29.432Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 1173248 bytes)
+2025-01-31T06:28:31.432Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 1188110 bytes)
+2025-01-31T06:28:33.772Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 158 bytes (total: 1200601 bytes)
+2025-01-31T06:28:37.874Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 158 bytes (total: 1212651 bytes)
+2025-01-31T06:28:39.871Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 166 bytes (total: 1227160 bytes)
+2025-01-31T06:28:41.872Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 161 bytes (total: 1242376 bytes)
+2025-01-31T06:28:43.871Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 1255299 bytes)
+2025-01-31T06:28:46.771Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 149 bytes (total: 1269314 bytes)
+2025-01-31T06:28:49.212Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 145 bytes (total: 1279054 bytes)
+2025-01-31T06:28:51.212Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 106 bytes (total: 1291229 bytes)
+2025-01-31T06:28:53.214Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 154 bytes (total: 1305445 bytes)
+2025-01-31T06:28:55.213Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 172 bytes (total: 1320630 bytes)
+2025-01-31T06:28:57.293Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 165 bytes (total: 1334748 bytes)
+2025-01-31T06:28:59.711Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 167 bytes (total: 1348703 bytes)
+2025-01-31T06:29:02.131Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 168 bytes (total: 1363072 bytes)
+2025-01-31T06:29:04.209Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 144 bytes (total: 1375296 bytes)
+2025-01-31T06:29:06.288Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 1388653 bytes)
+2025-01-31T06:29:08.295Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 157 bytes (total: 1404435 bytes)
+2025-01-31T06:29:10.292Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 183 bytes (total: 1419763 bytes)
+2025-01-31T06:29:12.292Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 175 bytes (total: 1433977 bytes)
+2025-01-31T06:29:14.790Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 165 bytes (total: 1445078 bytes)
+2025-01-31T06:29:16.793Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 150 bytes (total: 1461007 bytes)
+2025-01-31T06:29:18.791Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 153 bytes (total: 1475958 bytes)
+2025-01-31T06:29:20.790Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 174 bytes (total: 1491810 bytes)
+2025-01-31T06:29:22.791Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 161 bytes (total: 1505629 bytes)
+2025-01-31T06:29:24.792Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 1520112 bytes)
+2025-01-31T06:29:27.211Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 181 bytes (total: 1533881 bytes)
+2025-01-31T06:29:29.211Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 49 bytes (total: 1546570 bytes)
+2025-01-31T06:29:33.394Z [32minfo[39m: [StorageService] Generating temp file path for guild 1315144523336122469 with type pcm
+2025-01-31T06:29:33.398Z [32minfo[39m: [StorageService] Generated temp file path:{"guildId":"1315144523336122469","type":"pcm","filename":"recording-1315144523336122469-1738304973395-hjomkyf9fll.pcm","directory":"temp"}
+2025-01-31T06:29:33.404Z [32minfo[39m: [VoiceRecorder] Using prism-media opus decoder
+2025-01-31T06:29:33.405Z [32minfo[39m: [AudioService] Starting recording with connection state:{"status":"ready","adapter":"present","subscription":"inactive"}
+2025-01-31T06:29:33.406Z [32minfo[39m: [AudioService] Voice receiver state:{"subscriptions":1}
+2025-01-31T06:29:33.406Z [32minfo[39m: [AudioService] Recording setup complete, waiting for audio...
+2025-01-31T06:29:33.553Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 158 bytes (total: 1559116 bytes)
+2025-01-31T06:29:34.421Z [32minfo[39m: [VoiceRecorder] Output stream closed successfully
+2025-01-31T06:29:34.975Z [32minfo[39m: [AudioService] User 406937877348352001 started speaking
+2025-01-31T06:29:34.977Z [32minfo[39m: [AudioService] Set up audio stream for user 406937877348352001
+2025-01-31T06:29:35.854Z [32minfo[39m: [AudioService] User 406937877348352001 stopped speaking
+2025-01-31T06:29:37.532Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 139 bytes (total: 13496 bytes)
+2025-01-31T06:29:37.830Z [32minfo[39m: Successfully converted /usr/src/app/temp/recording-1315144523336122469-1738304733306-eenarhy98o.pcm to MP3
+2025-01-31T06:29:37.831Z [32minfo[39m: [TranscriptionService] Starting transcription (attempt 1/3):{"filepath":"/usr/src/app/temp/recording-1315144523336122469-1738304733306-eenarhy98o.pcm.mp3","exists":true}
+2025-01-31T06:29:37.831Z [32minfo[39m: [TranscriptionService] File stats:{"size":2787669,"created":"2025-01-31T06:29:36.304Z","modified":"2025-01-31T06:29:37.802Z"}
+2025-01-31T06:29:37.833Z [32minfo[39m: [TranscriptionService] Transcribing with guildId: 1315144523336122469
+2025-01-31T06:29:37.833Z [32minfo[39m: [TranscriptionService] Creating read stream and sending to OpenAI...
+2025-01-31T06:29:39.532Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 156 bytes (total: 28633 bytes)
+2025-01-31T06:29:41.532Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 166 bytes (total: 42634 bytes)
+2025-01-31T06:29:42.816Z [32minfo[39m: [TranscriptionService] Transcription completed:{"length":621,"hasContent":true,"text":"For example, if there is no audio, just use user1, user2, and so on. For example, if there is no aud"}
+2025-01-31T06:29:42.817Z [32minfo[39m: [VoiceRecorder] Transcript received for guild 1315144523336122469: For example, if there is no audio, just use user1, user2, and so on. For example, if there is no audio, just use user1, user2, and so on. For example, if there is no audio, just use user1, user2, and ...
+2025-01-31T06:29:42.817Z [32minfo[39m: [TranscriptionService] Starting summary generation{"transcriptLength":620,"transcriptSample":"For example, if there is no audio, just use user1, user2, and so on. For example, if there is no aud"}
+2025-01-31T06:29:42.817Z [32minfo[39m: [TranscriptionService] Sending summary prompt to OpenAI with model gpt-4
+2025-01-31T06:29:43.534Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 166 bytes (total: 56231 bytes)
+2025-01-31T06:29:43.588Z [33mwarn[39m: [TranscriptionService] Unable to summarize, using transcript as fallback{"responseContent":"Unable to summarize."}
+2025-01-31T06:29:43.589Z [32minfo[39m: [TranscriptionService] Summary generated successfully:{"length":620,"transcriptLength":620,"summary":"For example, if there is no audio, just use user1, user2, and so on. For example, if there is no aud"}
+2025-01-31T06:29:43.595Z [32minfo[39m: [StorageService] Saved transcript:{"guildId":"1315144523336122469","fileName":"transcript-1315144523336122469-1738304983589.txt","size":620}
+2025-01-31T06:29:43.596Z [32minfo[39m: [ChannelService] Sending message to channel
+2025-01-31T06:29:43.964Z [31merror[39m: [AudioService] Cleanup failed for guild 1315144523336122469:{}
+2025-01-31T06:29:44.045Z [32minfo[39m: [StorageService] Deleted file:{"file":"recording-1315144523336122469-1738304733306-eenarhy98o.pcm","directory":"/usr/src/app/temp"}
+2025-01-31T06:29:44.052Z [32minfo[39m: [StorageService] Deleted file:{"file":"recording-1315144523336122469-1738304733306-eenarhy98o.pcm.mp3","directory":"/usr/src/app/temp"}
+2025-01-31T06:29:44.052Z [32minfo[39m: [VoiceRecorder] Successfully rotated recording for guild 1315144523336122469
+2025-01-31T06:29:45.530Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 170 bytes (total: 72094 bytes)
+2025-01-31T06:29:48.371Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 128 bytes (total: 86201 bytes)
+2025-01-31T06:29:50.455Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 158 bytes (total: 97609 bytes)
+2025-01-31T06:29:52.451Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 111866 bytes)
+2025-01-31T06:29:56.833Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 3 bytes (total: 123890 bytes)
+2025-01-31T06:29:59.349Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 150 bytes (total: 137561 bytes)
+2025-01-31T06:30:01.548Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 159 bytes (total: 150893 bytes)
+2025-01-31T06:30:03.630Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 169 bytes (total: 163936 bytes)

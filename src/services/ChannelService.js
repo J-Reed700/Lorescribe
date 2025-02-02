@@ -17,7 +17,7 @@ export default class ChannelService {
                 if(isTranscription) {
                     await this.sendMessage(guildConfig.summaryChannelId, {    
                         content:
-                         `📢❗🚨 **There was an error generating a summary** 📢❗🚨 \n
+                         `*📢❗🚨* **There was an error generating a summary** *📢❗🚨* \n
                             Direct transcription:\n\n${summary}\n
                         *This is a background generated job to retry, JobId:* ${jobId}`
                     }); 

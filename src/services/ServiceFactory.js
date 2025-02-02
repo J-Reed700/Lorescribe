@@ -72,8 +72,7 @@ export default class ServiceFactory {
             ));
 
             // Initialize and register job services
-            const redisUrl = process.env.REDIS_URL || 'redis://redis:6379';
-            const jobService = new JobService(redisUrl);
+            const jobService = new JobService();
             this.containerInstance.register('jobs', jobService);
             
             // Register summary job service

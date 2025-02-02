@@ -1,10 +1,10 @@
 import Queue from 'bull';
 import logger from '../utils/logger.js';
+import { redisUrl } from '../config/redis.js';
 
 export default class JobService {
-    constructor(redisUrl) {
+    constructor() {
         this.queues = new Map();
-        this.redisUrl = redisUrl;
         this.processors = new Map();
         this.failedJobsKey = 'failed_jobs';  // Redis key for failed jobs
     }
@@ -14,13 +14,16 @@ export default class JobService {
             return this.queues.get(name);
         }
 
-        const queue = new Queue(name, this.redisUrl, {
+        const queue = new Queue(name, redisUrl, {
             defaultJobOptions: {
                 attempts: 3,
                 backoff: {
                     type: 'exponential',
                     delay: 1000
                 }
+            },
+            redis: {
+                tls: process.env.REDIS_TLS_ENABLED === 'true' ? { rejectUnauthorized: false } : undefined
             }
         });
 
