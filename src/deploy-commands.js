@@ -15,11 +15,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Create minimal container with only required services
-const container = new Container();
-container.register('config', new ConfigurationService(baseConfig));
-container.register('logger', logger);
+const services = await new ServiceFactory(baseConfig).initialize();
+const container = services.initialize();
 
-const commands = [];
 // Grab all the command folders from the commands directory
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
