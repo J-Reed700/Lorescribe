@@ -14,7 +14,7 @@ export default class ChannelService {
             try {
                 const {summary, isTranscription, jobId, isUnableToSummarize} = transummarize;
                 
-                if(isTranscription) {
+                if(isTranscription && !isUnableToSummarize) {
                     await this.sendMessage(guildConfig.summaryChannelId, {    
                         content:
                          `*📢❗🚨* **There was an error generating a summary** *📢❗🚨* \n
