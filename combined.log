@@ -11018,3 +11018,31 @@ The bot will now record and summarize your voice channel conversation.
 2025-01-31T06:29:59.349Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 150 bytes (total: 137561 bytes)
 2025-01-31T06:30:01.548Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 159 bytes (total: 150893 bytes)
 2025-01-31T06:30:03.630Z [32minfo[39m: [AudioService] Received audio data from 406937877348352001: 169 bytes (total: 163936 bytes)
+2025-02-02T06:09:25.529Z [32minfo[39m: Loaded 2 guild configs, 0 errors
+2025-02-02T06:09:25.548Z [32minfo[39m: [ServiceFactory] Services initialized successfully
+2025-02-02T06:09:25.568Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"temp","fileCount":1,"maxAge":0}
+2025-02-02T06:09:25.573Z [32minfo[39m: [StorageService] Deleted old file:{"file":"recording-1315144523336122469-1738304973395-hjomkyf9fll.pcm","age":171561512.34887695,"size":4684800}
+2025-02-02T06:09:25.574Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/transcripts","fileCount":1,"maxAge":2592000000}
+2025-02-02T06:09:25.575Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/summaries","fileCount":0,"maxAge":2592000000}
+2025-02-02T06:09:25.575Z [32minfo[39m: [StorageService] Storage cleanup completed
+2025-02-02T06:09:25.585Z [32minfo[39m: Loaded command: record
+2025-02-02T06:09:25.586Z [32minfo[39m: Loaded command: setkey
+2025-02-02T06:09:25.587Z [32minfo[39m: Loaded command: setsummarychannel
+2025-02-02T06:09:25.588Z [32minfo[39m: Loaded command: setinterval
+2025-02-02T06:09:25.589Z [32minfo[39m: Loaded command: status
+2025-02-02T06:09:25.590Z [32minfo[39m: Loaded command: stop
+2025-02-02T06:09:25.590Z [32minfo[39m: Started refreshing 6 application (/) commands.
+2025-02-02T06:09:25.713Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"WRONGPASS invalid username-password pair or user is disabled.","stack":"ReplyError: WRONGPASS invalid username-password pair or user is disabled.\n    at parseError (/Users/joshreed/Code/SummarizerBot/node_modules/.pnpm/redis-parser@3.0.0/node_modules/redis-parser/lib/parser.js:179:12)\n    at parseType (/Users/joshreed/Code/SummarizerBot/node_modules/.pnpm/redis-parser@3.0.0/node_modules/redis-parser/lib/parser.js:302:14)"}
+2025-02-02T06:10:02.414Z [32minfo[39m: Loaded 2 guild configs, 0 errors
+2025-02-02T06:10:02.434Z [31merror[39m: Error loading command from /Users/joshreed/Code/SummarizerBot/src/commands/audio/RecordCommand.js: Service voiceRecorder not found{"stack":"Error: Service voiceRecorder not found\n    at Container.get (file:///Users/joshreed/Code/SummarizerBot/src/services/Container.js:44:15)\n    at new RecordCommand (file:///Users/joshreed/Code/SummarizerBot/src/commands/audio/RecordCommand.js:9:39)\n    at file:///Users/joshreed/Code/SummarizerBot/src/deploy-commands.js:47:20"}
+2025-02-02T06:10:02.436Z [32minfo[39m: Loaded command: setkey
+2025-02-02T06:10:02.439Z [32minfo[39m: Loaded command: setsummarychannel
+2025-02-02T06:10:02.439Z [31merror[39m: Error loading command from /Users/joshreed/Code/SummarizerBot/src/commands/audio/SetTimeIntervalCommand.js: Service storage not found{"stack":"Error: Service storage not found\n    at Container.get (file:///Users/joshreed/Code/SummarizerBot/src/services/Container.js:44:15)\n    at new SetTimeIntervalCommand (file:///Users/joshreed/Code/SummarizerBot/src/commands/audio/SetTimeIntervalCommand.js:8:33)\n    at file:///Users/joshreed/Code/SummarizerBot/src/deploy-commands.js:47:20"}
+2025-02-02T06:10:02.440Z [31merror[39m: Error loading command from /Users/joshreed/Code/SummarizerBot/src/commands/audio/StatusCommand.js: Service voiceRecorder not found{"stack":"Error: Service voiceRecorder not found\n    at Container.get (file:///Users/joshreed/Code/SummarizerBot/src/services/Container.js:44:15)\n    at new StatusCommand (file:///Users/joshreed/Code/SummarizerBot/src/commands/audio/StatusCommand.js:11:39)\n    at file:///Users/joshreed/Code/SummarizerBot/src/deploy-commands.js:47:20"}
+2025-02-02T06:10:02.442Z [31merror[39m: Error loading command from /Users/joshreed/Code/SummarizerBot/src/commands/audio/StopCommand.js: Service voiceRecorder not found{"stack":"Error: Service voiceRecorder not found\n    at Container.get (file:///Users/joshreed/Code/SummarizerBot/src/services/Container.js:44:15)\n    at new StopCommand (file:///Users/joshreed/Code/SummarizerBot/src/commands/audio/StopCommand.js:10:39)\n    at file:///Users/joshreed/Code/SummarizerBot/src/deploy-commands.js:47:20"}
+2025-02-02T06:10:02.443Z [32minfo[39m: Started refreshing 2 application (/) commands.
+2025-02-02T06:10:02.443Z [32minfo[39m: Deploying commands to guild 1315144523336122469...
+2025-02-02T06:10:02.685Z [32minfo[39m: Guild commands deployed successfully
+2025-02-02T06:10:02.685Z [32minfo[39m: Deploying commands globally...
+2025-02-02T06:10:02.994Z [32minfo[39m: Global commands deployed successfully
+2025-02-02T06:10:02.994Z [32minfo[39m: Successfully reloaded 2 application (/) commands.

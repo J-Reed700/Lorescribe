@@ -4,7 +4,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import logger from './utils/logger.js';
-import ServiceFactory from './services/ServiceFactory.js';
+import Container from './services/Container.js';
+import ConfigurationService from './services/ConfigurationService.js';
 import baseConfig from './config.js';
 
 // Load environment variables
@@ -13,7 +14,10 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const services = await new ServiceFactory(baseConfig).initialize();
+// Create minimal container with only required services
+const container = new Container();
+container.register('config', new ConfigurationService(baseConfig));
+container.register('logger', logger);
 
 const commands = [];
 // Grab all the command folders from the commands directory
@@ -39,16 +43,11 @@ for (const folder of commandFolders) {
 				continue;
 			}
 
-			// Instantiate the command class with services
-			const command = new CommandClass(services);
+			// Instantiate the command class with minimal services
+			const command = new CommandClass(container);
 			
 			if (typeof command.getData !== 'function') {
 				logger.warn(`[WARNING] The command at ${filePath} is missing the getData method.`);
-				continue;
-			}
-
-			if (typeof command.execute !== 'function') {
-				logger.warn(`[WARNING] The command at ${filePath} is missing the execute method.`);
 				continue;
 			}
 
@@ -68,19 +67,30 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 try {
 	logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 
-    if (process.env.GUILD_ID) {
-        // Deploy to guild
-        const guildResult = await rest.put(
-            Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
-            { body: commands }
-        );
-    }
+	// Deploy to guild
+	const guildId = process.env.DISCORD_GUILD_ID;
+	const clientId = process.env.DISCORD_CLIENT_ID;
 
-    // Then deploy globally
-    const globalResult = await rest.put(
-        Routes.applicationCommands(process.env.CLIENT_ID),
-        { body: commands }
-    );
+	if (!clientId) {
+		throw new Error('DISCORD_CLIENT_ID not set in environment variables');
+	}
+
+	if (guildId) {
+		logger.info(`Deploying commands to guild ${guildId}...`);
+		await rest.put(
+			Routes.applicationGuildCommands(clientId, guildId),
+			{ body: commands }
+		);
+		logger.info('Guild commands deployed successfully');
+	}
+
+	// Deploy globally
+	logger.info('Deploying commands globally...');
+	await rest.put(
+		Routes.applicationCommands(clientId),
+		{ body: commands }
+	);
+	logger.info('Global commands deployed successfully');
 
 	logger.info(`Successfully reloaded ${commands.length} application (/) commands.`);
 } catch (error) {

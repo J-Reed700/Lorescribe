@@ -1,6 +1,6 @@
 import Queue from 'bull';
 import logger from '../utils/logger.js';
-import { redisUrl } from '../config/redis.js';
+import { redisUrl, redisOptions } from '../config/redis.js';
 
 export default class JobService {
     constructor() {
@@ -15,15 +15,13 @@ export default class JobService {
         }
 
         const queue = new Queue(name, redisUrl, {
+            ...redisOptions,
             defaultJobOptions: {
                 attempts: 3,
                 backoff: {
                     type: 'exponential',
                     delay: 1000
                 }
-            },
-            redis: {
-                tls: process.env.REDIS_TLS_ENABLED === 'true' ? { rejectUnauthorized: false } : undefined
             }
         });
 
