@@ -49,8 +49,7 @@ export default class SummaryJobService {
                     guildId
                 });
                 // Mark the job as failed and remove it from the queue
-                await job.moveToFailed({ message: error.messsage }, true);
-                return { success: false, error: error.message };
+                throw error;
             }
         });
     }
