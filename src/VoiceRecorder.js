@@ -61,6 +61,12 @@ export default class VoiceRecorder extends EventEmitter {
         const connection = recordingInfo.connection;
 
         try {
+            // Check current file size
+            const stats = await fs.promises.stat(recordingInfo.filename);
+            if (stats.size >= baseConfig.MAX_FILE_SIZE) {
+                this.logger.info(`[VoiceRecorder] File size (${stats.size} bytes) exceeded limit (${baseConfig.MAX_FILE_SIZE} bytes), rotating...`);
+            }
+
             // Create new recording components first
             const { outputStream, opusDecoder, filename } = await this.audioService.createStreamAndOpusDecoder(guildId);
             
@@ -313,40 +319,27 @@ export default class VoiceRecorder extends EventEmitter {
     }
 
     async startRecording(voiceChannel) {
+        if (!voiceChannel) {
+            throw new Error('No voice channel provided');
+        }
 
         const guildId = voiceChannel.guild.id;
-        const interval = await this.configService.getTimeInterval(guildId);
-        
-        if(!this.configService.getOpenAIKey(guildId)) {
-            throw new Error('OpenAI API key not set');
-        }
-
-        if(this.configService.getGuildConfig(guildId)?.summaryChannelId === null) {
-            throw new Error('Summary channel not set');
-        }
-
-        if (this.activeRecordings.has(guildId)) {
-
-            throw new Error('Recording already in progress');
-        }
 
         try {
             // Join the voice channel
-            const connection = await this.voiceState.joinChannel(voiceChannel);
+            await this.voiceState.joinChannel(voiceChannel);
             this.logger.info(`[VoiceRecorder] Joined voice channel for guild ${guildId}`);
+            this.events.emit(RecordingEvents.JOINED_CHANNEL, { guildId });
+
+            const connection = this.voiceState.getConnection(guildId);
             if (!connection) {
-                throw new Error('Failed to establish voice connection');
+                throw new Error('No connection after joining channel');
             }
-            
-            this.logger.info(`[VoiceRecorder] Joined voice channel for guild ${guildId}`);
-            // Create the recording session
+
+            // Set up recording components
             const { outputStream, opusDecoder, filename } = await this.audioService.createStreamAndOpusDecoder(guildId);
-
-            if (!opusDecoder) {
-                throw new Error('Failed to create opus decoder');
-            }
-
-            // Create recording info
+            
+            // Start the recording
             const recordingInfo = await this.audioService.StartRecording(connection, opusDecoder, outputStream);
             recordingInfo.filename = filename;
 
@@ -355,10 +348,27 @@ export default class VoiceRecorder extends EventEmitter {
                 this.rotateStreams(guildId).catch(error => {
                     this.logger.error(`[VoiceRecorder] Error rotating files:`, error);
                 });
-            }, interval);
+            }, baseConfig.TIME_INTERVAL * 60 * 1000);
 
-            // Store the interval for cleanup
+            // Set up size check interval
+            const sizeCheckInterval = setInterval(async () => {
+                try {
+                    const currentInfo = this.activeRecordings.get(guildId);
+                    if (!currentInfo) return;
+                    
+                    const stats = await fs.promises.stat(currentInfo.filename);
+                    if (stats.size >= baseConfig.MAX_FILE_SIZE) {
+                        this.logger.info(`[VoiceRecorder] Size check: file size (${stats.size} bytes) exceeded limit (${baseConfig.MAX_FILE_SIZE} bytes), triggering rotation...`);
+                        await this.rotateStreams(guildId);
+                    }
+                } catch (error) {
+                    this.logger.error(`[VoiceRecorder] Error checking file size:`, error);
+                }
+            }, 30 * 1000); // Check every 30 seconds
+
+            // Store the intervals for cleanup
             recordingInfo.rotationInterval = rotationInterval;
+            recordingInfo.sizeCheckInterval = sizeCheckInterval;
 
             // Log initial setup
             this.logger.info(`[VoiceRecorder] Started recording for guild ${guildId}`);
