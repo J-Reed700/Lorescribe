@@ -211,7 +211,7 @@ export default class VoiceRecorder extends EventEmitter {
                 isTranscription = true;
             }
 
-            if (!isUnableToSummarize) {
+            if (isUnableToSummarize) {
                 // Schedule background summary generation
                 jobId = await this.summaryJobs.scheduleSummaryGeneration(guildId, transcript, baseConfig.JOB_DELAY);
                 this.logger.info(`[VoiceRecorder] Scheduled summary generation for guild ${guildId} with job ID: ${jobId}`);
