@@ -1,5 +1,5 @@
 export default {
-    TIME_INTERVAL: 4, // 5 minutes
+    TIME_INTERVAL: 5, // 5 minutes
     ROTATION_DELAY: 500, // 500ms delay before processing rotated file
     CHUNK_DURATION: 30 * 1000, // 30 seconds
     MAX_CHUNKS: 48, // 4 hours total maximum
