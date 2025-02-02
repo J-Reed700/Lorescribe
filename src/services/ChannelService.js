@@ -14,19 +14,19 @@ export default class ChannelService {
             try {
                 const {summary, isTranscription, jobId, isUnableToSummarize} = transummarize;
                 
-                if(isTranscription && !isUnableToSummarize) {
+                if (isUnableToSummarize) {
+                    await this.sendMessage(guildConfig.summaryChannelId, {
+                        content: `🤔 **Unable to summarize recording** 🤔 \n
+                        Direct transcription:\n\n${summary}\n`
+                    });
+                }
+                else if(isTranscription) {
                     await this.sendMessage(guildConfig.summaryChannelId, {    
                         content:
                          `*📢❗🚨* **There was an error generating a summary** *📢❗🚨* \n
                             Direct transcription:\n\n${summary}\n${jobId ? `\n*This is a background generated job to retry, JobId:* ${jobId}` : ''}`
                     }); 
                 } 
-                else if (isUnableToSummarize) {
-                    await this.sendMessage(guildConfig.summaryChannelId, {
-                        content: `🤔 **Unable to summarize recording** 🤔 \n
-                        Direct transcription:\n\n${summary}\n`
-                    });
-                }
                 else {
                     await this.sendMessage(guildConfig.summaryChannelId, {
                         content: `**Recording Summary**\n\n${summary}\n\n`
