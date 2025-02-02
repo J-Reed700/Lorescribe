@@ -99,10 +99,8 @@ export default class ConfigurationService extends IConfigurationService {
 
             // Rename temp file to actual file (atomic operation)
             await fs.promises.rename(tempPath, filePath);
-
-            // Update in-memory config
+            
             this.configs.set(guildId, config);
-
             logger.info(`Updated configuration for guild ${guildId}`);
             return true;
         } catch (error) {
@@ -135,38 +133,23 @@ export default class ConfigurationService extends IConfigurationService {
     }
 
     setOpenAIKey(guildId, key) {
-        try {
-            const config = this.getGuildConfig(guildId) || {};
-            config.openAIKey = key;
-            this.setGuildConfig(guildId, config);
-            return true;
-        } catch (error) {
-            logger.error(`Failed to set OpenAI key for guild ${guildId}:`, error);
-            throw error;
+        if (!guildId || typeof guildId !== 'string') {
+            throw new Error('Invalid guild ID');
         }
+        if (!key || typeof key !== 'string') {
+            throw new Error('Invalid API key');
+        }
+        this.inMemoryKeys.set(guildId, key);
+        logger.info(`Set OpenAI key for guild ${guildId} (stored in memory only)`);
     }
 
     getOpenAIKey(guildId) {
-        try {
-            const config = this.getGuildConfig(guildId);
-            return config?.openAIKey || null;
-        } catch (error) {
-            logger.error(`Error getting OpenAI key for guild ${guildId}:`, error);
-            return null;
-        }
+        return this.inMemoryKeys.get(guildId);
     }
 
     clearOpenAIKey(guildId) {
-        try {
-            const config = this.getGuildConfig(guildId);
-            if (config) {
-                delete config.openAIKey;
-                this.setGuildConfig(guildId, config);
-            }
-        } catch (error) {
-            logger.error(`Failed to clear OpenAI key for guild ${guildId}:`, error);
-            throw error;
-        }
+        this.inMemoryKeys.delete(guildId);
+        logger.info(`Cleared OpenAI key for guild ${guildId} from memory`);
     }
 
     deleteGuildConfig(guildId) {
