@@ -40,12 +40,13 @@ export default class AudioService {
                 const ffmpeg = spawn('ffmpeg', [
                     '-hide_banner',
                     '-f', 's16le',
-                    '-ar', '48000',
-                    '-ac', '2',
+                    '-ar', '44100',     // Bumped up from 32000 to 44100 (CD quality)
+                    '-ac', '1',         // Keeping mono for size control
                     '-acodec', 'pcm_s16le',
                     '-i', inputFile,
                     '-codec:a', 'libmp3lame',
-                    '-q:a', '2',
+                    '-q:a', '4',        // Better quality (5->4)
+                    '-b:a', '96k',      // Higher bitrate (64k->96k)
                     '-y',
                     outputFile
                 ]);
@@ -132,7 +133,11 @@ export default class AudioService {
     async createOpusDecoder() {
         let opusDecoder;
         try {
-            const decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
+            const decoder = new prism.opus.Decoder({ 
+                rate: 44100,    // Bumped up to match FFmpeg
+                channels: 1,    // Keeping mono
+                frameSize: 960 
+            });
             opusDecoder = decoder;
             this.logger.info('[VoiceRecorder] Using prism-media opus decoder');
         } catch (e) {
