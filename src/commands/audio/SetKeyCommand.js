@@ -13,7 +13,7 @@ export default class SetKeyCommand extends BaseCommand {
     getData() {
         return new SlashCommandBuilder()
             .setName('setkey')
-            .setDescription('Set your OpenAI API key for transcription and summarization')
+            .setDescription('Set your OpenAI API key for transcription and summarization.This is stored only in memory and will be lost when the bot restarts.')
             .addStringOption(option =>
                 option.setName('key')
                     .setDescription('Your OpenAI API key')
@@ -39,7 +39,7 @@ export default class SetKeyCommand extends BaseCommand {
             await this.config.setOpenAIKey(interaction.guildId, key);
             
             await handleReply(
-                '✅ **Success!** OpenAI API key has been set\n> The key will be stored securely and used for transcription.',
+                '✅ **Success!** OpenAI API key has been set\n> The key will be stored securely in memory only.',
                 interaction,
                 true,
                 true

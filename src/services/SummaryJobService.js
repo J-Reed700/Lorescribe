@@ -26,7 +26,7 @@ export default class SummaryJobService {
                 
                 // Send to summary channel if configured
                 const guildConfig = this.configService.getGuildConfig(guildId);
-                if (guildConfig?.summaryChannelId && !transummarize.isUnableToSummarize) {
+                if (guildConfig?.summaryChannelId) {
                     await this.channelService.sendErrorMessage(guildConfig, transummarize);
                 }
 
