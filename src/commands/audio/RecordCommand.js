@@ -30,9 +30,14 @@ export default class RecordCommand extends BaseCommand {
             
             await this.deferReplyIfNeeded(interaction, false);
 
-            const openAIKey = this.configService.getOpenAIKey(interaction.member.voice.channel.guild.id);
+            const openAIKey = this.configService.getOpenAIKey(interaction.guildId);
             if (!openAIKey) {
                 throw new Error('OpenAI API key not set');
+            }
+
+            const summaryChannelId = this.configService.getSummaryChannel(interaction.guildId);
+            if (!summaryChannelId) {
+                throw new Error('Summary channel not set');
             }
 
             // Start recording
