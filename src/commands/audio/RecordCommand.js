@@ -7,6 +7,7 @@ export default class RecordCommand extends BaseCommand {
     constructor(services) {
         super(services);
         this.voiceRecorder = services.get('voiceRecorder');
+        this.configService = services.get('config');
     }
 
     getData() {
@@ -26,8 +27,11 @@ export default class RecordCommand extends BaseCommand {
                 );
                 return;
             }
-
+            
             await this.deferReplyIfNeeded(interaction, false);
+
+            if(this.configService.getOpenAIKey() === null)
+                throw("OpenAI API key not set"); 
 
             // Start recording
             logger.info('[RecordCommand] Starting recording...');
