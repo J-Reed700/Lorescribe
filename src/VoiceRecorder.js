@@ -314,9 +314,11 @@ export default class VoiceRecorder extends EventEmitter {
     async sendSummaryToChannel(guildId, transummarize) {
         try {
             const summaryChannelId = await this.configService.getSummaryChannel(guildId);
-            if (summaryChannelId) {
-                await this.channelService.sendErrorMessage(summaryChannelId, transummarize);
+            if (!summaryChannelId) {
+                this.logger.warn(`[VoiceRecorder] No summary channel configured for guild ${guildId}. Use /setsummarychannel to configure one.`);
+                return;
             }
+            await this.channelService.sendMessage(summaryChannelId, transummarize);
         } catch (error) {
             this.logger.error('[VoiceRecorder] Error sending to summary channel:', error);
         }

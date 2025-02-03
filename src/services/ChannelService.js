@@ -9,21 +9,21 @@ export default class ChannelService {
         return await this.client.channels.fetch(channelId);
     }
 
-    async sendErrorMessage(summaryChannelId, transummarize) {
+    async sendMessage(summaryChannelId, transummarize) {
         if (summaryChannelId) {
             try {
                 const {summary, isTranscription, jobId, isUnableToSummarize} = transummarize;
                 
                 if (isUnableToSummarize) {
                     this.logger.info(`[ChannelService] Sending unable to summarize message to channel ${summaryChannelId}`);
-                    await this.sendMessage(summaryChannelId, {
+                    await this.sendMessageToChannel(summaryChannelId, {
                         content: `🤔 **Unable to summarize recording** 🤔 \n
                         Direct transcription:\n\n${summary}\n`
                     });
                 }
                 else if(isTranscription) {
                     this.logger.info(`[ChannelService] Sending error generating summary message to channel ${summaryChannelId}`);
-                    await this.sendMessage(summaryChannelId, {    
+                    await this.sendMessageToChannel(summaryChannelId, {    
                         content:
                          `*📢❗🚨* **There was an error generating a summary** *📢❗🚨* \n
                             Direct transcription:\n\n${summary}\n${jobId ? `\n*This is a background generated job to retry, JobId:* ${jobId}` : ''}`
@@ -31,7 +31,7 @@ export default class ChannelService {
                 } 
                 else {
                     this.logger.info(`[ChannelService] Sending summary message to channel ${summaryChannelId}`);
-                    await this.sendMessage(summaryChannelId, {
+                    await this.sendMessageToChannel(summaryChannelId, {
                         content: `**Recording Summary**\n\n${summary}\n\n`
                     });
                 }
@@ -41,7 +41,7 @@ export default class ChannelService {
             }
         }
     }
-    async sendMessage(channelId, messageData) {
+    async sendMessageToChannel(channelId, messageData) {
         const channel = await this.getChannel(channelId);
         if (!channel) {
             this.logger.error(`[ChannelService] Could not find channel ${channelId}`);
