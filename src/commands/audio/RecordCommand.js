@@ -30,8 +30,10 @@ export default class RecordCommand extends BaseCommand {
             
             await this.deferReplyIfNeeded(interaction, false);
 
-            if(this.configService.getOpenAIKey() === null)
-                throw("OpenAI API key not set"); 
+            const openAIKey = this.configService.getOpenAIKey();
+            if (!openAIKey) {
+                throw new Error('OpenAI API key not set');
+            }
 
             // Start recording
             logger.info('[RecordCommand] Starting recording...');
