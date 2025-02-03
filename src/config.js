@@ -124,9 +124,9 @@ export default {
         'SendMessages'
     ],
     VOICE: {
-        BITRATE: 48000,  // Reduced for better multi-speaker handling
+        BITRATE: 24000,  // Reduced for better multi-speaker handling
         SILENCE_FRAME_LENGTH: 10000,
-        SAMPLE_RATE: 32000,  // Reduced from 48000 for better file size
+        SAMPLE_RATE: 24000,  // Using standard Opus rate
         CHANNELS: 1,     // Keeping mono for size control
         ENCODING: 'opus'
     },

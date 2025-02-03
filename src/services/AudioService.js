@@ -138,7 +138,7 @@ export default class AudioService {
             const decoder = new prism.opus.Decoder({ 
                 rate: this.config.VOICE.SAMPLE_RATE,
                 channels: this.config.VOICE.CHANNELS,
-                frameSize: 960 
+                frameSize: 480  // Adjusted for 24kHz (20ms frame at 24kHz)
             });
             opusDecoder = decoder;
             this.logger.info('[VoiceRecorder] Using prism-media opus decoder');
