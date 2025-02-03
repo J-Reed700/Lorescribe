@@ -57,8 +57,8 @@ COPY --from=builder /usr/src/app/src ./src
 COPY --from=builder /usr/src/app/package.json ./
 
 # Create directories for recordings and temp files
-RUN mkdir -p /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries && \
-    chmod -R 777 /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries
+RUN mkdir -p /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries /guild-configs && \
+    chmod -R 777 /recordings /usr/src/app/temp /usr/src/app/transcripts /usr/src/app/summaries /guild-configs
 
 # Set environment variables
 ENV PORT=8080
