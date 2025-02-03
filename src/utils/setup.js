@@ -5,6 +5,7 @@ import logger from './logger.js';
 export function ensureDirectoryStructure() {
     const directories = [
         'recordings',
+        'guild-configs',   
         'data',
         'data/transcripts',
         'data/summaries',
