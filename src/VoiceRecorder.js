@@ -312,10 +312,14 @@ export default class VoiceRecorder extends EventEmitter {
     }
 
     async sendSummaryToChannel(guildId, transummarize) {
-        if (!guildId) return;
-
-        const summaryChannelId = this.configService.getSummaryChannel(guildId);
-        await this.channelService.sendErrorMessage(summaryChannelId, transummarize);
+        try {
+            const summaryChannelId = await this.configService.getSummaryChannel(guildId);
+            if (summaryChannelId) {
+                await this.channelService.sendErrorMessage(summaryChannelId, transummarize);
+            }
+        } catch (error) {
+            this.logger.error('[VoiceRecorder] Error sending to summary channel:', error);
+        }
     }
 
     async startRecording(voiceChannel) {
