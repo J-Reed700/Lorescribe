@@ -140,7 +140,7 @@ export default {
     OUTPUT: {
         DIRECTORY: 'recordings',  // Deprecated, use STORAGE paths instead
         FORMAT: 'mp3',
-        QUALITY: 3,  // Increased compression
+        QUALITY: 5,  // Increased compression
         BITRATE: '48k'  // Added explicit bitrate control
     }
 };
