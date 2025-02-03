@@ -35,7 +35,7 @@ export default class RecordCommand extends BaseCommand {
                 throw new Error('OpenAI API key not set');
             }
 
-            const summaryChannelId = this.configService.getSummaryChannel(interaction.guildId);
+            const summaryChannelId = await this.configService.getSummaryChannel(interaction.guildId);
             if (!summaryChannelId) {
                 throw new Error('Summary channel not set');
             }
@@ -75,9 +75,11 @@ export default class RecordCommand extends BaseCommand {
                 ? '❌ **Error:** A recording is already in progress in this server!'
                 : error.message === 'OpenAI API key not set'
                     ? '❌ **Error:** OpenAI API key not set. Please run `/setkey` to set your key.'
-                    : '❌ **Error:** Failed to start recording. Please try again.';
+                    : error.message === 'Summary channel not set'
+                        ? '❌ **Error:** Summary channel not set. Please run `/setsummarychannel` to set a channel for summaries.'
+                        : '❌ **Error:** Failed to start recording. Please try again.';
 
-            throw error;
+            throw new Error(errorMessage);
         }
     }
 } 
