@@ -9,26 +9,29 @@ export default class ChannelService {
         return await this.client.channels.fetch(channelId);
     }
 
-    async sendErrorMessage(guildConfig, transummarize) {
-        if (guildConfig?.summaryChannelId) {
+    async sendErrorMessage(summaryChannelId, transummarize) {
+        if (summaryChannelId) {
             try {
                 const {summary, isTranscription, jobId, isUnableToSummarize} = transummarize;
                 
                 if (isUnableToSummarize) {
-                    await this.sendMessage(guildConfig.summaryChannelId, {
+                    this.logger.info(`[ChannelService] Sending unable to summarize message to channel ${summaryChannelId}`);
+                    await this.sendMessage(summaryChannelId, {
                         content: `🤔 **Unable to summarize recording** 🤔 \n
                         Direct transcription:\n\n${summary}\n`
                     });
                 }
                 else if(isTranscription) {
-                    await this.sendMessage(guildConfig.summaryChannelId, {    
+                    this.logger.info(`[ChannelService] Sending error generating summary message to channel ${summaryChannelId}`);
+                    await this.sendMessage(summaryChannelId, {    
                         content:
                          `*📢❗🚨* **There was an error generating a summary** *📢❗🚨* \n
                             Direct transcription:\n\n${summary}\n${jobId ? `\n*This is a background generated job to retry, JobId:* ${jobId}` : ''}`
                     }); 
                 } 
                 else {
-                    await this.sendMessage(guildConfig.summaryChannelId, {
+                    this.logger.info(`[ChannelService] Sending summary message to channel ${summaryChannelId}`);
+                    await this.sendMessage(summaryChannelId, {
                         content: `**Recording Summary**\n\n${summary}\n\n`
                     });
                 }

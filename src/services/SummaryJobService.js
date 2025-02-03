@@ -25,9 +25,9 @@ export default class SummaryJobService {
                 const timestamp = Date.now();
                 
                 // Send to summary channel if configured
-                const guildConfig = this.configService.getGuildConfig(guildId);
-                if (guildConfig?.summaryChannelId) {
-                    await this.channelService.sendErrorMessage(guildConfig, transummarize);
+                const summaryChannelId = this.configService.getSummaryChannel(guildId);
+                if (summaryChannelId) {
+                    await this.channelService.sendErrorMessage(summaryChannelId, transummarize);
                 }
 
                 // Emit success event
