@@ -29,6 +29,9 @@ importers:
       ffmpeg-static:
         specifier: ^5.2.0
         version: 5.2.0
+      ioredis:
+        specifier: ^5.4.2
+        version: 5.4.2
       libsodium-wrappers:
         specifier: ^0.7.13
         version: 0.7.15

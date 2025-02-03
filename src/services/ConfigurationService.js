@@ -1,66 +1,44 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import Redis from 'ioredis';
 import logger from '../utils/logger.js';
 import IConfigurationService from '../interfaces/IConfigurationService.js';
 import baseConfig from '../config.js';
+import { redisOptions } from '../config/redis.js';
 
 export default class ConfigurationService extends IConfigurationService {
     constructor(baseConfig) {
         super();
-        this.configPath = path.join(process.cwd(), 'guild-configs');
         this.configs = new Map();
         this.inMemoryKeys = new Map();
         this.baseConfig = baseConfig;
-        this.ensureConfigDirectory();
+        this.redis = new Redis(redisOptions.redis);
         this.loadConfigs();
     }
 
-    ensureConfigDirectory() {
+    async loadConfigs() {
         try {
-            if (!fs.existsSync(this.configPath)) {
-                fs.mkdirSync(this.configPath, { recursive: true });
-                logger.info('Created guild configs directory');
-            }
-        } catch (error) {
-            logger.error('Failed to create guild configs directory:', error);
-            throw new Error('Failed to initialize configuration service');
-        }
-    }
-
-    loadConfigs() {
-        try {
-            const files = fs.readdirSync(this.configPath);
+            // Get all guild configs from Redis
+            const keys = await this.redis.keys('guild:*');
             let loadedCount = 0;
             let errorCount = 0;
 
-            files.forEach(file => {
-                if (file.endsWith('.json')) {
-                    try {
-                        const guildId = file.replace('.json', '');
-                        const filePath = path.join(this.configPath, file);
-                        const fileContent = fs.readFileSync(filePath, 'utf8');
-                        
-                        try {
-                            const config = JSON.parse(fileContent);
-                            if (this._validateConfig(config)) {
-                                this.configs.set(guildId, config);
-                                loadedCount++;
-                            } else {
-                                logger.error(`Invalid config found for guild ${guildId}`);
-                                errorCount++;
-                            }
-                        } catch (parseError) {
-                            logger.error(`Failed to parse config for guild ${guildId}:`, parseError);
-                            errorCount++;
-                            // Move invalid file to .invalid extension
-                            fs.renameSync(filePath, `${filePath}.invalid`);
-                        }
-                    } catch (fileError) {
-                        logger.error(`Error processing config file ${file}:`, fileError);
+            for (const key of keys) {
+                try {
+                    const guildId = key.split(':')[1];
+                    const configStr = await this.redis.get(key);
+                    const config = JSON.parse(configStr);
+                    
+                    if (this._validateConfig(config)) {
+                        this.configs.set(guildId, config);
+                        loadedCount++;
+                    } else {
+                        logger.error(`Invalid config found for guild ${guildId}`);
                         errorCount++;
                     }
+                } catch (error) {
+                    logger.error(`Error processing config for guild ${key}:`, error);
+                    errorCount++;
                 }
-            });
+            }
 
             logger.info(`Loaded ${loadedCount} guild configs, ${errorCount} errors`);
         } catch (error) {
@@ -88,17 +66,8 @@ export default class ConfigurationService extends IConfigurationService {
                 throw new Error('Invalid configuration format');
             }
 
-            const filePath = path.join(this.configPath, `${guildId}.json`);
-            const tempPath = `${filePath}.tmp`;
-
-            // Write to temporary file first
-            await fs.promises.writeFile(
-                tempPath,
-                JSON.stringify(config, null, 2)
-            );
-
-            // Rename temp file to actual file (atomic operation)
-            await fs.promises.rename(tempPath, filePath);
+            // Save to Redis
+            await this.redis.set(`guild:${guildId}`, JSON.stringify(config));
 
             // Update in-memory config
             this.configs.set(guildId, config);
@@ -169,20 +138,12 @@ export default class ConfigurationService extends IConfigurationService {
         }
     }
 
-    deleteGuildConfig(guildId) {
+    async deleteGuildConfig(guildId) {
         try {
-            const filePath = path.join(this.configPath, `${guildId}.json`);
-            if (fs.existsSync(filePath)) {
-                // Create backup before deletion
-                const backupPath = `${filePath}.bak`;
-                fs.copyFileSync(filePath, backupPath);
-                
-                fs.unlinkSync(filePath);
-                this.configs.delete(guildId);
-                logger.info(`Deleted configuration for guild ${guildId}`);
-                return true;
-            }
-            return false;
+            await this.redis.del(`guild:${guildId}`);
+            this.configs.delete(guildId);
+            logger.info(`Deleted configuration for guild ${guildId}`);
+            return true;
         } catch (error) {
             logger.error(`Failed to delete config for guild ${guildId}:`, error);
             return false;
@@ -191,18 +152,16 @@ export default class ConfigurationService extends IConfigurationService {
 
     async backupConfigs() {
         try {
-            const backupDir = path.join(this.configPath, 'backups');
-            if (!fs.existsSync(backupDir)) {
-                fs.mkdirSync(backupDir, { recursive: true });
-            }
-
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const backupPath = path.join(backupDir, `configs-${timestamp}.json`);
+            const backupKey = `backup:${timestamp}`;
             
-            const backupData = Object.fromEntries(this.configs);
-            await fs.promises.writeFile(backupPath, JSON.stringify(backupData, null, 2));
+            const configs = Object.fromEntries(this.configs);
+            await this.redis.set(backupKey, JSON.stringify(configs));
             
-            logger.info(`Created backup at ${backupPath}`);
+            // Set expiry for backup (30 days)
+            await this.redis.expire(backupKey, 60 * 60 * 24 * 30);
+            
+            logger.info(`Created backup with key ${backupKey}`);
             return true;
         } catch (error) {
             logger.error('Failed to create backup:', error);
@@ -233,7 +192,7 @@ export default class ConfigurationService extends IConfigurationService {
 
     async setTimeInterval(guildId, interval) {
         try {
-            const config = this.getGuildConfig(guildId);
+            const config = this.getGuildConfig(guildId) || {};
             config.timeInterval = interval;
             return await this.setGuildConfig(guildId, config);
         } catch (error) {
@@ -250,7 +209,16 @@ export default class ConfigurationService extends IConfigurationService {
             return timeInterval;
         } catch (error) {
             logger.error(`Error getting time interval for guild ${guildId}:`, error);
-            return baseConfig.TIME_INTERVAL * 1000 * 60;
+            return this.baseConfig.TIME_INTERVAL * 1000 * 60;
+        }
+    }
+
+    async dispose() {
+        try {
+            await this.redis.quit();
+            logger.info('Redis connection closed');
+        } catch (error) {
+            logger.error('Error closing Redis connection:', error);
         }
     }
 }
