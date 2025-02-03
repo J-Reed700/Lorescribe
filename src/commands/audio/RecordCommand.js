@@ -19,7 +19,7 @@ export default class RecordCommand extends BaseCommand {
     async execute(interaction) {
         try {
             // Check if user is in a voice channel first
-            if (!interaction.member.voice.channel) {
+            if (!interaction.member.voice.channel || !interaction.member.voice.channel.guild) {
                 await handleReply(
                     '❌ **Error:** You need to be in a voice channel to use this command!',
                     interaction,
@@ -30,7 +30,7 @@ export default class RecordCommand extends BaseCommand {
             
             await this.deferReplyIfNeeded(interaction, false);
 
-            const openAIKey = this.configService.getOpenAIKey();
+            const openAIKey = this.configService.getOpenAIKey(interaction.member.voice.channel.guild.id);
             if (!openAIKey) {
                 throw new Error('OpenAI API key not set');
             }
