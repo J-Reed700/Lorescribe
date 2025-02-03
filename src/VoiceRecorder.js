@@ -314,7 +314,7 @@ export default class VoiceRecorder extends EventEmitter {
     async sendSummaryToChannel(guildId, transummarize) {
         if (!guildId) return;
 
-        const summaryChannelId = this.configService.getSummaryChannelId(guildId);
+        const summaryChannelId = this.configService.getSummaryChannel(guildId);
         await this.channelService.sendErrorMessage(summaryChannelId, transummarize);
     }
 
