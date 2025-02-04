@@ -1,13 +1,10 @@
-import { workerData } from 'worker_threads';
-
-const { services } = workerData;
-const transcriptionService = services.get('transcription');
 
 const TRANSCRIPTION_TIMEOUT = 3 * 60 * 1000; // 3 minute timeout for transcription
 const SUMMARY_TIMEOUT = 2 * 60 * 1000; // 2 minute timeout for summary
 
 export default async function processRecording({ 
   audioPath, 
+  transcriptionService,
   guildId
 }) {
   try {

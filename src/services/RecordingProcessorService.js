@@ -10,14 +10,15 @@ const MAX_THREADS = Math.max(1, os.cpus().length - 1); // Leave one core free
 
 export default class RecordingProcessor {
   constructor(services) {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    this.audioService = services.get('audio');
+    this.transcriptionService = services.get('transcription');
+    this.storage = services.get('storage');
+
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));o
+    
     this.threadPool = new Piscina({
       filename: path.resolve(__dirname, '../workers/transcriptionWorker.js'),
       maxThreads: MAX_THREADS,
-      // Pass services to worker threads
-      workerData: {
-        services
-      }
     });
   }
 
@@ -25,13 +26,13 @@ export default class RecordingProcessor {
    * Process all user recordings from a session.
    * Returns an array of transcript objects.
    */
-  async processRecordings(guildId, userRecordings, audioService, transcriptionService, storage) {
+  async processRecordings(guildId, userRecordings) {
     let anyData = false;
 
     // First close all recordings
     for (const [userId, recording] of userRecordings.entries()) {
       try {
-        await audioService.closeUserRecording(recording);
+        await this.audioService.closeUserRecording(recording);
         if (recording.dataReceived) {
           anyData = true;
         }
@@ -56,14 +57,15 @@ export default class RecordingProcessor {
         const result = await Promise.race([
           this.threadPool.run({
             audioPath: recording.filename,
-            guildId
+            guildId,
+            transcriptionService: this.transcriptionService
           }),
           timeoutPromise
         ]);
 
         // Clean up the recording file
         try {
-          await storage.deleteFile(recording.filename);
+          await this.storage.deleteFile(recording.filename);
         } catch (err) {
           logger.error(`[RecordingProcessor] Error deleting file for user ${userId}:`, err);
         }

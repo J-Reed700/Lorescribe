@@ -86,7 +86,7 @@ export default class ServiceFactory {
                 summaryJobs: this.containerInstance.get('summaryJobs')
               }));
 
-              
+
             // Register VoiceRecorder after all its dependencies
             this.containerInstance.register('voiceRecorder', new VoiceRecorder(this.containerInstance));
 
