@@ -37,11 +37,6 @@ export default class AudioService {
       filename
     ]);
 
-    // Log FFmpeg output for debugging.
-    ffmpeg.stderr.on('data', (data) => {
-      this.logger.info(`[AudioService][User ${userId}] ffmpeg: ${data.toString()}`);
-    });
-
     const outputStream = ffmpeg.stdin;
     const opusDecoder = await this.createOpusDecoder();
 
