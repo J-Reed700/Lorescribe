@@ -12,6 +12,7 @@ import JobService from './JobService.js';
 import SummaryJobService from './SummaryJobService.js';
 import logger from '../utils/logger.js';
 import baseConfig from '../config.js';
+import RecordingProcessor from './RecordingProcessorService.js';
 import { EventEmitter } from 'events';
 
 export default class ServiceFactory {
@@ -82,6 +83,14 @@ export default class ServiceFactory {
             this.containerInstance.register('voiceRecorder', new VoiceRecorder(this.containerInstance));
 
             logger.info('[ServiceFactory] Services initialized successfully');
+
+            this.containerInstance.register('recordingProcessor', new RecordingProcessor({
+                storage: this.containerInstance.get('storage'),
+                transcriptionService: this.containerInstance.get('transcription'),
+                channelService: this.containerInstance.get('channel'),
+                summaryJobs: this.containerInstance.get('summaryJobs')
+              }));
+
             return this.containerInstance;
         } catch (error) {
             logger.error('[ServiceFactory] Failed to initialize services:', error);
