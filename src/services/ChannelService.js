@@ -120,4 +120,14 @@ export default class ChannelService {
 
         return chunks;
     }
+
+    async getUserName(userId) {
+        try {
+            const user = await this.client.users.fetch(userId);
+            return user.displayName || user.username;
+        } catch (error) {
+            this.logger.error(`[ChannelService] Error fetching username for user ${userId}:`, error);
+            return `Unknown User (${userId})`;
+        }
+    }
 }   

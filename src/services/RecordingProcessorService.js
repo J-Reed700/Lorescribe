@@ -14,6 +14,7 @@ export default class RecordingProcessor {
     this.transcriptionService = services.get('transcription');
     this.storage = services.get('storage');
     this.summaryJobService = services.get('summaryJobs');
+    this.channelService = services.get('channel');
   }
 
   async _processRecording({ audioPath, guildId }) {
@@ -82,6 +83,8 @@ export default class RecordingProcessor {
           timeoutPromise
         ]);
 
+        const username = await this.channelService.getUserName(userId);
+
         // Clean up the recording file
         try {
           await this.storage.deleteFile(recording.filename);
@@ -94,7 +97,7 @@ export default class RecordingProcessor {
         }
 
         return {
-          userId,
+          username,
           transcript: result.transcript
         };
 
@@ -112,8 +115,8 @@ export default class RecordingProcessor {
     }
 
     // Combine all transcripts into one text with user context
-    const combinedTranscript = validResults.map(result => 
-      `User ${result.userId}:\n${result.transcript}\n`
+    const combinedTranscript = validResults.map(result =>  
+      `User Name: ${result.username} Transcript: \n${result.transcript}\n`
     ).join('\n');
 
     logger.info(`[RecordingProcessor] Combined transcript: ${combinedTranscript.substring(0, 100)}`);
@@ -134,7 +137,8 @@ export default class RecordingProcessor {
         summary,
         isTranscription,
         isUnableToSummarize,
-        jobId
+        jobId,
+        userId
       };
     } catch (error) {
       logger.error('[RecordingProcessor] Error generating summary:', error);

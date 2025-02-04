@@ -34,8 +34,12 @@ export default class AudioService {
       filename
     ]);
 
+    let logCounter = 0;
     ffmpeg.stderr.on('data', (data) => {
-      this.logger.info(`[AudioService][User ${userId}] ffmpeg: ${data.toString()}`);
+      logCounter++;
+      if (logCounter % 100 === 0) {
+        this.logger.info(`[AudioService][User ${userId}] ffmpeg: ${data.toString()}`);
+      }
     });
 
     const outputStream = ffmpeg.stdin;
