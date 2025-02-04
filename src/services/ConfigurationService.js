@@ -3,6 +3,7 @@ import logger from '../utils/logger.js';
 import IConfigurationService from '../interfaces/IConfigurationService.js';
 import baseConfig from '../config.js';
 import { redisOptions } from '../config/redis.js';
+import { encrypt, decrypt } from '../utils/encryption.js';
 
 export default class ConfigurationService extends IConfigurationService {
     constructor(baseConfig) {
@@ -16,12 +17,12 @@ export default class ConfigurationService extends IConfigurationService {
 
     async loadConfigs() {
         try {
-            // Get all guild configs from Redis
-            const keys = await this.redis.keys('guild:*');
+            // Load guild configs
+            const configKeys = await this.redis.keys('guild:*');
             let loadedCount = 0;
             let errorCount = 0;
 
-            for (const key of keys) {
+            for (const key of configKeys) {
                 try {
                     const guildId = key.split(':')[1];
                     const configStr = await this.redis.get(key);
@@ -68,7 +69,7 @@ export default class ConfigurationService extends IConfigurationService {
 
             // Save to Redis
             await this.redis.set(`guild:${guildId}`, JSON.stringify(config));
-
+            
             // Update in-memory config
             this.configs.set(guildId, config);
 
@@ -103,11 +104,10 @@ export default class ConfigurationService extends IConfigurationService {
         }
     }
 
-    setOpenAIKey(guildId, key) {
+    async setOpenAIKey(guildId, key) {
         try {
-            const config = this.getGuildConfig(guildId) || {};
-            config.openAIKey = key;
-            this.setGuildConfig(guildId, config);
+            // Store the key in memory
+            this.inMemoryKeys.set(guildId, key);
             return true;
         } catch (error) {
             logger.error(`Failed to set OpenAI key for guild ${guildId}:`, error);
@@ -117,21 +117,19 @@ export default class ConfigurationService extends IConfigurationService {
 
     getOpenAIKey(guildId) {
         try {
-            const config = this.getGuildConfig(guildId);
-            return config?.openAIKey || null;
+            return this.inMemoryKeys.get(guildId) || null;
         } catch (error) {
             logger.error(`Error getting OpenAI key for guild ${guildId}:`, error);
             return null;
         }
     }
 
-    clearOpenAIKey(guildId) {
+    async clearOpenAIKey(guildId) {
         try {
-            const config = this.getGuildConfig(guildId);
-            if (config) {
-                delete config.openAIKey;
-                this.setGuildConfig(guildId, config);
-            }
+            // Clear from memory
+            this.inMemoryKeys.delete(guildId);
+
+            return true;
         } catch (error) {
             logger.error(`Failed to clear OpenAI key for guild ${guildId}:`, error);
             throw error;
