@@ -14,11 +14,11 @@ export default class RecordingProcessor {
     this.transcriptionService = services.get('transcription');
     this.storage = services.get('storage');
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));o
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     
     this.threadPool = new Piscina({
       filename: path.resolve(__dirname, '../workers/transcriptionWorker.js'),
-      maxThreads: MAX_THREADS,
+      maxThreads: MAX_THREADS
     });
   }
 
