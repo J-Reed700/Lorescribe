@@ -3,6 +3,7 @@ import logger from './utils/logger.js';
 import RecordingEvents from './events/RecordingEvents.js';
 import { EndBehaviorType } from '@discordjs/voice';
 import fs from 'node:fs';
+import config from './config.js';
 
 export default class VoiceRecorder extends EventEmitter {
   constructor(services) {
@@ -118,7 +119,7 @@ export default class VoiceRecorder extends EventEmitter {
         for (const rec of session.userRecordings.values()) {
           try {
             const stats = await fs.promises.stat(rec.filename);
-            if (stats.size >= this.config.MAX_FILE_SIZE) {
+            if (stats.size >= config.MAX_FILE_SIZE) {
               shouldRotate = true;
               break;
             }
@@ -130,7 +131,7 @@ export default class VoiceRecorder extends EventEmitter {
           this.logger.info(`[VoiceRecorder] Size check triggered rotation for guild ${guildId}`);
           await this.rotateSession(guildId);
         }
-      }, this.config.SIZE_CHECK_INTERVAL);
+      }, config.SIZE_CHECK_INTERVAL);
       this.sizeCheckIntervals.set(guildId, sizeCheckInterval);
 
       this.events.emit(RecordingEvents.RECORDING_STARTED, { guildId });
@@ -208,7 +209,7 @@ export default class VoiceRecorder extends EventEmitter {
         this.logger.error(`[VoiceRecorder] Error processing rotated session for guild ${guildId}:`, err);
         this.events.emit(RecordingEvents.ROTATION_ERROR, { guildId, error: err });
       }
-    }, this.config.ROTATION_DELAY);
+    }, config.ROTATION_DELAY);
   }
 
   /**
