@@ -16,12 +16,10 @@ export default class AudioService {
 
   /**
    * Create a recording pipeline for a given user.
-   * This method spawns an FFmpeg process that reads raw PCM data from stdin
-   * and encodes it to MP3 on the fly. A unique filename is generated based on
-   * the guild and user IDs.
+   * Spawns an FFmpeg process that reads PCM data from stdin and encodes to MP3.
+   * A unique filename is generated using the guild and user IDs.
    */
   async createUserRecordingPipeline(guildId, userId) {
-    // Generate a filename that is unique per user
     const filename = this.storage.getTempFilePath(`${guildId}-${userId}`, 'mp3');
     const ffmpeg = spawn('ffmpeg', [
       '-hide_banner',
@@ -29,13 +27,17 @@ export default class AudioService {
       '-ar', String(this.config.VOICE.SAMPLE_RATE),
       '-ac', String(this.config.VOICE.CHANNELS),
       '-acodec', 'pcm_s16le',
-      '-i', 'pipe:0',
+      '-i', 'pipe:0', // read PCM data from stdin
       '-codec:a', 'libmp3lame',
       '-q:a', String(this.config.OUTPUT.QUALITY),
       '-b:a', this.config.OUTPUT.BITRATE,
       '-y',
       filename
     ]);
+
+    ffmpeg.stderr.on('data', (data) => {
+      this.logger.info(`[AudioService][User ${userId}] ffmpeg: ${data.toString()}`);
+    });
 
     const outputStream = ffmpeg.stdin;
     const opusDecoder = await this.createOpusDecoder();
@@ -49,7 +51,7 @@ export default class AudioService {
       const decoder = new prism.opus.Decoder({
         rate: this.config.VOICE.SAMPLE_RATE,
         channels: this.config.VOICE.CHANNELS,
-        frameSize: 480 // 20ms frames at the configured sample rate
+        frameSize: 480 // 20ms frame
       });
       opusDecoder = decoder;
       this.logger.info('[AudioService] Using prism-media opus decoder');
@@ -70,7 +72,7 @@ export default class AudioService {
             this.logger.info('[AudioService] Using @discordjs/opus decoder');
           } catch (e) {
             this.logger.error('[AudioService] Failed to load any opus decoder:', e);
-            throw new Error('No opus decoder available. Please install either opusscript, node-opus, or @discordjs/opus');
+            throw new Error('No opus decoder available');
           }
         }
       }
@@ -84,18 +86,17 @@ export default class AudioService {
    */
   async startUserRecording(userId, connection) {
     const pipeline = await this.createUserRecordingPipeline(connection.joinedGuild.id, userId);
-    const userRecording = {
+    return {
       userId,
       ...pipeline,
       dataReceived: false,
       bytesWritten: 0,
       startTime: Date.now()
     };
-    return userRecording;
   }
 
   /**
-   * Close a given user recording pipeline.
+   * Close a user’s recording pipeline.
    */
   async closeUserRecording(recording) {
     return new Promise((resolve, reject) => {

@@ -17,10 +17,8 @@ export default class RecordingProcessor {
   }
 
   /**
-   * Process all user recordings from a given session.
-   * Closes each recording, transcribes the resulting file,
-   * and deletes the file after processing.
-   *
+   * Process all user recordings from a session.
+   * Closes each recording, transcribes it, and deletes the temporary file.
    * Returns an array of objects: [{ userId, transcript }, ...]
    */
   async processRecordings(guildId, userRecordings, audioService) {
