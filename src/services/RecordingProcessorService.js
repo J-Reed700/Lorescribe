@@ -1,35 +1,60 @@
 import fs from 'node:fs';
 import logger from '../utils/logger.js';
-import Piscina from 'piscina';
 import path from 'path';
 import os from 'os';
 import { fileURLToPath } from 'url';
 
-const PROCESSING_TIMEOUT = 5 * 60 * 1000; // 5 minute timeout
-const MAX_THREADS = Math.max(1, os.cpus().length - 1); // Leave one core free
+const PROCESSING_TIMEOUT = 5 * 60 * 1000; // Overall 5 minute timeout per recording
+const TRANSCRIPTION_TIMEOUT = 3 * 60 * 1000; // 3 minute timeout for transcription
+const SUMMARY_TIMEOUT = 2 * 60 * 1000; // 2 minute timeout for summary
 
 export default class RecordingProcessor {
   constructor(services) {
     this.audioService = services.get('audio');
     this.transcriptionService = services.get('transcription');
     this.storage = services.get('storage');
+    this.summaryJobService = services.get('summaryJobs');
+  }
 
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    
-    this.threadPool = new Piscina({
-      filename: path.resolve(__dirname, '../workers/transcriptionWorker.js'),
-      maxThreads: MAX_THREADS
-    });
+  async _processRecording({ audioPath, guildId }) {
+    try {
+      // Transcribe with timeout
+      const transcriptionPromise = this.transcriptionService.transcribeAudio(audioPath, guildId);
+      const transcriptionTimeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Transcription timeout')), TRANSCRIPTION_TIMEOUT);
+      });
+      const transcript = await Promise.race([
+        transcriptionPromise,
+        transcriptionTimeoutPromise
+      ]);
+
+      if (!transcript || transcript.trim().length === 0) {
+        return {
+          success: false,
+          transcript: ''
+        };
+      }
+
+      return {
+        success: true,
+        transcript
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Unknown error in processing'
+      };
+    }
   }
 
   /**
-   * Process all user recordings from a session.
-   * Returns an array of transcript objects.
+   * Process all user recordings from a session and return a combined transcript with user context
    */
   async processRecordings(guildId, userRecordings) {
     let anyData = false;
-
-    // First close all recordings
+    let jobId = null;
+    // Close all recordings first
     for (const [userId, recording] of userRecordings.entries()) {
       try {
         await this.audioService.closeUserRecording(recording);
@@ -42,24 +67,18 @@ export default class RecordingProcessor {
     }
 
     if (!anyData) {
-      return [{ summary: 'No audio detected during this session.' }];
+      return { transcript: 'No audio detected during this session.' };
     }
 
-    // Process recordings in parallel with timeout
+    // Process each recording and combine into one transcript
     const processingPromises = Array.from(userRecordings.entries()).map(async ([userId, recording]) => {
       try {
-        // Create a timeout promise
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('Processing timeout')), PROCESSING_TIMEOUT);
         });
 
-        // Run the processing in a worker thread with timeout
         const result = await Promise.race([
-          this.threadPool.run({
-            audioPath: recording.filename,
-            guildId,
-            transcriptionService: this.transcriptionService
-          }),
+          this._processRecording({ audioPath: recording.filename, guildId }),
           timeoutPromise
         ]);
 
@@ -76,13 +95,9 @@ export default class RecordingProcessor {
 
         return {
           userId,
-          transcript: result.transcript,
-          summary: result.isUnableToSummarize ? 
-            `Unable to summarize recording. Direct transcription:\n\n${result.summary}` :
-            result.isTranscription ?
-              `Error generating summary. Direct transcription:\n\n${result.summary}` :
-              result.summary
+          transcript: result.transcript
         };
+
       } catch (error) {
         logger.error(`[RecordingProcessor] Error processing recording for user ${userId}:`, error);
         return null;
@@ -92,14 +107,47 @@ export default class RecordingProcessor {
     const results = await Promise.all(processingPromises);
     const validResults = results.filter(result => result !== null);
 
-    return validResults.length > 0 ? validResults : [{ summary: 'Failed to process any recordings in this session.' }];
+    if (validResults.length === 0) {
+      return { transcript: 'Failed to process any recordings in this session.' };
+    }
+
+    // Combine all transcripts into one text with user context
+    const combinedTranscript = validResults.map(result => 
+      `User ${result.userId}:\n${result.transcript}\n`
+    ).join('\n');
+
+    logger.info(`[RecordingProcessor] Combined transcript: ${combinedTranscript.substring(0, 100)}`);
+
+    // Generate a single summary for the entire conversation
+    try {
+      const { summary, isTranscription, isUnableToSummarize } = await this.transcriptionService.generateSummary(
+        `Please summarize this conversation between multiple users:\n${combinedTranscript}`,
+        guildId
+      );
+
+      if(!isUnableToSummarize && isTranscription) {
+        jobId = this.summaryJobService.scheduleSummaryGeneration(guildId, combinedTranscript);
+      }
+
+      return {
+        transcript: combinedTranscript,
+        summary,
+        isTranscription,
+        isUnableToSummarize,
+        jobId
+      };
+    } catch (error) {
+      logger.error('[RecordingProcessor] Error generating summary:', error);
+      return {
+        transcript: combinedTranscript,
+        summary: combinedTranscript,
+        isTranscription: true,
+        isUnableToSummarize: true
+      };
+    }
   }
 
   async cleanup() {
-    try {
-      await this.threadPool.destroy();
-    } catch (err) {
-      logger.error('[RecordingProcessor] Error cleaning up thread pool:', err);
-    }
+    // With no worker thread you don't need extra cleanup here.
   }
 }

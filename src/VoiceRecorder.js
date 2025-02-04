@@ -189,22 +189,17 @@ export default class VoiceRecorder extends EventEmitter {
     // Delay processing the old session to allow for pending writes.
     setTimeout(async () => {
       try {
-        const transcripts = await this.recordingProcessor.processRecordings(
+        const summaryObject = await this.recordingProcessor.processRecordings(
           guildId,
-          oldSession.userRecordings,
-          this.audioService,
-          this.transcriptionService,
-          this.storage
+          oldSession.userRecordings
         );
         // Only send a message if transcripts exist.
-        if (transcripts && transcripts.length > 0) {
-          this.events.emit(RecordingEvents.ROTATION_COMPLETED, { guildId, transcripts });
+        if (summaryObject) {
+          this.events.emit(RecordingEvents.ROTATION_COMPLETED, { guildId, summaryObject });
           this.logger.info(`[VoiceRecorder] Successfully processed rotated session for guild ${guildId}`);
           const summaryChannel = await this.configService.getSummaryChannel(guildId);
           if (summaryChannel) {
-            await this.channelService.sendMessage(summaryChannel, {
-              content: `**Rotated Session Transcripts:**\n${JSON.stringify(transcripts, null, 2)}`
-            });
+            await this.channelService.sendMessage(summaryChannel, summaryObject);
           }
         } else {
           this.logger.info(`[VoiceRecorder] Rotated session for guild ${guildId} produced no transcripts.`);
@@ -233,15 +228,17 @@ export default class VoiceRecorder extends EventEmitter {
         clearInterval(this.sizeCheckIntervals.get(guildId));
         this.sizeCheckIntervals.delete(guildId);
       }
-      const summaries = await this.recordingProcessor.processRecordings(
+      const summaryObject = await this.recordingProcessor.processRecordings(
         guildId,
-        session.userRecordings,
-        this.audioService,
-        this.transcriptionService,
-        this.storage
+        session.userRecordings
       );
       this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, summaries });
+      const summaryChannel = await this.configService.getSummaryChannel(guildId);
+      if (summaryChannel) {
+        await this.channelService.sendMessage(summaryChannel, summaryObject);
+      }
       await this.cleanup(guildId);
+
     } catch (error) {
       this.logger.error(`[VoiceRecorder] Error stopping recording:`, error);
       await this.cleanup(guildId);
