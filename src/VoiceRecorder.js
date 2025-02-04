@@ -31,6 +31,7 @@ export default class VoiceRecorder extends EventEmitter {
         this.container = services;
         
         this.activeRecordings = new Map();
+        this.rotationLocks = new Map();
 
         this.setupEventListeners();
     }
@@ -52,6 +53,11 @@ export default class VoiceRecorder extends EventEmitter {
     }
 
     async rotateStreams(guildId) {
+        if (this.rotationLocks.get(guildId)) {
+            this.logger.info(`[VoiceRecorder] Rotation already in progress for guild ${guildId}, skipping...`);
+            return;
+        }
+
         const recordingInfo = this.activeRecordings.get(guildId);
         if (!recordingInfo) {
             return;
@@ -61,6 +67,9 @@ export default class VoiceRecorder extends EventEmitter {
         const connection = recordingInfo.connection;
 
         try {
+            // Set rotation lock
+            this.rotationLocks.set(guildId, true);
+
             // Check current file size
             const stats = await fs.promises.stat(recordingInfo.filename);
             if (stats.size >= baseConfig.MAX_FILE_SIZE) {
@@ -108,6 +117,9 @@ export default class VoiceRecorder extends EventEmitter {
             this.events.emit(RecordingEvents.ROTATION_ERROR, { guildId, error });
             // Don't throw the error - we want to keep recording even if rotation fails
             this.logger.warn('[VoiceRecorder] Continuing despite rotation error');
+        } finally {
+            // Always clean up the rotation lock
+            this.rotationLocks.delete(guildId);
         }
     }
 
