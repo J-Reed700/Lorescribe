@@ -79,17 +79,19 @@ export default class ServiceFactory {
             // Register summary job service
             this.containerInstance.register('summaryJobs', new SummaryJobService(this.containerInstance));
 
-            // Register VoiceRecorder after all its dependencies
-            this.containerInstance.register('voiceRecorder', new VoiceRecorder(this.containerInstance));
-
-            logger.info('[ServiceFactory] Services initialized successfully');
-
             this.containerInstance.register('recordingProcessor', new RecordingProcessor({
                 storage: this.containerInstance.get('storage'),
                 transcriptionService: this.containerInstance.get('transcription'),
                 channelService: this.containerInstance.get('channel'),
                 summaryJobs: this.containerInstance.get('summaryJobs')
               }));
+
+              
+            // Register VoiceRecorder after all its dependencies
+            this.containerInstance.register('voiceRecorder', new VoiceRecorder(this.containerInstance));
+
+            logger.info('[ServiceFactory] Services initialized successfully');
+
 
             return this.containerInstance;
         } catch (error) {
