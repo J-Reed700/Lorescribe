@@ -72,10 +72,6 @@ export default class VoiceRecorder extends EventEmitter {
       connection.receiver.speaking.on('start', async (userId) => {
         if (!session.userRecordings.has(userId)) {
           try {
-            if (connection.state.status !== 'ready') {
-              this.logger.warn(`[VoiceRecorder] Ignoring speaking event for user ${userId} - connection not ready`);
-              return;
-            }
             const user = await this.client.users.fetch(userId);
             if (user.bot) {
               this.logger.info(`[VoiceRecorder] Ignoring bot user ${userId}`);
@@ -237,14 +233,14 @@ export default class VoiceRecorder extends EventEmitter {
         clearInterval(this.sizeCheckIntervals.get(guildId));
         this.sizeCheckIntervals.delete(guildId);
       }
-      const transcripts = await this.recordingProcessor.processRecordings(
+      const summaries = await this.recordingProcessor.processRecordings(
         guildId,
         session.userRecordings,
         this.audioService,
         this.transcriptionService,
         this.storage
       );
-      this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, transcripts });
+      this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, summaries });
       await this.cleanup(guildId);
     } catch (error) {
       this.logger.error(`[VoiceRecorder] Error stopping recording:`, error);
