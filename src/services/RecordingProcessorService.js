@@ -3,12 +3,14 @@ import logger from '../utils/logger.js';
 import Piscina from 'piscina';
 import path from 'path';
 import os from 'os';
+import { fileURLToPath } from 'url';
 
 const PROCESSING_TIMEOUT = 5 * 60 * 1000; // 5 minute timeout
 const MAX_THREADS = Math.max(1, os.cpus().length - 1); // Leave one core free
 
 export default class RecordingProcessor {
   constructor(services) {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     this.threadPool = new Piscina({
       filename: path.resolve(__dirname, '../workers/transcriptionWorker.js'),
       maxThreads: MAX_THREADS,
