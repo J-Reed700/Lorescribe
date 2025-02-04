@@ -70,21 +70,8 @@ export default class CommandRegistry {
                 await this.handleErrorResponse(interaction, '⚠️ Command timed out. Please try again.');
                 return;
             }
-
             logger.error(`Error executing command ${interaction.commandName}:`, error);
-            
-            // Provide user-friendly error messages
-            let errorMessage = '❌ An error occurred while executing the command.';
-            
-            if (error.message === 'OpenAI API key not set') {
-                errorMessage = '❌ OpenAI API key not set. Please use `/setkey` to set your API key first.';
-            } else if (error.message === 'Connection destroyed') {
-                errorMessage = '❌ Failed to connect to voice channel. Please make sure you are in a voice channel and try again.';
-            } else if (error.message.includes('REDIS')) {
-                errorMessage = '❌ Database connection error. Please try again later.';
-            }
-
-            await this.handleErrorResponse(interaction, errorMessage);
+            await this.handleErrorResponse(interaction, error.message);
             throw error; // Still throw for logging purposes
         }
     }
