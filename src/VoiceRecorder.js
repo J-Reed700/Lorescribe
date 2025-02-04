@@ -64,7 +64,7 @@ export default class VoiceRecorder extends EventEmitter {
             // Check current file size
             const stats = await fs.promises.stat(recordingInfo.filename);
             if (stats.size >= baseConfig.MAX_FILE_SIZE) {
-                this.logger.info(`[VoiceRecorder] File size (${stats.size} bytes) exceeded limit (${baseConfig.MAX_FILE_SIZE} bytes), rotating...`);
+                this.logger.info(`[VoiceRecorder] File size (${stats.size} bytes) exceeded limit (${baseConfig.MAX_FILE_SIZE} bytes), during rotation...`);
             }
 
             // Create new recording components first
@@ -370,7 +370,7 @@ export default class VoiceRecorder extends EventEmitter {
                 } catch (error) {
                     this.logger.error(`[VoiceRecorder] Error checking file size:`, error);
                 }
-            }, 30 * 1000); // Check every 30 seconds
+            }, baseConfig.SIZE_CHECK_INTERVAL); // Check every 30 seconds
 
             // Store the intervals for cleanup
             recordingInfo.rotationInterval = rotationInterval;

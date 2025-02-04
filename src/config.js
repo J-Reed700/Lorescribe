@@ -1,11 +1,12 @@
 export default {
+    SIZE_CHECK_INTERVAL: 30 * 1000, // 30 seconds
     TIME_INTERVAL: 5, // 5 minutes
     ROTATION_DELAY: 500, // 500ms delay before processing rotated file
     CHUNK_DURATION: 30 * 1000, // 30 seconds
     MAX_CHUNKS: 48, // 4 hours total maximum
-    MAX_FILE_SIZE: 15 * 1024 * 1024, // Reduced to 15MB for faster rotation
+    MAX_FILE_SIZE: 23 * 1024 * 1024, // Reduced to 23MB for faster rotation
     JOB_DELAY: 5000, // 5 seconds delay for debugging
-    ORGANIZE_PROMPT: `You are given a transcript of a voice chat. Please organize the transcript into a structured format. Organize and assign a name to each speaker. If there is no way to defer the speaker, just use user1, user2, and so on.`,
+    ORGANIZE_PROMPT: `You are given a transcript of a voice chat. Please organize the transcript into a structured format. Organize and assign a name to each speaker. If there is no way to understand who is speaking, just use user1, user2, and so on.`,
     SUMMARY_PROMPT: `
 
                     ##### Rules
