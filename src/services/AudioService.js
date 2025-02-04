@@ -82,7 +82,8 @@ export default class AudioService {
    * Starts a recording pipeline for an individual user.
    */
   async startUserRecording(userId, connection) {
-    const pipeline = await this.createUserRecordingPipeline(connection.joinedGuild.id, userId);
+    const guildId = connection.joinConfig.guildId;
+    const pipeline = await this.createUserRecordingPipeline(guildId, userId);
     return {
       userId,
       ...pipeline,
@@ -93,7 +94,7 @@ export default class AudioService {
   }
 
   /**
-   * Closes a user’s recording pipeline.
+   * Closes a user's recording pipeline.
    */
   async closeUserRecording(recording) {
     return new Promise((resolve, reject) => {

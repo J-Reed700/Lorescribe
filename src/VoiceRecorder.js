@@ -72,6 +72,10 @@ export default class VoiceRecorder extends EventEmitter {
       connection.receiver.speaking.on('start', async (userId) => {
         if (!session.userRecordings.has(userId)) {
           try {
+            if (connection.state.status !== 'ready') {
+              this.logger.warn(`[VoiceRecorder] Ignoring speaking event for user ${userId} - connection not ready`);
+              return;
+            }
             const user = await this.client.users.fetch(userId);
             if (user.bot) {
               this.logger.info(`[VoiceRecorder] Ignoring bot user ${userId}`);

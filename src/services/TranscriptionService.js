@@ -246,4 +246,13 @@ export default class TranscriptionService extends ITranscriptionService {
       return false;
     }
   }
+
+  cleanup(guildId) {
+    if (guildId) {
+      this.openaiClients.delete(guildId);
+    } else {
+      this.openaiClients.clear();
+    }
+    logger.info(`[TranscriptionService] Cleaned up OpenAI clients${guildId ? ` for guild ${guildId}` : ''}`);
+  }
 }
