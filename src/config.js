@@ -1,5 +1,5 @@
 export default {
-    TIME_INTERVAL: 3, // 3 minutes
+    TIME_INTERVAL: 5, // 5 minutes
     ROTATION_DELAY: 500, // 500ms delay before processing rotated file
     CHUNK_DURATION: 30 * 1000, // 30 seconds
     MAX_CHUNKS: 48, // 4 hours total maximum
@@ -127,7 +127,7 @@ export default {
         BITRATE: 24000,  // Reduced for better multi-speaker handling
         SILENCE_FRAME_LENGTH: 10000,
         SAMPLE_RATE: 24000,  // Using standard Opus rate
-        CHANNELS: 1,     // Keeping mono for size control
+        CHANNELS: 2,     // Keeping stereo for better quality
         ENCODING: 'opus'
     },
     STORAGE: {
