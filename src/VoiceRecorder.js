@@ -3,7 +3,7 @@ import logger from './utils/logger.js';
 import RecordingEvents from './events/RecordingEvents.js';
 import { EndBehaviorType } from '@discordjs/voice';
 import fs from 'node:fs';
-import config from './config.js';
+import baseConfig from './config.js'
 
 export default class VoiceRecorder extends EventEmitter {
   constructor(services) {
@@ -19,13 +19,14 @@ export default class VoiceRecorder extends EventEmitter {
     this.channelService = services.get('channel');
     this.client = services.get('client');
     this.recordingProcessor = services.get('recordingProcessor');
-
+    this.config = baseConfig;
     // Active sessions keyed by guild ID.
     // Each session: { connection, userRecordings: Map<userId, recording>, startTime }
     this.activeRecordings = new Map();
 
-    this.rotationIntervals = new Map(); // For time-based rotation per guild
-    this.sizeCheckIntervals = new Map(); // For size-based rotation per guild
+    // Intervals for rotation.
+    this.rotationIntervals = new Map();
+    this.sizeCheckIntervals = new Map();
 
     this.setupEventListeners();
   }
@@ -46,8 +47,8 @@ export default class VoiceRecorder extends EventEmitter {
   }
 
   /**
-   * Starts a recording session by joining the voice channel and setting up per‑user recording pipelines.
-   * Also schedules rotation based on time and file size.
+   * Start a new recording session in a voice channel.
+   * Sets up per‑user pipelines and schedules rotation.
    */
   async startRecording(voiceChannel) {
     if (!voiceChannel) throw new Error('No voice channel provided');
@@ -60,7 +61,7 @@ export default class VoiceRecorder extends EventEmitter {
       const connection = this.voiceState.getConnection(guildId);
       if (!connection) throw new Error('No connection after joining channel');
 
-      // Create an initial session object.
+      // Create the initial session.
       const session = {
         connection,
         userRecordings: new Map(),
@@ -98,28 +99,27 @@ export default class VoiceRecorder extends EventEmitter {
       connection.receiver.speaking.on('end', (userId) => {
         if (session.userRecordings.has(userId)) {
           this.logger.info(`[VoiceRecorder] User ${userId} stopped speaking`);
-          // Optionally, you can choose to close the pipeline now.
         }
       });
 
       this.activeRecordings.set(guildId, session);
 
-      // Schedule rotation intervals.
-      const timeInterval = this.configService.getTimeInterval(guildId);
+      // Set up time-based rotation.
+      const timeInterval = await this.configService.getTimeInterval(guildId); // in ms
       const rotationInterval = setInterval(() => {
         this.rotateSession(guildId).catch(err => this.logger.error(`[VoiceRecorder] Rotation error for guild ${guildId}:`, err));
       }, timeInterval);
       this.rotationIntervals.set(guildId, rotationInterval);
 
+      // Set up size-based rotation.
       const sizeCheckInterval = setInterval(async () => {
         const session = this.activeRecordings.get(guildId);
         if (!session) return;
-        // Check each user's recording file size.
         let shouldRotate = false;
         for (const rec of session.userRecordings.values()) {
           try {
             const stats = await fs.promises.stat(rec.filename);
-            if (stats.size >= config.MAX_FILE_SIZE) {
+            if (stats.size >= this.config.MAX_FILE_SIZE) {
               shouldRotate = true;
               break;
             }
@@ -131,7 +131,7 @@ export default class VoiceRecorder extends EventEmitter {
           this.logger.info(`[VoiceRecorder] Size check triggered rotation for guild ${guildId}`);
           await this.rotateSession(guildId);
         }
-      }, config.SIZE_CHECK_INTERVAL);
+      }, this.config.SIZE_CHECK_INTERVAL);
       this.sizeCheckIntervals.set(guildId, sizeCheckInterval);
 
       this.events.emit(RecordingEvents.RECORDING_STARTED, { guildId });
@@ -145,10 +145,8 @@ export default class VoiceRecorder extends EventEmitter {
   }
 
   /**
-   * Rotates the current session. Creates a new session (new pipelines for each active user)
-   * and processes the old session (closing streams, transcribing, summarizing, and sending output).
-   *
-   * The new session begins capturing audio immediately so that recording continues seamlessly.
+   * Rotate the current session.
+   * Creates a new session (new pipelines) while processing the old session.
    */
   async rotateSession(guildId) {
     const oldSession = this.activeRecordings.get(guildId);
@@ -164,12 +162,10 @@ export default class VoiceRecorder extends EventEmitter {
       startTime: Date.now()
     };
 
-    // For each active user in the old session, start a new pipeline.
+    // For every active user in the old session, start a new pipeline.
     for (const [userId, oldRec] of oldSession.userRecordings.entries()) {
       try {
-        // Start a new recording for the same user.
         const newRec = await this.audioService.startUserRecording(userId, connection);
-        // (Re-)subscribe to the user’s audio.
         const audioStream = connection.receiver.subscribe(userId, {
           end: { behavior: EndBehaviorType.Manual }
         });
@@ -186,52 +182,63 @@ export default class VoiceRecorder extends EventEmitter {
       }
     }
 
-    // Replace the active session with the new session.
+    // Replace active session with new session.
     this.activeRecordings.set(guildId, newSession);
     this.logger.info(`[VoiceRecorder] New recording session started for guild ${guildId}`);
 
-    // Delay processing slightly to ensure all writes in the old session are finished.
+    // Delay processing the old session to allow for pending writes.
     setTimeout(async () => {
       try {
         const transcripts = await this.recordingProcessor.processRecordings(
           guildId,
           oldSession.userRecordings,
-          this.audioService
+          this.audioService,
+          this.transcriptionService,
+          this.storage
         );
-        this.events.emit(RecordingEvents.ROTATION_COMPLETED, { guildId, transcripts });
-        this.logger.info(`[VoiceRecorder] Successfully processed rotated session for guild ${guildId}`);
-        // Optionally, send the transcripts/summaries to a channel here.
-        await this.channelService.sendMessage(
-          await this.configService.getSummaryChannel(guildId),
-          { content: `**Rotated Session Transcripts:**\n${JSON.stringify(transcripts, null, 2)}` }
-        );
+        // Only send a message if transcripts exist.
+        if (transcripts && transcripts.length > 0) {
+          this.events.emit(RecordingEvents.ROTATION_COMPLETED, { guildId, transcripts });
+          this.logger.info(`[VoiceRecorder] Successfully processed rotated session for guild ${guildId}`);
+          const summaryChannel = await this.configService.getSummaryChannel(guildId);
+          if (summaryChannel) {
+            await this.channelService.sendMessage(summaryChannel, {
+              content: `**Rotated Session Transcripts:**\n${JSON.stringify(transcripts, null, 2)}`
+            });
+          }
+        } else {
+          this.logger.info(`[VoiceRecorder] Rotated session for guild ${guildId} produced no transcripts.`);
+        }
       } catch (err) {
         this.logger.error(`[VoiceRecorder] Error processing rotated session for guild ${guildId}:`, err);
         this.events.emit(RecordingEvents.ROTATION_ERROR, { guildId, error: err });
       }
-    }, config.ROTATION_DELAY);
+    }, this.config.ROTATION_DELAY);
   }
 
   /**
-   * Stops the recording session for a guild.
-   * Closes all per‑user streams, processes the recordings, emits events, and cleans up.
+   * Stop the entire recording session.
    */
   async stopRecording(guildId) {
     if (!guildId || !this.activeRecordings.has(guildId)) return;
     this.logger.info(`[VoiceRecorder] Stopping recording for guild ${guildId}`);
     const session = this.activeRecordings.get(guildId);
     try {
-      // Clear rotation intervals.
-      const rotInt = this.rotationIntervals.get(guildId);
-      if (rotInt) clearInterval(rotInt);
-      const sizeInt = this.sizeCheckIntervals.get(guildId);
-      if (sizeInt) clearInterval(sizeInt);
-
-      // Process current session recordings.
+      // Clear rotation and size-check intervals.
+      if (this.rotationIntervals.has(guildId)) {
+        clearInterval(this.rotationIntervals.get(guildId));
+        this.rotationIntervals.delete(guildId);
+      }
+      if (this.sizeCheckIntervals.has(guildId)) {
+        clearInterval(this.sizeCheckIntervals.get(guildId));
+        this.sizeCheckIntervals.delete(guildId);
+      }
       const transcripts = await this.recordingProcessor.processRecordings(
         guildId,
         session.userRecordings,
-        this.audioService
+        this.audioService,
+        this.transcriptionService,
+        this.storage
       );
       this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, transcripts });
       await this.cleanup(guildId);

@@ -16,8 +16,7 @@ export default class AudioService {
 
   /**
    * Create a recording pipeline for a given user.
-   * Spawns an FFmpeg process that reads PCM data from stdin and encodes to MP3.
-   * A unique filename is generated using the guild and user IDs.
+   * Spawns an FFmpeg process that reads PCM from stdin and encodes it on the fly to MP3.
    */
   async createUserRecordingPipeline(guildId, userId) {
     const filename = this.storage.getTempFilePath(`${guildId}-${userId}`, 'mp3');
@@ -27,7 +26,7 @@ export default class AudioService {
       '-ar', String(this.config.VOICE.SAMPLE_RATE),
       '-ac', String(this.config.VOICE.CHANNELS),
       '-acodec', 'pcm_s16le',
-      '-i', 'pipe:0', // read PCM data from stdin
+      '-i', 'pipe:0',
       '-codec:a', 'libmp3lame',
       '-q:a', String(this.config.OUTPUT.QUALITY),
       '-b:a', this.config.OUTPUT.BITRATE,
@@ -41,7 +40,6 @@ export default class AudioService {
 
     const outputStream = ffmpeg.stdin;
     const opusDecoder = await this.createOpusDecoder();
-
     return { outputStream, opusDecoder, filename, ffmpegProcess: ffmpeg };
   }
 
@@ -51,7 +49,7 @@ export default class AudioService {
       const decoder = new prism.opus.Decoder({
         rate: this.config.VOICE.SAMPLE_RATE,
         channels: this.config.VOICE.CHANNELS,
-        frameSize: 480 // 20ms frame
+        frameSize: 480
       });
       opusDecoder = decoder;
       this.logger.info('[AudioService] Using prism-media opus decoder');
@@ -81,8 +79,7 @@ export default class AudioService {
   }
 
   /**
-   * Start recording for an individual user.
-   * Returns an object representing that user’s recording pipeline.
+   * Starts a recording pipeline for an individual user.
    */
   async startUserRecording(userId, connection) {
     const pipeline = await this.createUserRecordingPipeline(connection.joinedGuild.id, userId);
@@ -96,7 +93,7 @@ export default class AudioService {
   }
 
   /**
-   * Close a user’s recording pipeline.
+   * Closes a user’s recording pipeline.
    */
   async closeUserRecording(recording) {
     return new Promise((resolve, reject) => {

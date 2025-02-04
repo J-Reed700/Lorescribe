@@ -3,44 +3,38 @@ import logger from '../utils/logger.js';
 
 export default class RecordingProcessor {
   /**
-   * @param {Object} options
-   * @param {StorageService} options.storage
-   * @param {TranscriptionService} options.transcriptionService
-   * @param {ChannelService} options.channelService
-   * @param {SummaryJobService} options.summaryJobs
-   */
-  constructor({ storage, transcriptionService, channelService, summaryJobs }) {
-    this.storage = storage;
-    this.transcriptionService = transcriptionService;
-    this.channelService = channelService;
-    this.summaryJobs = summaryJobs;
-  }
-
-  /**
    * Process all user recordings from a session.
-   * Closes each recording, transcribes it, and deletes the temporary file.
-   * Returns an array of objects: [{ userId, transcript }, ...]
+   * Returns an array of transcript objects.
    */
-  async processRecordings(guildId, userRecordings, audioService) {
+  async processRecordings(guildId, userRecordings, audioService, transcriptionService, storage) {
     const transcripts = [];
+    let anyData = false;
     for (const [userId, recording] of userRecordings.entries()) {
       try {
         await audioService.closeUserRecording(recording);
       } catch (err) {
         logger.error(`[RecordingProcessor] Error closing recording for user ${userId}:`, err);
       }
+      // Check if any recording received data.
+      if (recording.dataReceived) {
+        anyData = true;
+      }
       try {
-        const transcript = await this.transcriptionService.transcribeAudio(recording.filename, guildId);
+        const transcript = await transcriptionService.transcribeAudio(recording.filename, guildId);
         transcripts.push({ userId, transcript });
       } catch (err) {
         logger.error(`[RecordingProcessor] Error transcribing for user ${userId}:`, err);
       } finally {
         try {
-          await this.storage.deleteFile(recording.filename);
+          await storage.deleteFile(recording.filename);
         } catch (err) {
           logger.error(`[RecordingProcessor] Error deleting file for user ${userId}:`, err);
         }
       }
+    }
+    // If none of the recordings captured any data, return a default transcript.
+    if (!anyData) {
+      return [{ transcript: 'No audio detected during this session.' }];
     }
     return transcripts;
   }
