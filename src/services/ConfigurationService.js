@@ -158,9 +158,7 @@ export default class ConfigurationService extends IConfigurationService {
             const configs = Object.fromEntries(this.configs);
             await this.redis.set(backupKey, JSON.stringify(configs));
             
-            // Set expiry for backup (30 days)
-            await this.redis.expire(backupKey, 60 * 60 * 24 * 30);
-            
+            // No expiry - backups will persist indefinitely
             logger.info(`Created backup with key ${backupKey}`);
             return true;
         } catch (error) {
