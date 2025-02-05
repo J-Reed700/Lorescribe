@@ -232,7 +232,7 @@ export default class VoiceRecorder extends EventEmitter {
         guildId,
         session.userRecordings
       );
-      this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, summaries });
+      this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, summaryObject });
       const summaryChannel = await this.configService.getSummaryChannel(guildId);
       if (summaryChannel) {
         await this.channelService.sendMessage(summaryChannel, summaryObject);

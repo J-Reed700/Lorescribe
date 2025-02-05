@@ -71,9 +71,18 @@ export default class RecordingProcessor {
       return { transcript: 'No audio detected during this session.' };
     }
 
+    // Add delay to ensure files are fully written
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // Process each recording and combine into one transcript
     const processingPromises = Array.from(userRecordings.entries()).map(async ([userId, recording]) => {
       try {
+        // Check if file exists before processing
+        if (!fs.existsSync(recording.filename)) {
+          logger.error(`[RecordingProcessor] File not found for user ${userId}: ${recording.filename}`);
+          return null;
+        }
+
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('Processing timeout')), PROCESSING_TIMEOUT);
         });
@@ -137,16 +146,16 @@ export default class RecordingProcessor {
         summary,
         isTranscription,
         isUnableToSummarize,
-        jobId,
-        userId
+        jobId
       };
     } catch (error) {
       logger.error('[RecordingProcessor] Error generating summary:', error);
       return {
         transcript: combinedTranscript,
-        summary: combinedTranscript,
+        summary: "Unable to generate summary. Here's the raw transcript:\n\n" + combinedTranscript,
         isTranscription: true,
-        isUnableToSummarize: true
+        isUnableToSummarize: true,
+        jobId
       };
     }
   }

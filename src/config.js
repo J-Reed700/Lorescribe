@@ -141,7 +141,7 @@ export default {
     OUTPUT: {
         DIRECTORY: 'recordings',  // Deprecated, use STORAGE paths instead
         FORMAT: 'mp3',
-        QUALITY: 5,  // Increased compression
-        BITRATE: '48k'  // Added explicit bitrate control
+        QUALITY: 4,  // Higher quality VBR (0-9, lower is better)
+        BITRATE: '128k'  // Increased bitrate for better quality
     }
 };
