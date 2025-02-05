@@ -20,7 +20,6 @@ export default class SetKeyCommand extends BaseCommand {
                     .setRequired(true)
             );
     }
-
     async execute(interaction) {
         try {
             await this.deferReplyIfNeeded(interaction, true);
@@ -29,24 +28,58 @@ export default class SetKeyCommand extends BaseCommand {
             if (!key) {
                 throw new Error('No API key provided');
             }
-            // Save the API key
-            await this.config.setOpenAIKey(interaction.guildId, key);
+
+            // Validate key format
+            if (!key.startsWith('sk-') || key.length < 40) {
+                throw new Error('Invalid API key format');
+            }
+
+            // Get transcription service to validate key
+            const transcriptionService = this.services.get('transcription');
+
+            // Test key with OpenAI API
+            const isValid = await transcriptionService._validateOpenAIKey(key);
+            if (!isValid) {
+                throw new Error('Invalid API key');
+            }
+
+            // Save the validated API key
+            await this.retryHandler.execute(() => 
+                this.config.setOpenAIKey(interaction.guildId, key)
+            );
             
             await handleReply(
-                '✅ **Success!** OpenAI API key has been set\n> The key will be stored securely in memory only.',
+                '✅ **Success!** OpenAI API key has been validated and set\n> The key will be stored securely in memory only.',
                 interaction,
                 true,
                 true
             );
+
         } catch (error) {
-            const errorMessage = error.message === 'Invalid API key format'
-                ? '❌ **Error:** Invalid API key format\n> The key should start with `sk-` and be at least 40 characters long.'
-                : error.message === 'No API key provided'
-                    ? '❌ **Error:** No API key provided\n> Please provide a valid OpenAI API key.'
-                    : '❌ **Error:** Failed to set API key. Please try again.';
-        
-            
-            if (!error.message.includes('Invalid API key') && !error.message.includes('No API key provided')) {
+            let errorMessage;
+            switch(error.message) {
+                case 'Invalid API key format':
+                    errorMessage = '❌ **Error:** Invalid API key format\n> The key should start with `sk-` and be at least 40 characters long.';
+                    break;
+                case 'No API key provided':
+                    errorMessage = '❌ **Error:** No API key provided\n> Please provide a valid OpenAI API key.';
+                    break;
+                case 'Invalid API key':
+                    errorMessage = '❌ **Error:** The provided API key is invalid\n> Please check your OpenAI API key and try again.';
+                    break;
+                case 'Request failed with status code 401':
+                    errorMessage = '❌ **Error:** Authentication failed\n> The API key appears to be invalid or revoked.';
+                    break;
+                case 'Request failed with status code 429':
+                    errorMessage = '❌ **Error:** Rate limit exceeded\n> Please try again in a few minutes.';
+                    break;
+                default:
+                    errorMessage = '❌ **Error:** Failed to set API key. Please try again.';
+            }
+
+            if (!error.message.includes('Invalid API key') && 
+                !error.message.includes('No API key provided') &&
+                !error.message.includes('Request failed')) {
                 error.message = errorMessage;
                 throw error;
             }

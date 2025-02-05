@@ -172,9 +172,14 @@ export default class VoiceRecorder extends EventEmitter {
         audioStream
           .pipe(newRec.opusDecoder, { end: false })
           .pipe(newRec.outputStream, { end: false });
+        let count = 0;  
         audioStream.on('data', (data) => {
           newRec.dataReceived = true;
           newRec.bytesWritten += data.length;
+          count++;
+          if (count % 100 === 0) {
+            this.logger.info(`[VoiceRecorder] User ${userId} has written ${newRec.bytesWritten} bytes`);
+          }
         });
         newSession.userRecordings.set(userId, newRec);
       } catch (err) {
