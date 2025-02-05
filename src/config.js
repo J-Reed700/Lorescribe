@@ -135,7 +135,7 @@ export default {
         TEMP_DIRECTORY: 'temp',           // For temporary audio files
         TRANSCRIPTS_DIRECTORY: 'data/transcripts', // For storing transcripts
         SUMMARIES_DIRECTORY: 'data/summaries',  // For storing summaries
-        RETENTION_DAYS: 30,               // How long to keep transcripts and summaries
+        RETENTION_DAYS: 1,               // How long to keep transcripts and summaries
         CLEANUP_INTERVAL: 24 * 60 * 60 * 1000, // Cleanup old files daily
     },
     OUTPUT: {
