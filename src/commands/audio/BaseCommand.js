@@ -20,7 +20,7 @@ export default class BaseCommand {
                 try {
                     if(ephemeral) {
                         this.logger.info('[BaseCommand] Deferring reply with ephemeral flag');
-                        await interaction.deferReply( { ephemeral: true } );
+                        await interaction.deferReply( { flags: MessageFlags.Ephemeral } );
                     } else {
                         this.logger.info('[BaseCommand] Deferring reply without ephemeral flag');
                         await interaction.deferReply();
@@ -37,7 +37,7 @@ export default class BaseCommand {
                                 // Try the opposite ephemeral method from what might have failed
                                 const useFlags = Math.random() < 0.5;
                                 if (useFlags) {
-                                    await interaction.deferReply( { flags: MessageFlags.Ephemeral } );
+                                    await interaction.deferReply( { flags: MessageFlags.Ephemeral} );
                                 } else {
                                     await interaction.deferReply( { ephemeral: true } );
                                 }
