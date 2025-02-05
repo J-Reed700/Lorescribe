@@ -45,7 +45,7 @@ export default class SetKeyCommand extends BaseCommand {
             );
 
         } catch (error) {
-            let errorMessage;
+            let errorMessage = error.message;
             switch(error.message) {
                 case 'Invalid API key format':
                     errorMessage = '❌ **Error:** Invalid API key format\n> The key should start with `sk-` and be at least 40 characters long.';
@@ -66,12 +66,7 @@ export default class SetKeyCommand extends BaseCommand {
                     errorMessage = '❌ **Error:** Failed to set API key. Please try again.';
             }
 
-            if (!error.message.includes('Invalid API key') && 
-                !error.message.includes('No API key provided') &&
-                !error.message.includes('Request failed')) {
-                error.message = errorMessage;
-                throw error;
-            }
+            throw new Error(errorMessage);
         }
     }
 }
