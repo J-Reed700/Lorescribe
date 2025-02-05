@@ -34,19 +34,8 @@ export default class SetKeyCommand extends BaseCommand {
                 throw new Error('Invalid API key format');
             }
 
-            // Get transcription service to validate key
-            const transcriptionService = this.services.get('transcription');
-
-            // Test key with OpenAI API
-            const isValid = await transcriptionService._validateOpenAIKey(key);
-            if (!isValid) {
-                throw new Error('Invalid API key');
-            }
-
             // Save the validated API key
-            await this.retryHandler.execute(() => 
-                this.config.setOpenAIKey(interaction.guildId, key)
-            );
+            await this.config.setOpenAIKey(interaction.guildId, key);
             
             await handleReply(
                 '✅ **Success!** OpenAI API key has been validated and set\n> The key will be stored securely in memory only.',

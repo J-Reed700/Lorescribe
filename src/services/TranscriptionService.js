@@ -213,38 +213,29 @@ export default class TranscriptionService extends ITranscriptionService {
     }
   }
 
-  async _validateOpenAIKey(key) {
-    try {
-      logger.info('[TranscriptionService] Validating OpenAI API key');
-      await this.openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: "test" }],
-        max_tokens: 1
-      });
-      logger.info('[TranscriptionService] API key validation successful');
-      return true;
-    } catch (error) {
-      const errorDetails = {
-        location: 'TranscriptionService._validateOpenAIKey',
-        error: {
-          name: error.name,
-          message: error.message,
-          status: error.status,
-          code: error.code,
-          type: error.type,
-          stack: error.stack
-        }
-      };
-      if (error.response) {
-        errorDetails.openai = {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        };
+  async summarizeAllSummaries(guildId, summaries) {
+    // Accumulate all summaries with user IDs into one string
+    const combinedSummary = summaries.reduce((acc, summary) => {
+      if (summary.userId && summary.summary) {
+        return acc + `\nUser ${summary.userId}:\n${summary.summary}\n`;
       }
-      logger.error('[TranscriptionService] API key validation failed:', errorDetails);
-      return false;
+      return acc;
+    }, '');
+
+    // If we have content, generate a summary of all summaries
+    if (combinedSummary.trim().length > 0) {
+      const finalSummary = await this.generateSummary(
+        `Please summarize this conversation between multiple users:\n${combinedSummary}`, 
+        guildId
+      );
+      return finalSummary;
     }
+
+    return {
+      summary: 'No valid summaries to combine.',
+      isTranscription: false,
+      isUnableToSummarize: true
+    };
   }
 
   cleanup(guildId) {
