@@ -29,12 +29,6 @@ export default class SetKeyCommand extends BaseCommand {
             if (!key) {
                 throw new Error('No API key provided');
             }
-
-            // Basic validation of key format
-            if (!key.startsWith('sk-') || key.length < 40) {
-                throw new Error('Invalid API key format');
-            }
-
             // Save the API key
             await this.config.setOpenAIKey(interaction.guildId, key);
             
