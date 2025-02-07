@@ -1,7 +1,6 @@
 import Redis from 'ioredis';
 import logger from '../utils/logger.js';
 import IConfigurationService from '../interfaces/IConfigurationService.js';
-import baseConfig from '../config.js';
 import { redisOptions } from '../config/redis.js';
 import { encrypt, decrypt } from '../utils/encryption.js';
 
@@ -209,6 +208,55 @@ export default class ConfigurationService extends IConfigurationService {
         }
     }
 
+    async setSummaryPrompt(guildId, prompt) {
+        try {
+            const config = this.getGuildConfig(guildId) || {};
+            config.summaryPrompt = prompt;
+            return await this.setGuildConfig(guildId, config);
+        } catch (error) {
+            logger.error(`Failed to set summary prompt for guild ${guildId}:`, error);
+            throw error;
+        }
+    }
+
+    async getSummaryPrompt(guildId) {
+        try {
+            const config = this.getGuildConfig(guildId);
+            if (config?.summaryPrompt) {
+                return this._setCustomUserPrompt(config.summaryPrompt);
+            }
+            else {
+                return this.baseConfig.SUMMARY_PROMPT;
+            }
+        } catch (error) {
+            logger.error(`Error getting summary prompt for guild ${guildId}:`, error);
+            return this.baseConfig.SUMMARY_PROMPT;
+        }
+    }
+
+    async deleteSummaryPrompt(guildId) {
+        try {
+            const config = this.getGuildConfig(guildId) || {};
+            config.summaryPrompt = null;
+            return await this.setGuildConfig(guildId, config);
+        } catch (error) {
+            logger.error(`Failed to delete summary prompt for guild ${guildId}:`, error);
+            throw error;
+        }
+    }
+
+    _setCustomUserPrompt(summaryPrompt) {
+        try {
+            let prompt = this.baseConfig.CUSTOM_USER_PROMPT;
+            prompt = prompt.replace('&USER_PROMPT&', summaryPrompt);
+            return prompt;
+        } catch (error) {
+            logger.error(`Failed to set custom user prompt:`, error);
+            throw error;
+        }
+    }
+
+    
     async dispose() {
         try {
             await this.redis.quit();

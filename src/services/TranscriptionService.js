@@ -139,12 +139,13 @@ export default class TranscriptionService extends ITranscriptionService {
           }
           logger.info(`[TranscriptionService] Sending summary prompt to OpenAI with model ${model}`);
           const openai = this.getOpenAIClient(guildId);
+          const summaryPrompt = await this.configService.getSummaryPrompt(guildId);
           completion = await openai.chat.completions.create({
             model: model,
             messages: [
               {
                 role: "system",
-                content: this.config.SUMMARY_PROMPT
+                content: summaryPrompt
               },
               {
                 role: "user",

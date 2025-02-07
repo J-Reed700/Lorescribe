@@ -6,9 +6,29 @@ export default {
     MAX_CHUNKS: 48, // 4 hours total maximum
     MAX_FILE_SIZE: 23 * 1024 * 1024, // Reduced to 23MB for faster rotation
     JOB_DELAY: 5000, // 5 seconds delay for debugging
-    ORGANIZE_PROMPT: `You are given a transcript of a person speaking in a voice chat. Please organize the transcript into a structured format. `,
+    SYSTEM_RULES: ` #### If there is no transcript return 'No transcript available'. ####
+                    
+                    #### If you are absolutely positive that you are unable to summarize no matter what and no matter how hard you try, return 'Unable to summarize'. ####`,
+    DISCORD_RULES:`#####Format Guidelines:
+                    1. Use \`# \` for major sections
+                    2. Use \`## \` for subsections
+                    3. Use \`### \` for specific categories
+                    4. Use \`- \` for bullet points
+                    5. Use \`> \` for quotes
+                    6. Use \`>>> \` for multi-line quotes
+                    7. Use \`***\` for critical moments
+                    8. Use \`**\` for emphasis
+                    9. Use \`*\` for NPCs/minor emphasis
+                    10. Use \`__\` for locations
+                    11. Use \`||\` for spoilers
+                    12. Use \`\`\` for code blocks/quotes
+                    `,       
+    CUSTOM_USER_PROMPT:`${SYSTEM_RULES}
+                        ${DISCORD_RULES}
+                        &USER_PROMPT&`,       
     SUMMARY_PROMPT: `
-
+                    ${SYSTEM_RULES}
+                    
                     ##### Rules
                     
                     ##### Narrative Summary
@@ -75,19 +95,7 @@ export default {
                     - *Known Challenges Ahead*
                     - Player Intentions
 
-                    #####Format Guidelines:
-                    1. Use \`# \` for major sections
-                    2. Use \`## \` for subsections
-                    3. Use \`### \` for specific categories
-                    4. Use \`- \` for bullet points
-                    5. Use \`> \` for quotes
-                    6. Use \`>>> \` for multi-line quotes
-                    7. Use \`***\` for critical moments
-                    8. Use \`**\` for emphasis
-                    9. Use \`*\` for NPCs/minor emphasis
-                    10. Use \`__\` for locations
-                    11. Use \`||\` for spoilers
-                    12. Use \`\`\` for code blocks/quotes
+                    ${DISCORD_RULES}
 
                     #####Remember to:
                     - Maintain chronological flow while grouping related events
@@ -99,24 +107,25 @@ export default {
                     - Balance detail with readability
                     - Use appropriate formatting for emphasis and organization
                     
-                    #### If there is no transcript return 'No transcript available'. ####
-                    
-                    #### If you are absolutely positive that you are unable to summarize no matter what and no matter how hard you try, return 'Unable to summarize'. ####`  ,
+`,
 
     TRANSCRIPTION_PROMPT: `Please transcribe the audio, clearly indicating different speakers by prefixing their lines with their usernames. 
                     
-                    For example, if the user is called "John", and they say "Hello, how are you?", you would transcribe it as "John: Hello, how are you?".
-                    
+                    For example, if the user is called "John", and they say "Hello, how are you?", you would transcribe it as "John: Hello, how are you?".            
+
+                    If there is no audio, return "No audio available".
+
                     If you cannot infer who is speaking, just use user1, user2, and so on.
                     for example, if two people are talking, you would transcribe it as "user1: Hello, how are you? user2: I'm fine, thank you."
-                    If there is no audio, return "No audio available".`,
+                    `,
     COMMANDS: {
         START: '!record',
         STOP: '!stop',
         STATUS: '!status',
         HELP: '!help',
         SETCHANNEL: '!setsummarychannel',
-        SETTIMEINTERVAL: '!settimeinterval'
+        SETTIMEINTERVAL: '!settimeinterval',
+        MODIFY_PROMPT: '!modifyprompt'
     },
     PERMISSIONS: [
         'Connect',

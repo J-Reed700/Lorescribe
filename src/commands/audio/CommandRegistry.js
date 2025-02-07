@@ -4,6 +4,8 @@ import StopCommand from './StopCommand.js';
 import StatusCommand from './StatusCommand.js';
 import SetSummaryChannelCommand from './SetSummaryChannelCommand.js';
 import SetKeyCommand from './SetKeyCommand.js';
+import ModifyPromptCommand from './ModifyPromptCommand.js';
+import DeletePromptCommand from './DeletePromptCommand.js';
 import SetTimeIntervalCommand from './SetTimeIntervalCommand.js';
 import logger from '../../utils/logger.js';
 import { MessageFlags } from 'discord.js';
@@ -13,7 +15,6 @@ export default class CommandRegistry {
     constructor(container) {
         this.container = container;
         this.commands = new Map();
-        this.retryHandler = new RetryHandler(3, 1000); // 3 retries, starting with 1s delay
         this.registerCommands();
     }
 
@@ -25,6 +26,8 @@ export default class CommandRegistry {
             SetSummaryChannelCommand,
             SetKeyCommand,
             SetTimeIntervalCommand,
+            ModifyPromptCommand,
+            DeletePromptCommand
         ];
 
         // Register each command
