@@ -3,13 +3,14 @@ import logger from '../utils/logger.js';
 import IConfigurationService from '../interfaces/IConfigurationService.js';
 import { redisOptions } from '../config/redis.js';
 import { encrypt, decrypt } from '../utils/encryption.js';
-
+import config from '../config.js';
 export default class ConfigurationService extends IConfigurationService {
     constructor(baseConfig) {
         super();
         this.configs = new Map();
         this.inMemoryKeys = new Map();
-        this.baseConfig = baseConfig;
+        this.config = baseConfig;
+        this.baseConfig = config;
         this.redis = new Redis(redisOptions.redis);
         this.loadConfigs();
     }

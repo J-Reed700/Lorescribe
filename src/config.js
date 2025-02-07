@@ -22,12 +22,15 @@ export default {
                     10. Use \`__\` for locations
                     11. Use \`||\` for spoilers
                     12. Use \`\`\` for code blocks/quotes
-                    `,       
-    CUSTOM_USER_PROMPT:`${SYSTEM_RULES}
-                        ${DISCORD_RULES}
-                        &USER_PROMPT&`,       
-    SUMMARY_PROMPT: `
-                    ${SYSTEM_RULES}
+                    `,
+    get CUSTOM_USER_PROMPT() {
+        return `${this.SYSTEM_RULES}
+                ${this.DISCORD_RULES}
+                &USER_PROMPT&`;
+    },
+    get SUMMARY_PROMPT() {
+        return `
+                    ${this.SYSTEM_RULES}
                     
                     ##### Rules
                     
@@ -95,7 +98,7 @@ export default {
                     - *Known Challenges Ahead*
                     - Player Intentions
 
-                    ${DISCORD_RULES}
+                    ${this.DISCORD_RULES}
 
                     #####Remember to:
                     - Maintain chronological flow while grouping related events
@@ -106,9 +109,8 @@ export default {
                     - Document any major rule interpretations or house rules applied
                     - Balance detail with readability
                     - Use appropriate formatting for emphasis and organization
-                    
-`,
-
+                    `;
+    },
     TRANSCRIPTION_PROMPT: `Please transcribe the audio, clearly indicating different speakers by prefixing their lines with their usernames. 
                     
                     For example, if the user is called "John", and they say "Hello, how are you?", you would transcribe it as "John: Hello, how are you?".            
