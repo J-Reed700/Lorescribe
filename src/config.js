@@ -6,7 +6,7 @@ export default {
     MAX_CHUNKS: 48, // 4 hours total maximum
     MAX_FILE_SIZE: 23 * 1024 * 1024, // Reduced to 23MB for faster rotation
     JOB_DELAY: 5000, // 5 seconds delay for debugging
-    ORGANIZE_PROMPT: `You are given a transcript of a voice chat. Please organize the transcript into a structured format. Organize and assign a name to each speaker. If there is no way to understand who is speaking, just use user1, user2, and so on.`,
+    ORGANIZE_PROMPT: `You are given a transcript of a person speaking in a voice chat. Please organize the transcript into a structured format. `,
     SUMMARY_PROMPT: `
 
                     ##### Rules
