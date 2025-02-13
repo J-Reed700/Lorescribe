@@ -5,7 +5,7 @@ import RetryHandler from '../../utils/RetryHandler.js';
 export default class SetTimeIntervalCommand extends BaseCommand {
     constructor(services) {
         super(services);
-        this.storage = services.get('storage');
+        this.configService = services.get('config');
         this.retryHandler = new RetryHandler(3, 1000);
     }
 
@@ -37,7 +37,7 @@ export default class SetTimeIntervalCommand extends BaseCommand {
             }
 
             // Save the interval
-            await this.retryHandler.execute(() => this.storage.setSummaryInterval(interaction.guildId, minutes));
+            await this.retryHandler.execute(() => this.configService.setTimeInterval(interaction.guildId, minutes));
             
             await handleReply(
                 `✅ **Success!** Summary interval set to \`${minutes}\` minutes\n> Recordings will be processed every \`${minutes}\` minutes.`,
@@ -47,7 +47,9 @@ export default class SetTimeIntervalCommand extends BaseCommand {
             );
         } catch (error) {
             const errorMessage = error.message === 'Invalid interval'
-                ? '❌ **Error:** Please provide a valid interval between 1 and 60 minutes.'
+                ? '❌ **Error:** Please provide a valid interval between 1 and 60 minutes.' 
+                : error.message === 'No interval provided'
+                ? '❌ **Error:** Please provide an interval between 1 and 60 minutes.'
                 : '❌ **Error:** Failed to set summary interval. Please try again.';
 
             if (!error.message.includes('Invalid interval')) {
