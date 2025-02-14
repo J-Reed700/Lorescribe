@@ -43,7 +43,7 @@ export default {
                     significant NPC, you would include a detailed breakdown of the NPC. If there was a new location, you would include a detailed breakdown 
                     of the location. Don't miss out on any of the important dialogue.
 
-                    Otherwise, just give a very detailed summary of the transcript.
+                    Give a very detailed summary of the transcript.
                     
                     If any of the below sections are not applicable, omit them. Do not include them in the summary.
 
