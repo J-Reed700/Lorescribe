@@ -41,20 +41,13 @@ export default {
                     is a list of different events that could occur in a transcript. Use these as a guide to create a detailed summary of the transcript where 
                     applicable. For example, if there was a combat encounter, you would include a detailed breakdown of the encounter. If there was a 
                     significant NPC, you would include a detailed breakdown of the NPC. If there was a new location, you would include a detailed breakdown 
-                    of the location.
+                    of the location. Don't miss out on any of the important dialogue.
 
                     Otherwise, just give a very detailed summary of the transcript.
-
+                    
+                    If any of the below sections are not applicable, omit them. Do not include them in the summary.
 
                     ##### Detailed Breakdown
-                    
-                    ##### Key Events
-                    Chronologically list major events, using:
-                    - \`>\` for important quotes
-                    - \`**\` for combat encounters
-                    - \`*\` for significant NPCs
-                    - \`__\` for new locations
-                    - ||Spoiler tags|| for reveals/twists
 
                     ### Combat Encounters
                     For each major battle:
@@ -81,22 +74,6 @@ export default {
                     - **Critical Successes/Failures**
                     - *Unexpected Events*
                     - Player Innovations
-
-                    ### Consequences & Setup
-                    - **Immediate Consequences**
-                    - *Future Plot Hooks*
-                    - Unresolved Threads
-                    - Party's Next Objectives
-
-                    ## Technical Notes
-                    - **House Rules Applied**
-                    - *Mechanical Challenges*
-                    - Rule Interpretations
-
-                    ## Next Session
-                    - ***Immediate Goals***
-                    - *Known Challenges Ahead*
-                    - Player Intentions
 
                     ${this.DISCORD_RULES}
 
