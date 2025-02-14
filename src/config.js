@@ -1,6 +1,6 @@
 export default {
     SIZE_CHECK_INTERVAL: 30 * 1000, // 30 seconds
-    TIME_INTERVAL: 4, // 4 minutes
+    TIME_INTERVAL: 10, // 10 minutes
     ROTATION_DELAY: 500, // 500ms delay before processing rotated file
     CHUNK_DURATION: 30 * 1000, // 30 seconds
     MAX_CHUNKS: 48, // 4 hours total maximum
