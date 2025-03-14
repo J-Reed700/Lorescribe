@@ -21,12 +21,13 @@ export default class VoiceRecorder extends EventEmitter {
     this.recordingProcessor = services.get('recordingProcessor');
     this.config = baseConfig;
     // Active sessions keyed by guild ID.
-    // Each session: { connection, userRecordings: Map<userId, recording>, startTime }
+    // Each session: { connection, userRecordings: Map<userId, recording>, startTime, lastActivityTime }
     this.activeRecordings = new Map();
 
     // Intervals for rotation.
     this.rotationIntervals = new Map();
     this.sizeCheckIntervals = new Map();
+    this.inactivityIntervals = new Map();
 
     this.setupEventListeners();
   }
@@ -65,11 +66,15 @@ export default class VoiceRecorder extends EventEmitter {
       const session = {
         connection,
         userRecordings: new Map(),
-        startTime: Date.now()
+        startTime: Date.now(),
+        lastActivityTime: Date.now()
       };
 
       // Listen for speaking events.
       connection.receiver.speaking.on('start', async (userId) => {
+        // Update last activity time when someone starts speaking
+        session.lastActivityTime = Date.now();
+        
         if (!session.userRecordings.has(userId)) {
           try {
             const user = await this.client.users.fetch(userId);
@@ -103,6 +108,19 @@ export default class VoiceRecorder extends EventEmitter {
       });
 
       this.activeRecordings.set(guildId, session);
+
+      // Set up inactivity check (5 minutes)
+      const inactivityInterval = setInterval(async () => {
+        const currentSession = this.activeRecordings.get(guildId);
+        if (!currentSession) return;
+        
+        const inactiveTime = Date.now() - currentSession.lastActivityTime;
+        if (inactiveTime >= 5 * 60 * 1000) { // 5 minutes in milliseconds
+          this.logger.info(`[VoiceRecorder] No activity detected for 5 minutes in guild ${guildId}, stopping recording`);
+          await this.stopRecording(guildId);
+        }
+      }, 30000); // Check every 30 seconds
+      this.inactivityIntervals.set(guildId, inactivityInterval);
 
       // Set up time-based rotation.
       const timeInterval = await this.configService.getTimeInterval(guildId); // in ms
@@ -261,6 +279,10 @@ export default class VoiceRecorder extends EventEmitter {
     if (this.sizeCheckIntervals.has(guildId)) {
       clearInterval(this.sizeCheckIntervals.get(guildId));
       this.sizeCheckIntervals.delete(guildId);
+    }
+    if (this.inactivityIntervals.has(guildId)) {
+      clearInterval(this.inactivityIntervals.get(guildId));
+      this.inactivityIntervals.delete(guildId);
     }
   }
 
