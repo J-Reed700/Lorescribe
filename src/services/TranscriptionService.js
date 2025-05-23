@@ -112,14 +112,14 @@ export default class TranscriptionService extends ITranscriptionService {
         return {summary: 'No summaries to combine', isTranscription: false, isUnableToSummarize: true};
       }
       const combinedSummary = summaries.join('\n');
-      return await this.generateSummary(combinedSummary, guildId);
+      return await this.generateSummary(combinedSummary, guildId, true);
     } catch (error) {
       logger.error('[TranscriptionService] Error generating summary from session summaries:', error);
       throw error;
     }
   }
 
-  async generateSummary(transcript, guildId) {
+  async generateSummary(transcript, guildId, summarize = false) {
     try {
       if (!transcript || transcript.trim().length === 0) {
         throw new Error('Empty transcript provided');
@@ -157,7 +157,7 @@ export default class TranscriptionService extends ITranscriptionService {
           }
           logger.info(`[TranscriptionService] Sending summary prompt to OpenAI with model ${model}`);
           const openai = this.getOpenAIClient(guildId);
-          const summaryPrompt = await this.configService.getSummaryPrompt(guildId);
+          const summaryPrompt = summarize ? await this.configService.getSessionSummaryPrompt(guildId) : await this.configService.getSummaryPrompt(guildId);
           completion = await openai.chat.completions.create({
             model: model,
             messages: [

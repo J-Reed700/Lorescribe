@@ -235,6 +235,15 @@ export default class ConfigurationService extends IConfigurationService {
         }
     }
 
+    async getSessionSummaryPrompt(guildId) {
+        try {
+            return this.baseConfig.SESSION_SUMMARY_PROMPT
+        } catch (error) {
+            logger.error(`Error getting session summary prompt for guild ${guildId}:`, error);
+            return this.baseConfig.SESSION_SUMMARY_PROMPT;
+        }
+    }
+
     async deleteSummaryPrompt(guildId) {
         try {
             const config = this.getGuildConfig(guildId) || {};

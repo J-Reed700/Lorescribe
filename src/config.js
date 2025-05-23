@@ -35,7 +35,7 @@ export default {
                     ##### Rules
                     
                     ##### Narrative Summary
-                    Start with a 2-3 sentence high-level overview of the transcript's main events, using ***bold italics*** for particularly significant moments.
+                    Start with a high-level overview of the transcript's main events, using ***bold italics*** for particularly significant moments.
 
                     Then begin a detailed breakdown of the transcript, be very descriptive and detailed. Do not leave out any important details. Below 
                     is a list of different events that could occur in a transcript. Use these as a guide to create a detailed summary of the transcript where 
@@ -88,6 +88,11 @@ export default {
                     - Use appropriate formatting for emphasis and organization
                     `;
     },
+    SESSION_SUMMARY_PROMPT: 
+                    `This is a combination of several transcripts from a Dungeons & Dragons session, where each transcript represents a 10-minute interval of gameplay. 
+                    Please create a comprehensive summary that weaves together all these intervals into a cohesive narrative. Do not forget any important details. 
+                    Please include the names of the players and the DM. Please include any important details. Make it a very descriptive summary.`
+    ,
     TRANSCRIPTION_PROMPT: `Please transcribe the audio, clearly indicating different speakers by prefixing their lines with their usernames. 
                     
                     For example, if the user is called "John", and they say "Hello, how are you?", you would transcribe it as "John: Hello, how are you?".            
