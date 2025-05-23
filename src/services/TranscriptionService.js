@@ -101,6 +101,21 @@ export default class TranscriptionService extends ITranscriptionService {
     throw lastError;
   }
 
+  async generateSummaryFromSessionSummaries(sessionSummaries, guildId) {
+    try {
+      const summaries = [];
+      for (const summary of sessionSummaries) {
+        const {summary, isTranscription, jobId, isUnableToSummarize} = summary;    
+        summaries.push(`${summary}`);
+      }
+      const combinedSummary = summaries.join('\n');
+      return await this.generateSummary(combinedSummary, guildId);
+    } catch (error) {
+      logger.error('[TranscriptionService] Error generating summary from session summaries:', error);
+      throw error;
+    }
+  }
+
   async generateSummary(transcript, guildId) {
     try {
       if (!transcript || transcript.trim().length === 0) {
@@ -152,8 +167,7 @@ export default class TranscriptionService extends ITranscriptionService {
                 content: transcript
               }
             ],
-            temperature: 0.7,
-            max_tokens: 1000
+            temperature: 0.9
           });
           const content = completion?.choices?.[0]?.message?.content;
           if (!content || content.includes('No transcript available')) {

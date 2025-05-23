@@ -67,7 +67,8 @@ export default class VoiceRecorder extends EventEmitter {
         connection,
         userRecordings: new Map(),
         startTime: Date.now(),
-        lastActivityTime: Date.now()
+        lastActivityTime: Date.now(),
+        summaries: []
       };
 
       // Listen for speaking events.
@@ -216,6 +217,8 @@ export default class VoiceRecorder extends EventEmitter {
           guildId,
           oldSession.userRecordings
         );
+        const session = this.activeRecordings.get(guildId);
+        session.summaries.push(summaryObject);
         // Only send a message if transcripts exist.
         if (summaryObject) {
           this.events.emit(RecordingEvents.ROTATION_COMPLETED, { guildId, summaryObject });
@@ -255,10 +258,16 @@ export default class VoiceRecorder extends EventEmitter {
         guildId,
         session.userRecordings
       );
+
+      session.summaries.push(summaryObject);
+
+      const summariesObject = await this.transcriptionService.generateSummaryFromSessionSummaries(session.summaries, guildId);
+
       this.events.emit(RecordingEvents.RECORDING_STOPPED, { guildId, summaryObject });
       const summaryChannel = await this.configService.getSummaryChannel(guildId);
       if (summaryChannel) {
         await this.channelService.sendMessage(summaryChannel, summaryObject);
+        await this.channelService.sendMessage(summaryChannel, summariesObject);
       }
       await this.cleanup(guildId);
 

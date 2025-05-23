@@ -55,7 +55,7 @@ export default class StorageService {
 
         try {
             // Cleanup temp directory (delete all files)
-            await this.cleanDirectory(this.config.STORAGE.TEMP_DIRECTORY, 0);
+            await this.cleanDirectory(this.config.STORAGE.TEMP_DIRECTORY, maxAge);
             
             // Cleanup transcripts and summaries older than retention period
             await this.cleanDirectory(this.config.STORAGE.TRANSCRIPTS_DIRECTORY, maxAge);
