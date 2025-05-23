@@ -11249,3 +11249,12 @@ The bot will now record and summarize your voice channel conversation.
 2025-02-07T04:11:03.909Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
 2025-02-07T04:11:04.559Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
 2025-02-07T04:11:04.561Z [31merror[39m: [JobService] Queue summary-generation error:{"error":"getaddrinfo ENOTFOUND redis","stack":"Error: getaddrinfo ENOTFOUND redis\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:26)"}
+2025-05-23T02:11:37.601Z [32minfo[39m: [ServiceFactory] Services initialized successfully
+2025-05-23T02:11:37.624Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"temp","fileCount":0,"maxAge":86400000}
+2025-05-23T02:11:37.625Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/transcripts","fileCount":0,"maxAge":86400000}
+2025-05-23T02:11:37.627Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/summaries","fileCount":0,"maxAge":86400000}
+2025-05-23T02:11:37.627Z [32minfo[39m: [StorageService] Storage cleanup completed
+2025-05-23T02:11:37.634Z [32minfo[39m: Loaded 8 guild configs, 0 errors
+2025-05-23T02:11:37.996Z [32minfo[39m: Bot initialized successfully
+2025-05-23T02:11:37.997Z [32minfo[39m: Health check server listening on port 8091
+2025-05-23T02:11:38.354Z [32minfo[39m: Logged in as Lorescribe#8404

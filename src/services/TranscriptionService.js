@@ -105,8 +105,11 @@ export default class TranscriptionService extends ITranscriptionService {
     try {
       const summaries = [];
       for (const summary of sessionSummaries) {
-        const {summary, isTranscription, jobId, isUnableToSummarize} = summary;    
+        const {summary, isTranscription, isUnableToSummarize} = summary;    
         summaries.push(`${summary}`);
+      }
+      if(summaries.length === 0) {
+        return {summary: 'No summaries to combine', isTranscription: false, isUnableToSummarize: true};
       }
       const combinedSummary = summaries.join('\n');
       return await this.generateSummary(combinedSummary, guildId);
