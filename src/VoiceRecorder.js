@@ -178,7 +178,9 @@ export default class VoiceRecorder extends EventEmitter {
     const newSession = {
       connection,
       userRecordings: new Map(),
-      startTime: Date.now()
+      startTime: Date.now(),
+      lastActivityTime: Date.now(),
+      summaries: []
     };
 
     // For every active user in the old session, start a new pipeline.

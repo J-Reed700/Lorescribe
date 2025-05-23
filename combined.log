@@ -11258,3 +11258,514 @@ The bot will now record and summarize your voice channel conversation.
 2025-05-23T02:11:37.996Z [32minfo[39m: Bot initialized successfully
 2025-05-23T02:11:37.997Z [32minfo[39m: Health check server listening on port 8091
 2025-05-23T02:11:38.354Z [32minfo[39m: Logged in as Lorescribe#8404
+2025-05-23T02:35:13.619Z [32minfo[39m: [ServiceFactory] Services initialized successfully
+2025-05-23T02:35:13.641Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"temp","fileCount":0,"maxAge":86400000}
+2025-05-23T02:35:13.642Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/transcripts","fileCount":0,"maxAge":86400000}
+2025-05-23T02:35:13.644Z [32minfo[39m: [StorageService] Cleaning directory:{"directory":"data/summaries","fileCount":0,"maxAge":86400000}
+2025-05-23T02:35:13.644Z [32minfo[39m: [StorageService] Storage cleanup completed
+2025-05-23T02:35:13.654Z [32minfo[39m: Loaded 8 guild configs, 0 errors
+2025-05-23T02:35:14.051Z [32minfo[39m: Bot initialized successfully
+2025-05-23T02:35:14.053Z [32minfo[39m: Health check server listening on port 8091
+2025-05-23T02:35:14.362Z [32minfo[39m: Logged in as Lorescribe#8404
+2025-05-23T02:35:59.413Z [32minfo[39m: Command Name: setkey
+2025-05-23T02:35:59.413Z [32minfo[39m: [BaseCommand] Deferring reply with ephemeral flag
+2025-05-23T02:35:59.580Z [32minfo[39m: [handleReply] Interaction state: ✅ **Success!** OpenAI API key has been validated and set
+> The key will be stored securely in memory only.{"deferred":true,"replied":false,"ephemeral":true,"interactionId":"1375301205986906152","commandName":"setkey","isCommand":true,"isMessageComponent":false,"isModalSubmit":false}
+2025-05-23T02:35:59.580Z [32minfo[39m: [handleReply] Attempting edit reply
+2025-05-23T02:36:01.215Z [32minfo[39m: Command Name: record
+2025-05-23T02:36:01.215Z [32minfo[39m: [BaseCommand] Deferring reply without ephemeral flag
+2025-05-23T02:36:01.461Z [32minfo[39m: [RecordCommand] Starting recording...
+2025-05-23T02:36:01.632Z [32minfo[39m: [VoiceStateService] Connection state changed from signalling to connecting for guild 1315144523336122469
+2025-05-23T02:36:01.672Z [32minfo[39m: [VoiceStateService] Connection state changed from connecting to connecting for guild 1315144523336122469
+2025-05-23T02:36:01.716Z [32minfo[39m: [VoiceStateService] Connection state changed from connecting to connecting for guild 1315144523336122469
+2025-05-23T02:36:01.735Z [32minfo[39m: [VoiceStateService] Connection state changed from connecting to connecting for guild 1315144523336122469
+2025-05-23T02:36:01.743Z [32minfo[39m: [VoiceStateService] Connection state changed from connecting to ready for guild 1315144523336122469
+2025-05-23T02:36:01.743Z [32minfo[39m: [VoiceStateService] Connection ready for guild 1315144523336122469
+2025-05-23T02:36:01.743Z [32minfo[39m: [VoiceStateService] Successfully connected to voice channel in guild 1315144523336122469 (attempt 1)
+2025-05-23T02:36:01.743Z [32minfo[39m: [VoiceRecorder] Joined voice channel for guild 1315144523336122469
+2025-05-23T02:36:01.743Z [32minfo[39m: [VoiceRecorder] Started recording session for guild 1315144523336122469
+2025-05-23T02:36:01.744Z [32minfo[39m: [RecordCommand] Deferred state:{"deferred":true,"replied":false}
+2025-05-23T02:36:01.744Z [32minfo[39m: [handleReply] Interaction state: 🎙️ **Recording Started!**
+The bot will now record and summarize your voice channel conversation.
+
+💡 **Tips:**
+• `Speak clearly` and at a normal pace
+• `Avoid background noise` if possible
+• Use `/stop` to end the recording
+
+> Your recording will be automatically processed and summarized.
+> Use high-quality audio for best results.{"deferred":true,"replied":false,"ephemeral":false,"interactionId":"1375301213519740949","commandName":"record","isCommand":true,"isMessageComponent":false,"isModalSubmit":false}
+2025-05-23T02:36:01.744Z [32minfo[39m: [handleReply] Attempting edit reply
+2025-05-23T02:36:01.942Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 started speaking
+2025-05-23T02:36:01.942Z [32minfo[39m: [StorageService] Generating temp file path for guild 1315144523336122469-406937877348352001 with type mp3
+2025-05-23T02:36:01.942Z [32minfo[39m: [StorageService] Generated temp file path:{"guildId":"1315144523336122469-406937877348352001","type":"mp3","filename":"recording-1315144523336122469-406937877348352001-1747967761942-npogzgn3v5.mp3","directory":"temp"}
+2025-05-23T02:36:01.964Z [32minfo[39m: [AudioService] Using prism-media opus decoder
+2025-05-23T02:36:02.065Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:02.202Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:02.398Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:02.602Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:02.730Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:04.814Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:07.343Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:19.603Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:20.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:20.222Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:21.945Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:26.543Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:30.903Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:32.423Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:37.864Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:42.467Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:47.265Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:49.004Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:49.130Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:49.964Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:51.144Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:53.311Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:54.535Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:56.024Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:57.084Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:36:58.763Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:01.483Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:03.164Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=     256kB time=00:00:51.19 bitrate=  41.0kbits/s speed=0.901x    
+2025-05-23T02:37:05.242Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:11.783Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:24.302Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:27.642Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:28.223Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:30.303Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:30.663Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:41.681Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:42.704Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:43.803Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:45.085Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:45.923Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:49.823Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:55.362Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:37:56.865Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=     512kB time=00:01:40.72 bitrate=  41.6kbits/s speed=0.911x    
+2025-05-23T02:38:00.623Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:02.744Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:03.392Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:04.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:04.875Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:08.802Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:10.529Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:11.244Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:12.623Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:13.563Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:15.373Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:17.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:31.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:33.143Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:40.782Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:41.883Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:43.725Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:44.284Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:44.604Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:45.126Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:45.324Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:46.281Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:46.702Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:47.223Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:47.744Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:47.942Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:49.324Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:49.843Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:50.564Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:50.703Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    1024kB time=00:02:32.32 bitrate=  55.1kbits/s speed=0.927x    
+2025-05-23T02:38:50.999Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:51.622Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:51.944Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:52.668Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:54.565Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:56.144Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:56.663Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:57.183Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:38:59.261Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:00.001Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:00.542Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:01.484Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:01.903Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:03.083Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:03.505Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:04.526Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:04.726Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:05.243Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:05.782Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:06.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:06.584Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:07.343Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:09.242Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:11.545Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:11.864Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:12.048Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:13.443Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:13.965Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:14.502Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:20.483Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:29.562Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:39.744Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:39:45.338Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    1280kB time=00:03:24.52 bitrate=  51.3kbits/s speed=0.934x    
+2025-05-23T02:40:13.062Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:40:13.604Z [32minfo[39m: Memory Usage:
+2025-05-23T02:40:13.605Z [32minfo[39m: rss: 122.79 MB
+2025-05-23T02:40:13.605Z [32minfo[39m: heapTotal: 49.11 MB
+2025-05-23T02:40:13.605Z [32minfo[39m: heapUsed: 42.08 MB
+2025-05-23T02:40:13.605Z [32minfo[39m: external: 23.85 MB
+2025-05-23T02:40:13.605Z [32minfo[39m: arrayBuffers: 0.29 MB
+2025-05-23T02:40:37.845Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    1792kB time=00:04:16.72 bitrate=  57.2kbits/s speed=0.946x    
+2025-05-23T02:40:46.462Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:40:55.022Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:40:55.545Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:40:57.702Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:13.263Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:14.183Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:14.364Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:14.822Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:16.503Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:25.724Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:29.804Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:31.844Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    2048kB time=00:05:08.06 bitrate=  54.5kbits/s speed=0.946x    
+2025-05-23T02:41:39.083Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:40.564Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:45.204Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:46.522Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:55.704Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:56.425Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:56.763Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:57.283Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:57.804Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:41:59.903Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:00.083Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:01.142Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:02.522Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:03.044Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:04.624Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:05.143Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:05.343Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:06.384Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:07.243Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:07.764Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:08.058Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:08.283Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:09.864Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:11.104Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:12.483Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:14.583Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:16.663Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:17.204Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:17.723Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:18.262Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:18.444Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:19.304Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:19.822Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:20.344Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:21.062Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:21.922Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:22.443Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:23.163Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:23.684Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:24.545Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:25.064Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:25.596Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    2560kB time=00:05:58.65 bitrate=  58.5kbits/s speed=0.946x    
+2025-05-23T02:42:29.882Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:36.382Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:40.785Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:54.003Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:42:57.425Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:00.723Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:02.002Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:05.742Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:06.643Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:07.983Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:09.924Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:10.964Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:11.263Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:14.064Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:16.061Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:16.563Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:25.761Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    2816kB time=00:06:50.18 bitrate=  56.2kbits/s speed=0.933x    
+2025-05-23T02:43:28.384Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:29.002Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:32.346Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:38.323Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:42.284Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:46.783Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:47.903Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:51.046Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:51.241Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:52.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:52.622Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:53.684Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:54.724Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:55.245Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:55.443Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:57.117Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:57.864Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:58.584Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:43:59.964Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:00.483Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:01.205Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:01.543Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:02.269Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:02.581Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:03.113Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:03.317Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:03.944Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:04.683Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:05.202Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:07.304Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:07.823Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:08.543Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:09.926Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:11.505Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:12.024Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:12.543Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:12.742Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:13.266Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:14.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:14.643Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:15.163Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:15.363Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:15.923Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:16.742Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:17.270Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:19.204Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    3328kB time=00:07:41.88 bitrate=  59.0kbits/s speed=0.937x    
+2025-05-23T02:44:19.923Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:26.045Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:26.763Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:27.105Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:27.625Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:28.143Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:28.664Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:30.244Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:30.764Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:32.440Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:33.884Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:36.004Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:37.584Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:38.102Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:38.644Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:38.949Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:39.163Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:39.972Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:40.201Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:40.724Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:42.823Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:45.443Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:47.022Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:47.222Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:48.062Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:48.264Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:49.324Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:50.162Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:50.363Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:51.423Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:52.786Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:55.405Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:57.504Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:58.025Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:44:59.620Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:11.524Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:11.812Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=    3840kB time=00:08:33.60 bitrate=  61.2kbits/s speed=0.942x    
+2025-05-23T02:45:13.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:13.404Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:13.604Z [32minfo[39m: Memory Usage:
+2025-05-23T02:45:13.605Z [32minfo[39m: rss: 122.97 MB
+2025-05-23T02:45:13.605Z [32minfo[39m: heapTotal: 49.11 MB
+2025-05-23T02:45:13.605Z [32minfo[39m: heapUsed: 38.71 MB
+2025-05-23T02:45:13.605Z [32minfo[39m: external: 23.87 MB
+2025-05-23T02:45:13.605Z [32minfo[39m: arrayBuffers: 0.31 MB
+2025-05-23T02:45:13.624Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:15.209Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:42.062Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:51.138Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:51.664Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:45:59.762Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:01.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:01.744Z [32minfo[39m: [VoiceRecorder] Rotating recording session for guild 1315144523336122469
+2025-05-23T02:46:01.744Z [32minfo[39m: [StorageService] Generating temp file path for guild 1315144523336122469-406937877348352001 with type mp3
+2025-05-23T02:46:01.745Z [32minfo[39m: [StorageService] Generated temp file path:{"guildId":"1315144523336122469-406937877348352001","type":"mp3","filename":"recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3","directory":"temp"}
+2025-05-23T02:46:01.748Z [32minfo[39m: [AudioService] Using prism-media opus decoder
+2025-05-23T02:46:01.749Z [32minfo[39m: [VoiceRecorder] New recording session started for guild 1315144523336122469
+2025-05-23T02:46:01.749Z [31merror[39m: [VoiceRecorder] Error checking file size for user 406937877348352001: ENOENT: no such file or directory, stat '/usr/src/app/temp/recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3'{"errno":-2,"code":"ENOENT","syscall":"stat","path":"/usr/src/app/temp/recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3","stack":"Error: ENOENT: no such file or directory, stat '/usr/src/app/temp/recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3'\n    at async Object.stat (node:internal/fs/promises:1036:18)\n    at async Timeout._onTimeout (file:///usr/src/app/src/VoiceRecorder.js:140:27)"}
+2025-05-23T02:46:01.861Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:02.250Z [32minfo[39m: [AudioService][User 406937877348352001] Output stream closed successfully
+2025-05-23T02:46:02.382Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:02.934Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:03.250Z [32minfo[39m: [TranscriptionService] Starting transcription (attempt 1/3):{"filepath":"/usr/src/app/temp/recording-1315144523336122469-406937877348352001-1747967761942-npogzgn3v5.mp3","exists":true}
+2025-05-23T02:46:03.250Z [32minfo[39m: [TranscriptionService] File stats:{"size":4329645,"created":"2025-05-23T02:36:06.304Z","modified":"2025-05-23T02:46:02.249Z"}
+2025-05-23T02:46:03.251Z [32minfo[39m: [TranscriptionService] Transcribing with guildId: 1315144523336122469
+2025-05-23T02:46:03.251Z [32minfo[39m: [TranscriptionService] Creating read stream and sending to OpenAI...
+2025-05-23T02:46:03.343Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:03.803Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 14243 bytes
+2025-05-23T02:46:05.803Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 29139 bytes
+2025-05-23T02:46:07.102Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:07.642Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:07.821Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 45148 bytes
+2025-05-23T02:46:08.343Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:09.183Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:09.725Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:09.801Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 61408 bytes
+2025-05-23T02:46:10.441Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:11.824Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 77474 bytes
+2025-05-23T02:46:12.344Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:13.582Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:13.801Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 91572 bytes
+2025-05-23T02:46:13.922Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:14.023Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:14.442Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:16.025Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 106936 bytes
+2025-05-23T02:46:16.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:17.063Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:17.261Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:17.583Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:17.782Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:18.116Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 120292 bytes
+2025-05-23T02:46:18.324Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:19.164Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:19.683Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:20.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 136316 bytes
+2025-05-23T02:46:20.403Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:20.743Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:21.784Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:22.103Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 151244 bytes
+2025-05-23T02:46:22.303Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:22.501Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:24.127Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 167448 bytes
+2025-05-23T02:46:24.405Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:25.123Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:26.172Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 183672 bytes
+2025-05-23T02:46:26.662Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:27.025Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:27.744Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:28.082Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:28.269Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 195931 bytes
+2025-05-23T02:46:29.643Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:30.129Z [32minfo[39m: [TranscriptionService] Transcription completed:{"length":9114,"hasContent":true,"text":"\"...Democrats didn't support me. Because if the Democrats support me, they will have to take on AIPA"}
+2025-05-23T02:46:30.130Z [32minfo[39m: [StorageService] Deleted file:{"file":"recording-1315144523336122469-406937877348352001-1747967761942-npogzgn3v5.mp3","directory":"/usr/src/app/temp"}
+2025-05-23T02:46:30.130Z [32minfo[39m: [RecordingProcessor] Combined transcript: User Name: Reed Transcript: 
+"...Democrats didn't support me. Because if the Democrats support me, t
+2025-05-23T02:46:30.130Z [32minfo[39m: [TranscriptionService] Starting summary generation{"transcriptLength":9202,"transcriptSample":"Please summarize this conversation between multiple users:\nUser Name: Reed Transcript: \n\"...Democrat"}
+2025-05-23T02:46:30.130Z [32minfo[39m: [TranscriptionService] Sending summary prompt to OpenAI with model gpt-4
+2025-05-23T02:46:30.206Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 212280 bytes
+2025-05-23T02:46:32.204Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 227544 bytes
+2025-05-23T02:46:33.265Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:34.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 241690 bytes
+2025-05-23T02:46:36.204Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 257967 bytes
+2025-05-23T02:46:38.207Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 274007 bytes
+2025-05-23T02:46:40.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 290315 bytes
+2025-05-23T02:46:42.203Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 305909 bytes
+2025-05-23T02:46:44.204Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 322247 bytes
+2025-05-23T02:46:45.447Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:46.367Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:46.625Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 336028 bytes
+2025-05-23T02:46:48.628Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 350993 bytes
+2025-05-23T02:46:50.654Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 367343 bytes
+2025-05-23T02:46:50.897Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:51.615Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:51.816Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:52.151Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:52.191Z [32minfo[39m: [AudioService][User 406937877348352001] ffmpeg: size=     256kB time=00:00:48.84 bitrate=  42.9kbits/s speed=1.01x    
+2025-05-23T02:46:52.763Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 383511 bytes
+2025-05-23T02:46:53.806Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:54.917Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 397300 bytes
+2025-05-23T02:46:55.084Z [32minfo[39m: [TranscriptionService] Summary generated successfully:{"length":3572,"transcriptLength":9202,"summary":"# Summary\n\nThe conversation features **Reed** discussing various political topics, primarily focusin"}
+2025-05-23T02:46:55.084Z [32minfo[39m: [VoiceRecorder] Successfully processed rotated session for guild 1315144523336122469
+2025-05-23T02:46:55.085Z [32minfo[39m: [ChannelService] Sending summary message to channel 1327887143309279275
+2025-05-23T02:46:55.085Z [33mwarn[39m: [ChannelService] Message is too long (3597 chars), splitting into chunks
+2025-05-23T02:46:56.901Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:57.056Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 410824 bytes
+2025-05-23T02:46:57.160Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:46:59.531Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 426339 bytes
+2025-05-23T02:47:01.330Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:01.542Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 442642 bytes
+2025-05-23T02:47:02.881Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:03.585Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 458711 bytes
+2025-05-23T02:47:05.580Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 474870 bytes
+2025-05-23T02:47:07.589Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 491005 bytes
+2025-05-23T02:47:08.690Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:08.914Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:09.679Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 505607 bytes
+2025-05-23T02:47:10.420Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:10.810Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:11.744Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 521853 bytes
+2025-05-23T02:47:12.706Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:13.237Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:13.881Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:14.003Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:14.225Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:14.265Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 537728 bytes
+2025-05-23T02:47:14.526Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:14.774Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:15.294Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:15.449Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:15.565Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:15.995Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:16.765Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 549203 bytes
+2025-05-23T02:47:17.029Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:17.957Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:19.840Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 564177 bytes
+2025-05-23T02:47:19.972Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:20.220Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:21.149Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:22.151Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:22.176Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 578053 bytes
+2025-05-23T02:47:24.121Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 594061 bytes
+2025-05-23T02:47:24.329Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:28.756Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 610102 bytes
+2025-05-23T02:47:29.138Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:29.586Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:29.767Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:29.921Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:30.424Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:30.857Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 626247 bytes
+2025-05-23T02:47:32.398Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:32.853Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 642418 bytes
+2025-05-23T02:47:33.415Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:34.405Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:34.938Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 has written 658578 bytes
+2025-05-23T02:47:36.391Z [32minfo[39m: Command Name: stop
+2025-05-23T02:47:36.391Z [32minfo[39m: [BaseCommand] Deferring reply without ephemeral flag
+2025-05-23T02:47:36.547Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:36.574Z [32minfo[39m: [StopCommand] Stopping recording...
+2025-05-23T02:47:36.574Z [32minfo[39m: [VoiceRecorder] Stopping recording for guild 1315144523336122469
+2025-05-23T02:47:36.575Z [32minfo[39m: [AudioService][User 406937877348352001] Output stream closed successfully
+2025-05-23T02:47:37.352Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:37.575Z [32minfo[39m: [TranscriptionService] Starting transcription (attempt 1/3):{"filepath":"/usr/src/app/temp/recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3","exists":true}
+2025-05-23T02:47:37.575Z [32minfo[39m: [TranscriptionService] File stats:{"size":709173,"created":"2025-05-23T02:46:03.802Z","modified":"2025-05-23T02:47:36.575Z"}
+2025-05-23T02:47:37.575Z [32minfo[39m: [TranscriptionService] Transcribing with guildId: 1315144523336122469
+2025-05-23T02:47:37.575Z [32minfo[39m: [TranscriptionService] Creating read stream and sending to OpenAI...
+2025-05-23T02:47:39.298Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:39.935Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:40.817Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:41.291Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:42.283Z [32minfo[39m: [TranscriptionService] Transcription completed:{"length":1404,"hasContent":true,"text":"That would be positive campaigning for that person. I'm not even kidding. First of all, they don't e"}
+2025-05-23T02:47:42.283Z [32minfo[39m: [StorageService] Deleted file:{"file":"recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3","directory":"/usr/src/app/temp"}
+2025-05-23T02:47:42.283Z [32minfo[39m: [RecordingProcessor] Combined transcript: User Name: Reed Transcript: 
+That would be positive campaigning for that person. I'm not even kiddin
+2025-05-23T02:47:42.283Z [32minfo[39m: [TranscriptionService] Starting summary generation{"transcriptLength":1492,"transcriptSample":"Please summarize this conversation between multiple users:\nUser Name: Reed Transcript: \nThat would b"}
+2025-05-23T02:47:42.283Z [32minfo[39m: [TranscriptionService] Sending summary prompt to OpenAI with model gpt-4
+2025-05-23T02:47:43.758Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:47.468Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:50.389Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:50.993Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:51.201Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:52.424Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:53.909Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:54.236Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:55.732Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:56.589Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:56.622Z [32minfo[39m: [TranscriptionService] Summary generated successfully:{"length":2190,"transcriptLength":1492,"summary":"# Conversation Summary\nReed, the user in the conversation, discusses topics related to political cam"}
+2025-05-23T02:47:56.622Z [31merror[39m: [TranscriptionService] Error generating summary from session summaries: Cannot access 'summary' before initialization{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async StopCommand.execute (file:///usr/src/app/src/commands/audio/StopCommand.js:23:13)\n    at async CommandRegistry.handleCommand (file:///usr/src/app/src/commands/audio/CommandRegistry.js:68:13)\n    at async Bot.handleInteraction (file:///usr/src/app/src/bot.js:78:13)"}
+2025-05-23T02:47:56.622Z [31merror[39m: [VoiceRecorder] Error stopping recording: Cannot access 'summary' before initialization{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async StopCommand.execute (file:///usr/src/app/src/commands/audio/StopCommand.js:23:13)\n    at async CommandRegistry.handleCommand (file:///usr/src/app/src/commands/audio/CommandRegistry.js:68:13)\n    at async Bot.handleInteraction (file:///usr/src/app/src/bot.js:78:13)"}
+2025-05-23T02:47:56.623Z [32minfo[39m: [VoiceRecorder] Stopping recording for guild 1315144523336122469
+2025-05-23T02:47:56.623Z [31merror[39m: Error executing command stop: ❌ **Error:** Failed to stop recording. Please try again.{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async StopCommand.execute (file:///usr/src/app/src/commands/audio/StopCommand.js:23:13)\n    at async CommandRegistry.handleCommand (file:///usr/src/app/src/commands/audio/CommandRegistry.js:68:13)\n    at async Bot.handleInteraction (file:///usr/src/app/src/bot.js:78:13)"}
+2025-05-23T02:47:56.721Z [32minfo[39m: [VoiceRecorder] User 406937877348352001 stopped speaking
+2025-05-23T02:47:56.884Z [31merror[39m: Error handling command: ❌ **Error:** Failed to stop recording. Please try again.{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async StopCommand.execute (file:///usr/src/app/src/commands/audio/StopCommand.js:23:13)\n    at async CommandRegistry.handleCommand (file:///usr/src/app/src/commands/audio/CommandRegistry.js:68:13)\n    at async Bot.handleInteraction (file:///usr/src/app/src/bot.js:78:13)"}
+2025-05-23T02:47:56.885Z [31merror[39m: Discord client error: ❌ **Error:** Failed to stop recording. Please try again.{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async StopCommand.execute (file:///usr/src/app/src/commands/audio/StopCommand.js:23:13)\n    at async CommandRegistry.handleCommand (file:///usr/src/app/src/commands/audio/CommandRegistry.js:68:13)\n    at async Bot.handleInteraction (file:///usr/src/app/src/bot.js:78:13)"}
+2025-05-23T02:48:01.623Z [33mwarn[39m: [AudioService][User 406937877348352001] Output stream close timed out, forcing destruction
+2025-05-23T02:48:02.623Z [31merror[39m: [RecordingProcessor] File not found for user 406937877348352001: /usr/src/app/temp/recording-1315144523336122469-406937877348352001-1747968361745-ixoxo4qjqs.mp3
+2025-05-23T02:48:02.624Z [31merror[39m: [TranscriptionService] Error generating summary from session summaries: Cannot access 'summary' before initialization{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)"}
+2025-05-23T02:48:02.624Z [31merror[39m: [VoiceRecorder] Error stopping recording: Cannot access 'summary' before initialization{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)"}
+2025-05-23T02:48:02.624Z [31merror[39m: [VoiceRecorder] Error stopping recording on disconnect: Cannot access 'summary' before initialization{"stack":"ReferenceError: Cannot access 'summary' before initialization\n    at TranscriptionService.generateSummaryFromSessionSummaries (file:///usr/src/app/src/services/TranscriptionService.js:108:65)\n    at VoiceRecorder.stopRecording (file:///usr/src/app/src/VoiceRecorder.js:266:63)"}

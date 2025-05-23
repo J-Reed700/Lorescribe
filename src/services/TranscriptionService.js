@@ -104,8 +104,8 @@ export default class TranscriptionService extends ITranscriptionService {
   async generateSummaryFromSessionSummaries(sessionSummaries, guildId) {
     try {
       const summaries = [];
-      for (const summary of sessionSummaries) {
-        const {summary, isTranscription, isUnableToSummarize} = summary;    
+      for (const summaryObj of sessionSummaries) {
+        const {summary, isTranscription, isUnableToSummarize} = summaryObj;    
         summaries.push(`${summary}`);
       }
       if(summaries.length === 0) {
